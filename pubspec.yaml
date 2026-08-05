@@ -1,0 +1,106 @@
+name: alwaleed_admain
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_screenutil: ^5.9.3
+  flutter_bloc: ^9.1.1
+  flutter_animate: ^4.5.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/
+    - assets/images/
+    - assets/icons/
+    - assets/fonts/
+    - assets/animation/
+    - assets/translations/
+
+  fonts:
+    # ===== Kufam Font Family =====
+    - family: Kufam
+      fonts:
+        - asset: assets/fonts/Kufam-Regular.ttf
+          weight: 400
+
+        - asset: assets/fonts/Kufam-Italic.ttf
+          weight: 400
+          style: italic
+
+        - asset: assets/fonts/Kufam-Medium.ttf
+          weight: 500
+
+        - asset: assets/fonts/Kufam-MediumItalic.ttf
+          weight: 500
+          style: italic
+
+        - asset: assets/fonts/Kufam-SemiBold.ttf
+          weight: 600
+
+        - asset: assets/fonts/Kufam-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+
+        - asset: assets/fonts/Kufam-Bold.ttf
+          weight: 700
+
+        - asset: assets/fonts/Kufam-BoldItalic.ttf
+          weight: 700
+          style: italic
+
+        - asset: assets/fonts/Kufam-ExtraBold.ttf
+          weight: 800
+
+        - asset: assets/fonts/Kufam-ExtraBoldItalic.ttf
+          weight: 800
+          style: italic
+
+        - asset: assets/fonts/Kufam-Black.ttf
+          weight: 900
+
+        - asset: assets/fonts/Kufam-BlackItalic.ttf
+          weight: 900
+          style: italic
+
+    # ===== Tajawal Font Family =====
+    - family: Tajawal
+      fonts:
+        - asset: assets/fonts/Tajawal-ExtraLight.ttf
+          weight: 200
+
+        - asset: assets/fonts/Tajawal-Light.ttf
+          weight: 300
+
+        - asset: assets/fonts/Tajawal-Regular.ttf
+          weight: 400
+
+        - asset: assets/fonts/Tajawal-Medium.ttf
+          weight: 500
+
+        - asset: assets/fonts/Tajawal-Bold.ttf
+          weight: 700
+
+        - asset: assets/fonts/Tajawal-ExtraBold.ttf
+          weight: 800
+
+        - asset: assets/fonts/Tajawal-Black.ttf
+          weight: 900
