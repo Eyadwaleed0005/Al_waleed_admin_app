@@ -52,7 +52,7 @@ class QuickActionCard extends StatelessWidget {
                       maxLines: 1,
                       softWrap: false,
                       textAlign: TextAlign.right,
-                      style: Textstyles.font14TextPrimaryMediumKufam(),
+                      style: AppTextStyle.font14TextPrimaryMediumKufam(),
                     ),
                   ),
                 ),

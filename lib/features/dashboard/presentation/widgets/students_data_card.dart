@@ -67,7 +67,7 @@ class _StudentsDataCardState extends State<StudentsDataCard> {
                       _isCountVisible ? widget.studentsCount.toString() : '•••',
                       key: ValueKey(_isCountVisible),
                       textDirection: TextDirection.ltr,
-                      style: Textstyles.font20PrimarySemiBoldKufam().copyWith(
+                      style: AppTextStyle.font20PrimarySemiBoldKufam().copyWith(
                         color: widget.numberColor,
                       ),
                     ),
@@ -83,7 +83,7 @@ class _StudentsDataCardState extends State<StudentsDataCard> {
                         maxLines: 1,
                         softWrap: false,
                         textAlign: TextAlign.right,
-                        style: Textstyles.font12TextSecondaryRegularTajawal(),
+                        style: AppTextStyle.font12TextSecondaryRegularTajawal(),
                       ),
                     ),
                   ),

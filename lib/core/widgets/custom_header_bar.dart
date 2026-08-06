@@ -21,7 +21,7 @@ class CustomHeaderBar extends StatelessWidget {
           child: Text(
             title,
             textAlign: TextAlign.left,
-            style: Textstyles.font18TextPrimarySemiBoldKufam(),
+            style: AppTextStyle.font18TextPrimarySemiBoldKufam(),
           ),
         ),
         Image.asset(iconPath, width: 24.w, height: 24.h, fit: BoxFit.contain),

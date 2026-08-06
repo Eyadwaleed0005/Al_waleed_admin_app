@@ -127,8 +127,8 @@ class NavItemState extends State<NavItem> {
                         duration: const Duration(milliseconds: 220),
                         curve: Curves.easeOut,
                         style: isActive
-                            ? Textstyles.font11PrimaryBoldTajawal()
-                            : Textstyles.font11TextMutedRegularTajawal(),
+                            ? AppTextStyle.font11PrimaryBoldTajawal()
+                            : AppTextStyle.font11TextMutedRegularTajawal(),
                         child: Text(
                           widget.title,
                           maxLines: 1,

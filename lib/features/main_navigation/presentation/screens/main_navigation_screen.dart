@@ -4,6 +4,7 @@ import 'package:alwaleed_admain/core/style/app_color.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
 import 'package:alwaleed_admain/features/main_navigation/presentation/cubit/bottom_navigation_cubit.dart';
 import 'package:alwaleed_admain/features/main_navigation/presentation/widgets/custom_bottom_nav_bar.dart';
+import 'package:alwaleed_admain/features/students/presentation/screens/student_management_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -13,7 +14,7 @@ class MainNavigationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => BottomNavigationCubit(),
+      create: (_) => BottomNavigationCubit(),
       child: const MainNavigationView(),
     );
   }
@@ -26,28 +27,45 @@ class MainNavigationView extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> screens = RouteNavBottom.screens(
       homeScreen: const HomeScreen(),
-      contentScreen: const TemporaryScreen(title: 'إدارة المحتوى'),
-      examsScreen: const TemporaryScreen(title: 'إدارة الامتحانات'),
-      studyNotesScreen: const TemporaryScreen(title: 'إدارة المذكرات'),
-      liveSessionScreen: const TemporaryScreen(title: 'الحصص المباشرة'),
+      students: const StudentManagementScreen(),
+      examsScreen: const TemporaryScreen(
+        title: 'إدارة الامتحانات',
+      ),
+      studyNotesScreen: const TemporaryScreen(
+        title: 'إدارة المذكرات',
+      ),
+      liveSessionScreen: const TemporaryScreen(
+        title: 'الحصص المباشرة',
+      ),
     );
 
     return Scaffold(
       backgroundColor: ColorPalette.background,
       extendBody: true,
-
       body: BlocBuilder<BottomNavigationCubit, int>(
+        buildWhen: (previousIndex, currentIndex) {
+          return previousIndex != currentIndex;
+        },
         builder: (context, currentIndex) {
-          return IndexedStack(index: currentIndex, children: screens);
+          return KeyedSubtree(
+            key: ValueKey<int>(currentIndex),
+            child: screens[currentIndex],
+          );
         },
       ),
-
       bottomNavigationBar: AppAnimations.bottomNavBarEntrance(
         child: BlocBuilder<BottomNavigationCubit, int>(
+          buildWhen: (previousIndex, currentIndex) {
+            return previousIndex != currentIndex;
+          },
           builder: (context, currentIndex) {
             return CustomBottomNavBar(
               currentIndex: currentIndex,
-              onTap: context.read<BottomNavigationCubit>().changePage,
+              onTap: (newIndex) {
+                context
+                    .read<BottomNavigationCubit>()
+                    .changePage(newIndex);
+              },
             );
           },
         ),
@@ -57,7 +75,10 @@ class MainNavigationView extends StatelessWidget {
 }
 
 class TemporaryScreen extends StatelessWidget {
-  const TemporaryScreen({super.key, required this.title});
+  const TemporaryScreen({
+    super.key,
+    required this.title,
+  });
 
   final String title;
 
@@ -65,7 +86,11 @@ class TemporaryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorPalette.background,
-      body: SafeArea(child: Center(child: Text(title))),
+      body: SafeArea(
+        child: Center(
+          child: Text(title),
+        ),
+      ),
     );
   }
 }
