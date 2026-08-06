@@ -28,7 +28,7 @@ class SplashScreen extends StatelessWidget {
         if (state is AppStartupCompleted) {
           Navigator.of(
             context,
-          ).pushNamedAndRemoveUntil(RouteNames.homeScreen, (route) => false);
+          ).pushNamedAndRemoveUntil(RouteNames.mainNavigationScreen, (route) => false);
         }
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(

@@ -124,4 +124,37 @@ abstract final class AppAnimations {
           curve: Curves.easeOutCubic,
         );
   }
+
+  static Widget bottomNavItem({
+    required Widget child,
+    required bool isSelected,
+  }) {
+    return child
+        .animate(target: isSelected ? 1 : 0)
+        .scale(
+          begin: const Offset(0.94, 0.94),
+          end: const Offset(1, 1),
+          duration: 260.ms,
+          curve: Curves.easeOutBack,
+        )
+        .slideY(
+          begin: 0.06,
+          end: 0,
+          duration: 240.ms,
+          curve: Curves.easeOutCubic,
+        );
+  }
+
+  static Widget bottomNavBarEntrance({required Widget child}) {
+    return child
+        .animate(delay: 600.ms)
+        .fadeIn(duration: 450.ms, curve: Curves.easeOut)
+        .moveY(begin: 120, end: 0, duration: 900.ms, curve: Curves.easeOutBack)
+        .scale(
+          begin: const Offset(0.92, 0.92),
+          end: const Offset(1, 1),
+          duration: 900.ms,
+          curve: Curves.easeOutBack,
+        );
+  }
 }
