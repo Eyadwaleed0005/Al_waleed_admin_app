@@ -20,6 +20,7 @@ class ColorPalette {
   static const Color surface = Color(0xFFFFFFFF);
   static const Color cardBackground = Color(0xFFFFFFFF);
   static const Color deepSurface = Color(0xFF021C14);
+  static const Color semanticSuccessSoftBg = Color(0xFFDCEBE1);
 
   // ===== Border Colors =====
   static const Color border = Color(0xFFDDE3DF);

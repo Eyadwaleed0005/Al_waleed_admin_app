@@ -30,7 +30,7 @@ class WelcomeCard extends StatelessWidget {
               child: Text(
                 'مدرس الكيمياء',
                 textAlign: TextAlign.center,
-                style: Textstyles.font12DeepSurfaceMediumTajawal(),
+                style: AppTextStyle.font12DeepSurfaceMediumTajawal(),
               ),
             ),
           ),
@@ -40,7 +40,7 @@ class WelcomeCard extends StatelessWidget {
             'أهلاً أستاذ وليد',
             textAlign: TextAlign.right,
             textDirection: TextDirection.rtl,
-            style: Textstyles.font26HighlightBoldKufam(),
+            style: AppTextStyle.font26HighlightBoldKufam(),
           ),
 
           verticalSpace(10),
@@ -48,7 +48,7 @@ class WelcomeCard extends StatelessWidget {
             'كل ما تحتاجه لإدارة طلابك ومحتواك من مكان واحد',
             textAlign: TextAlign.right,
             textDirection: TextDirection.rtl,
-            style: Textstyles.font13AccentRegularTajawal(),
+            style: AppTextStyle.font13AccentRegularTajawal(),
           ),
         ],
       ),

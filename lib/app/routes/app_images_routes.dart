@@ -24,6 +24,7 @@ class AppImage {
   late final String liveSession = '${baseIcons}live_session.png';
   late final String studyNotes = '${baseIcons}study_notes.png';
   late final String students = '${baseIcons}students.png';
+  late final String search = '${baseIcons}search.png';
 
   // ===== animations =====
 }

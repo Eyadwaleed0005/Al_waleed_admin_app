@@ -66,7 +66,7 @@ class SplashScreen extends StatelessWidget {
                           AppAnimations.primaryTitle(
                             child: SplashTitleText(
                               text: 'منصة الوليد للكيمياء',
-                              style: Textstyles.font20HighlightSemiBoldKufam(),
+                              style: AppTextStyle.font20HighlightSemiBoldKufam(),
                             ),
                           ),
 
@@ -75,7 +75,7 @@ class SplashScreen extends StatelessWidget {
                           AppAnimations.secondaryTitle(
                             child: SplashTitleText(
                               text: 'كيمياء بوضوح... من أول ذرة',
-                              style: Textstyles.font14AccentRegularTajawal(),
+                              style: AppTextStyle.font14AccentRegularTajawal(),
                             ),
                           ),
                         ],
@@ -96,7 +96,7 @@ class SplashScreen extends StatelessWidget {
                   AppAnimations.loadingText(
                     child: SplashTitleText(
                       text: 'جاري تجهيز لوحة المعلم',
-                      style: Textstyles.font14AccentRegularTajawal(),
+                      style: AppTextStyle.font14AccentRegularTajawal(),
                     ),
                   ),
                 ],

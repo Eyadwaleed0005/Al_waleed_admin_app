@@ -27,7 +27,7 @@ class QuickActionsSection extends StatelessWidget {
           child: Text(
             'إجراءات سريعة',
             textAlign: TextAlign.right,
-            style: Textstyles.font20TextSecondaryRegularKufam(),
+            style: AppTextStyle.font20TextSecondaryRegularKufam(),
           ),
         ),
         verticalSpace(16),

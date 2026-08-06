@@ -3,7 +3,7 @@ import 'package:alwaleed_admain/core/style/fontweighthelper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class Textstyles {
+class AppTextStyle {
   static const String tajawal = 'Tajawal';
   static const String kufam = 'Kufam';
 
@@ -113,4 +113,45 @@ class Textstyles {
       color: ColorPalette.primary,
     );
   } 
+  static TextStyle font15TextMutedRegularTajawal() {
+    return TextStyle(
+      fontSize: 15.sp,
+      fontWeight: FontWeightHelper.regular,
+      fontFamily: tajawal,
+      color: ColorPalette.textMuted,
+    );
+  } 
+  static TextStyle font15TextPrimaryMediumTajawal() {
+    return TextStyle(
+      fontSize: 15.sp,
+      fontWeight: FontWeightHelper.medium,
+      fontFamily: tajawal,
+      color: ColorPalette.textPrimary,
+    );
+  } 
+  static TextStyle font16TextPrimaryMediumKufam() {
+    return TextStyle(
+      fontSize: 16.sp,
+      fontWeight: FontWeightHelper.semiBold,
+      fontFamily: kufam,
+      color: ColorPalette.textPrimary,
+    );
+  }
+  static TextStyle font14SuccessMediumTajawal() {
+    return TextStyle(
+      fontSize: 14.sp,
+      fontWeight: FontWeightHelper.medium,
+      fontFamily: tajawal,
+      color: ColorPalette.success,
+    );
+  }
+
+   static TextStyle font15SurfaceBoldTajawal() {
+    return TextStyle(
+      fontSize: 15.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: tajawal,
+      color: ColorPalette.surface,
+    );
+  }
 }
