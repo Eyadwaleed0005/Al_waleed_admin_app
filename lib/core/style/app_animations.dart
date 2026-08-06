@@ -112,4 +112,16 @@ abstract final class AppAnimations {
           curve: Curves.easeOutCubic,
         );
   }
+
+  static Widget screenSection({required Widget child, int delay = 0}) {
+    return child
+        .animate(delay: delay.ms)
+        .fadeIn(duration: 450.ms, curve: Curves.easeOut)
+        .slideY(
+          begin: 0.12,
+          end: 0,
+          duration: 500.ms,
+          curve: Curves.easeOutCubic,
+        );
+  }
 }
