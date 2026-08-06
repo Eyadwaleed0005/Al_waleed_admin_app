@@ -96,4 +96,21 @@ class Textstyles {
       color: ColorPalette.textPrimary,
     );
   } 
+
+  static TextStyle font11TextMutedRegularTajawal() {
+    return TextStyle(
+      fontSize: 11.sp,
+      fontWeight: FontWeightHelper.regular,
+      fontFamily: tajawal,
+      color: ColorPalette.textMuted,
+    );
+  } 
+   static TextStyle font11PrimaryBoldTajawal() {
+    return TextStyle(
+      fontSize: 11.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: tajawal,
+      color: ColorPalette.primary,
+    );
+  } 
 }
