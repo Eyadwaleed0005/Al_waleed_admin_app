@@ -3,6 +3,8 @@ import 'package:alwaleed_admain/core/helper/app_system_ui.dart';
 import 'package:alwaleed_admain/core/helper/spacer.dart';
 import 'package:alwaleed_admain/core/style/app_color.dart';
 import 'package:alwaleed_admain/core/widgets/custom_header_bar.dart';
+import 'package:alwaleed_admain/features/dashboard/presentation/widgets/quick_actions_section.dart';
+import 'package:alwaleed_admain/features/dashboard/presentation/widgets/students_overview_cards.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/widgets/welcome_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,6 +30,18 @@ class HomeScreen extends StatelessWidget {
                 ),
                 verticalSpace(35),
                 const WelcomeCard(),
+                verticalSpace(20),
+                const StudentsOverviewCards(
+                  totalStudents: 250,
+                  expiredSubscriptions: 45,
+                ),
+                verticalSpace(24),
+                QuickActionsSection(
+                  onStudentsTap: () {},
+                  onContentTap: () {},
+                  onExamsTap: () {},
+                  onResultsTap: () {},
+                ),
               ],
             ),
           ),

@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
           title: 'الوليد',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(fontFamily: 'Tajawal'),
-          initialRoute: RouteNames.splashScreen,
+          initialRoute: RouteNames.homeScreen,
           onGenerateRoute: AppRoutes.generateRoute,
         );
       },
