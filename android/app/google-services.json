@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "929812100990",
+    "project_id": "alwaleed-education-platform",
+    "storage_bucket": "alwaleed-education-platform.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:929812100990:android:55b0f038bdd9153bdbe52f",
+        "android_client_info": {
+          "package_name": "com.famex.alwaleed.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7yeiSp3Mf76AA3XqdtV14HycPasozbvY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
