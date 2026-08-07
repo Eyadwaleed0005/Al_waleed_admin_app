@@ -15,6 +15,9 @@ dependencies:
   flutter_screenutil: ^5.9.3
   flutter_bloc: ^9.1.1
   flutter_animate: ^4.5.2
+  firebase_core: ^4.13.0
+  cloud_firestore: ^6.8.0
+  firebase_auth: ^6.5.7
 
 dev_dependencies:
   flutter_test:

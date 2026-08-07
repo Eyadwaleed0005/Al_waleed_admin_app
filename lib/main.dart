@@ -1,10 +1,15 @@
 import 'package:alwaleed_admain/app/routes/app_routes.dart';
 import 'package:alwaleed_admain/app/routes/route_names.dart';
+import 'package:alwaleed_admain/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await ScreenUtil.ensureScreenSize();
   runApp(const MyApp());
 }
