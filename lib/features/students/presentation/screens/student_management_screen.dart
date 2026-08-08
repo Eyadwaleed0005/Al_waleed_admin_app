@@ -23,42 +23,37 @@ class StudentManagementScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: ColorPalette.background,
         body: SafeArea(
-          child: BlocBuilder<
-              StudentManagementCubit,
-              StudentManagementState>(
+          child: BlocBuilder<StudentManagementCubit, StudentManagementState>(
             builder: (context, state) {
               return switch (state) {
                 StudentManagementInitial() ||
-                StudentManagementLoading() =>
-                  const StudentManagementSkeleton(),
+                StudentManagementLoading() => const StudentManagementSkeleton(),
 
-                StudentManagementFailure(:final error) =>
-                  AppErrorWidget(
-                    message: error.message,
-                    onRetry: () {
-                      context
-                          .read<StudentManagementCubit>()
-                          .watchStudentManagement();
+                StudentManagementFailure(:final error) => AppErrorWidget(
+                  message: error.message,
+                  onRetry: () {
+                    context
+                        .read<StudentManagementCubit>()
+                        .watchStudentManagement();
+                  },
+                ),
+
+                StudentManagementEmpty() => Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 20.h,
+                  ),
+                  child: AppEmptyWidget(
+                    title: 'لا يوجد طلاب بعد',
+                    message:
+                        'ابدأ بإضافة أول طالب وإنشاء حسابه لمتابعة الدروس والاختبارات.',
+                    actionText: 'إضافة طالب',
+                    icon: Icons.person_outline_rounded,
+                    onActionPressed: () {
+                      // الانتقال لشاشة إضافة الطالب.
                     },
                   ),
-
-                StudentManagementEmpty() =>
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 20.h,
-                    ),
-                    child: AppEmptyWidget(
-                      title: 'لا يوجد طلاب بعد',
-                      message:
-                          'ابدأ بإضافة أول طالب وإنشاء حسابه لمتابعة الدروس والاختبارات.',
-                      actionText: 'إضافة طالب',
-                      icon: Icons.person_outline_rounded,
-                      onActionPressed: () {
-                        // الانتقال لشاشة إضافة الطالب.
-                      },
-                    ),
-                  ),
+                ),
 
                 StudentManagementNoSearchResults(
                   :final grades,
@@ -70,10 +65,8 @@ class StudentManagementScreen extends StatelessWidget {
                     onAddStudent: () {
                       // الانتقال لشاشة إضافة الطالب.
                     },
-                    content:
-                        const AppNoSearchResultsWidget(
-                      message:
-                          'جرب البحث باسم آخر أو تغيير الفلاتر المستخدمة.',
+                    content: const AppNoSearchResultsWidget(
+                      message: 'جرب البحث باسم آخر أو تغيير الفلاتر المستخدمة.',
                     ),
                   ),
 

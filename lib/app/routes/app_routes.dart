@@ -1,5 +1,7 @@
 import 'package:alwaleed_admain/features/app_startup/presentation/cubit/app_startup_cubit.dart';
 import 'package:alwaleed_admain/features/app_startup/presentation/screens/splash_screen.dart';
+import 'package:alwaleed_admain/features/dashboard/domin/use_cases/get_dashboard_students_summary_use_case.dart';
+import 'package:alwaleed_admain/features/dashboard/presentation/cubit/home_dashboard_cubit.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
 import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
 import 'package:alwaleed_admain/features/main_navigation/presentation/screens/main_navigation_screen.dart';
@@ -13,7 +15,9 @@ import 'package:get_it/get_it.dart';
 import 'route_names.dart';
 
 class AppRoutes {
-  static Route<dynamic>? generateRoute(RouteSettings settings) {
+  static Route<dynamic>? generateRoute(
+    RouteSettings settings,
+  ) {
     switch (settings.name) {
       case RouteNames.splashScreen:
         return MaterialPageRoute(
@@ -29,14 +33,18 @@ class AppRoutes {
       case RouteNames.homeScreen:
         return MaterialPageRoute(
           settings: settings,
-          builder: (_) => const HomeScreen(),
+          builder: (_) {
+            return _provideHomeDashboardCubit(
+              child: const HomeScreen(),
+            );
+          },
         );
 
       case RouteNames.mainNavigationScreen:
         return MaterialPageRoute(
           settings: settings,
           builder: (_) {
-            return _provideStudentManagementCubit(
+            return _provideMainNavigationCubits(
               child: const MainNavigationScreen(),
             );
           },
@@ -47,7 +55,8 @@ class AppRoutes {
           settings: settings,
           builder: (_) {
             return _provideStudentManagementCubit(
-              child: const StudentManagementScreen(),
+              child:
+                  const StudentManagementScreen(),
             );
           },
         );
@@ -57,12 +66,64 @@ class AppRoutes {
     }
   }
 
-  static Widget _provideStudentManagementCubit({required Widget child}) {
+  static Widget _provideMainNavigationCubits({
+    required Widget child,
+  }) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<HomeDashboardCubit>(
+          create: (_) {
+            return HomeDashboardCubit(
+              getDashboardStudentsSummaryUseCase:
+                  GetIt.instance<
+                      GetDashboardStudentsSummaryUseCase>(),
+            )..loadStudentsSummary();
+          },
+        ),
+        BlocProvider<StudentManagementCubit>(
+          create: (_) {
+            return StudentManagementCubit(
+              streamStudentsUseCase:
+                  GetIt.instance<
+                      StreamStudentsUseCase>(),
+              streamGradesUseCase:
+                  GetIt.instance<
+                      StreamGradesUseCase>(),
+            )..watchStudentManagement();
+          },
+        ),
+      ],
+      child: child,
+    );
+  }
+
+  static Widget _provideHomeDashboardCubit({
+    required Widget child,
+  }) {
+    return BlocProvider<HomeDashboardCubit>(
+      create: (_) {
+        return HomeDashboardCubit(
+          getDashboardStudentsSummaryUseCase:
+              GetIt.instance<
+                  GetDashboardStudentsSummaryUseCase>(),
+        )..loadStudentsSummary();
+      },
+      child: child,
+    );
+  }
+
+  static Widget _provideStudentManagementCubit({
+    required Widget child,
+  }) {
     return BlocProvider<StudentManagementCubit>(
       create: (_) {
         return StudentManagementCubit(
-          streamStudentsUseCase: GetIt.instance<StreamStudentsUseCase>(),
-          streamGradesUseCase: GetIt.instance<StreamGradesUseCase>(),
+          streamStudentsUseCase:
+              GetIt.instance<
+                  StreamStudentsUseCase>(),
+          streamGradesUseCase:
+              GetIt.instance<
+                  StreamGradesUseCase>(),
         )..watchStudentManagement();
       },
       child: child,

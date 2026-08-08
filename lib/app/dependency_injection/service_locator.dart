@@ -2,6 +2,13 @@ import 'package:alwaleed_admain/core/connection/network/internet_connection_netw
 import 'package:alwaleed_admain/core/connection/network/network_info.dart';
 import 'package:alwaleed_admain/core/firebase/firestore/firebase_firestore_service.dart';
 import 'package:alwaleed_admain/core/firebase/firestore/firestore_service.dart';
+import 'package:alwaleed_admain/features/dashboard/data/data_sources/cache/dashboard_local_data_source.dart';
+import 'package:alwaleed_admain/features/dashboard/data/data_sources/cache/shared_preferences_dashboard_local_data_source.dart';
+import 'package:alwaleed_admain/features/dashboard/data/data_sources/remotely_data_base/dashboard_remote_data_source.dart';
+import 'package:alwaleed_admain/features/dashboard/data/data_sources/remotely_data_base/firebase_dashboard_remote_data_source.dart';
+import 'package:alwaleed_admain/features/dashboard/data/repositories/dashboard_repository_impl.dart';
+import 'package:alwaleed_admain/features/dashboard/domin/repositories/dashboard_repository.dart';
+import 'package:alwaleed_admain/features/dashboard/domin/use_cases/get_dashboard_students_summary_use_case.dart';
 import 'package:alwaleed_admain/features/grades/data/data_sources/firebase_grades_remote_data_source.dart';
 import 'package:alwaleed_admain/features/grades/data/data_sources/grades_remote_data_source.dart';
 import 'package:alwaleed_admain/features/grades/data/repositories/grades_repository_impl.dart';
@@ -33,6 +40,7 @@ final GetIt getIt = GetIt.instance;
 
 void setupServiceLocator() {
   // Firebase instances
+
   getIt.registerLazySingleton<FirebaseFirestore>(
     () => FirebaseFirestore.instance,
   );
@@ -42,11 +50,17 @@ void setupServiceLocator() {
   );
 
   // Core services
+
   getIt.registerLazySingleton<FirestoreService>(
     () => FirebaseFirestoreService(firestore: getIt<FirebaseFirestore>()),
   );
 
-  // Remote data sources
+  getIt.registerLazySingleton<NetworkInfo>(
+    () => InternetConnectionNetworkInfo(),
+  );
+
+  // Students remote data sources
+
   getIt.registerLazySingleton<StudentsRemoteDataSource>(
     () => FirebaseStudentsRemoteDataSource(
       firestoreService: getIt<FirestoreService>(),
@@ -59,7 +73,8 @@ void setupServiceLocator() {
     ),
   );
 
-  // Repositories
+  // Students repositories
+
   getIt.registerLazySingleton<StudentsRepository>(
     () => StudentsRepositoryImpl(
       remoteDataSource: getIt<StudentsRemoteDataSource>(),
@@ -72,7 +87,8 @@ void setupServiceLocator() {
     ),
   );
 
-  // Use cases
+  // Students use cases
+
   getIt.registerLazySingleton<CreateStudentUseCase>(
     () => CreateStudentUseCase(
       studentAuthRepository: getIt<StudentAuthRepository>(),
@@ -133,7 +149,9 @@ void setupServiceLocator() {
       studentsRepository: getIt<StudentsRepository>(),
     ),
   );
+
   // Grades remote data source
+
   getIt.registerLazySingleton<GradesRemoteDataSource>(
     () => FirebaseGradesRemoteDataSource(
       firestoreService: getIt<FirestoreService>(),
@@ -141,22 +159,44 @@ void setupServiceLocator() {
   );
 
   // Grades repository
+
   getIt.registerLazySingleton<GradesRepository>(
     () =>
         GradesRepositoryImpl(remoteDataSource: getIt<GradesRemoteDataSource>()),
   );
 
+  // Grades use cases
 
-  getIt.registerLazySingleton<NetworkInfo>(
-  () => InternetConnectionNetworkInfo(),
+  getIt.registerLazySingleton<StreamGradesUseCase>(
+    () => StreamGradesUseCase(gradesRepository: getIt<GradesRepository>()),
+  );
 
-);
+  // Dashboard remote data source
 
-getIt.registerLazySingleton<
-    StreamGradesUseCase>(
-  () => StreamGradesUseCase(
-    gradesRepository:
-        getIt<GradesRepository>(),
-  ),
-);
+  getIt.registerLazySingleton<DashboardRemoteDataSource>(
+    () => FirebaseDashboardRemoteDataSource(
+      firebaseFirestore: getIt<FirebaseFirestore>(),
+    ),
+  );
+
+  // Dashboard repository
+
+  getIt.registerLazySingleton<DashboardRepository>(
+    () => DashboardRepositoryImpl(
+      remoteDataSource: getIt<DashboardRemoteDataSource>(),
+      localDataSource: getIt<DashboardLocalDataSource>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<DashboardLocalDataSource>(
+    () => const SharedPreferencesDashboardLocalDataSource(),
+  );
+
+  // Dashboard use cases
+
+  getIt.registerLazySingleton<GetDashboardStudentsSummaryUseCase>(
+    () => GetDashboardStudentsSummaryUseCase(
+      dashboardRepository: getIt<DashboardRepository>(),
+    ),
+  );
 }
