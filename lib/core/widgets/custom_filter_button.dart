@@ -8,11 +8,11 @@ class CustomFilterButton extends StatelessWidget {
   const CustomFilterButton({
     super.key,
     required this.text,
-    required this.onTap,
+    this.onTap,
   });
 
   final String text;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +22,22 @@ class CustomFilterButton extends StatelessWidget {
         color: ColorPalette.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
-          side: BorderSide(color: ColorPalette.border, width: 1.w),
+          side: BorderSide(
+            color: ColorPalette.border,
+            width: 1.w,
+          ),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
-          splashColor: ColorPalette.primarySoftBackground,
-          highlightColor: ColorPalette.primarySoftBackground,
+          splashColor:
+              ColorPalette.primarySoftBackground,
+          highlightColor:
+              ColorPalette.primarySoftBackground,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18.w),
+            padding: EdgeInsets.symmetric(
+              horizontal: 18.w,
+            ),
             child: Row(
               textDirection: TextDirection.ltr,
               children: [
@@ -40,7 +47,8 @@ class CustomFilterButton extends StatelessWidget {
                     textAlign: TextAlign.left,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTextStyle.font15TextPrimaryMediumTajawal(),
+                    style: AppTextStyle
+                        .font15TextPrimaryMediumTajawal(),
                   ),
                 ),
                 horizontalSpace(8),

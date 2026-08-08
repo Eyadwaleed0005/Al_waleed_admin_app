@@ -154,4 +154,31 @@ class AppTextStyle {
       color: ColorPalette.surface,
     );
   }
+
+  static TextStyle font18PrimarySemiBoldKufam() {
+    return TextStyle(
+      fontSize: 18.sp,
+      fontWeight: FontWeightHelper.semiBold,
+      fontFamily: kufam,
+      color: ColorPalette.primary,
+    );
+  }
+
+  static TextStyle font14TextPrimaryRegularTajawal() {
+    return TextStyle(
+      fontSize: 14.sp,
+      fontWeight: FontWeightHelper.regular,
+      fontFamily: tajawal,
+      color: ColorPalette.textPrimary,
+    );
+  }
+
+   static TextStyle font14ErrorSemiBoldTajawal() {
+    return TextStyle(
+      fontSize: 14.sp,
+      fontWeight: FontWeightHelper.semiBold,
+      fontFamily: tajawal,
+      color: ColorPalette.error,
+    );
+  }
 }

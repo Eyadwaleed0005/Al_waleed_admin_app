@@ -22,4 +22,32 @@ class StudentEntity {
     required this.isActive,
     required this.isLoggedIn,
   });
+
+  StudentEntity copyWith({
+    String? studentId,
+    String? gradeId,
+    String? name,
+    int? age,
+    String? email,
+    String? phoneNumber,
+    DateTime? subscriptionStartAt,
+    DateTime? subscriptionEndAt,
+    bool? isActive,
+    bool? isLoggedIn,
+  }) {
+    return StudentEntity(
+      studentId: studentId ?? this.studentId,
+      gradeId: gradeId ?? this.gradeId,
+      name: name ?? this.name,
+      age: age ?? this.age,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      subscriptionStartAt:
+          subscriptionStartAt ?? this.subscriptionStartAt,
+      subscriptionEndAt:
+          subscriptionEndAt ?? this.subscriptionEndAt,
+      isActive: isActive ?? this.isActive,
+      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
+    );
+  }
 }

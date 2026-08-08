@@ -13,11 +13,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: AppSystemUi.dark(),
+      value: AppSystemUi.light(),
       child: Scaffold(
         backgroundColor: ColorPalette.background,
         body: SafeArea(
@@ -32,16 +31,12 @@ class HomeScreen extends StatelessWidget {
                     iconPath: AppImage().profileIcon,
                   ),
                 ),
-
                 verticalSpace(35),
-
                 AppAnimations.screenSection(
                   delay: 100,
                   child: const WelcomeCard(),
                 ),
-
                 verticalSpace(20),
-
                 AppAnimations.screenSection(
                   delay: 200,
                   child: const StudentsOverviewCards(
@@ -49,9 +44,7 @@ class HomeScreen extends StatelessWidget {
                     expiredSubscriptions: 45,
                   ),
                 ),
-
                 verticalSpace(24),
-
                 AppAnimations.screenSection(
                   delay: 300,
                   child: QuickActionsSection(
