@@ -13,7 +13,7 @@ class MainNavigationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
+    return BlocProvider<BottomNavigationCubit>(
       create: (_) => BottomNavigationCubit(),
       child: const MainNavigationView(),
     );
@@ -25,18 +25,12 @@ class MainNavigationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> screens = RouteNavBottom.screens(
+    final screens = RouteNavBottom.screens(
       homeScreen: const HomeScreen(),
       students: const StudentManagementScreen(),
-      examsScreen: const TemporaryScreen(
-        title: 'إدارة الامتحانات',
-      ),
-      studyNotesScreen: const TemporaryScreen(
-        title: 'إدارة المذكرات',
-      ),
-      liveSessionScreen: const TemporaryScreen(
-        title: 'الحصص المباشرة',
-      ),
+      examsScreen: const TemporaryScreen(title: 'إدارة الامتحانات'),
+      studyNotesScreen: const TemporaryScreen(title: 'إدارة المذكرات'),
+      liveSessionScreen: const TemporaryScreen(title: 'الحصص المباشرة'),
     );
 
     return Scaffold(
@@ -62,9 +56,7 @@ class MainNavigationView extends StatelessWidget {
             return CustomBottomNavBar(
               currentIndex: currentIndex,
               onTap: (newIndex) {
-                context
-                    .read<BottomNavigationCubit>()
-                    .changePage(newIndex);
+                context.read<BottomNavigationCubit>().changePage(newIndex);
               },
             );
           },
@@ -75,10 +67,7 @@ class MainNavigationView extends StatelessWidget {
 }
 
 class TemporaryScreen extends StatelessWidget {
-  const TemporaryScreen({
-    super.key,
-    required this.title,
-  });
+  const TemporaryScreen({super.key, required this.title});
 
   final String title;
 
@@ -86,11 +75,7 @@ class TemporaryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorPalette.background,
-      body: SafeArea(
-        child: Center(
-          child: Text(title),
-        ),
-      ),
+      body: SafeArea(child: Center(child: Text(title))),
     );
   }
 }

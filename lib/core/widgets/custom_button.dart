@@ -9,12 +9,16 @@ class CustomButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
+    this.icon,
     this.isLoading = false,
     this.isEnabled = true,
   });
 
   final String text;
   final VoidCallback onPressed;
+
+  final IconData? icon;
+
   final bool isLoading;
   final bool isEnabled;
 
@@ -43,18 +47,41 @@ class CustomButton extends StatelessWidget {
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
           child: isLoading
-              ?  AppLoadingIndicator(
-                  key: ValueKey('button-loading'),
+              ? AppLoadingIndicator(
+                  key: const ValueKey('button-loading'),
                   color: ColorPalette.surface,
                   size: 20.sp,
                   strokeWidth: 2.5.w,
                 )
-              : Text(
+              : icon == null
+              ? Text(
                   text,
                   key: const ValueKey('button-text'),
                   textAlign: TextAlign.center,
-                  style:
-                      AppTextStyle.font15SurfaceBoldTajawal(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyle.font15SurfaceBoldTajawal(),
+                )
+              : Row(
+                  key: const ValueKey('button-icon-and-text'),
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  textDirection: TextDirection.rtl,
+                  children: [
+                    Icon(icon, size: 22.sp, color: ColorPalette.surface),
+
+                    SizedBox(width: 8.w),
+
+                    Flexible(
+                      child: Text(
+                        text,
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyle.font15SurfaceBoldTajawal(),
+                      ),
+                    ),
+                  ],
                 ),
         ),
       ),

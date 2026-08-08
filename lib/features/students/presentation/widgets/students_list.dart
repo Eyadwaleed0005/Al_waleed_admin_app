@@ -1,44 +1,46 @@
+import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admain/features/students/domain/entities/student_entity.dart';
 import 'package:alwaleed_admain/features/students/presentation/widgets/student_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-class StudentListItem {
-  const StudentListItem({
-    required this.name,
-    required this.grade,
-    required this.isActive,
-  });
-
-  final String name;
-  final String grade;
-  final bool isActive;
-}
 
 class StudentsList extends StatelessWidget {
   const StudentsList({
     super.key,
     required this.students,
+    required this.grades,
     required this.onStudentTap,
   });
 
-  final List<StudentListItem> students;
-  final ValueChanged<StudentListItem> onStudentTap;
+  final List<StudentEntity> students;
+  final List<GradeEntity> grades;
+  final ValueChanged<StudentEntity> onStudentTap;
 
   @override
   Widget build(BuildContext context) {
+    final gradeNames = <String, String>{
+      for (final grade in grades) grade.gradeId: grade.name,
+    };
+
     return ListView.separated(
       padding: EdgeInsets.only(bottom: 20.h),
       itemCount: students.length,
-      separatorBuilder: (context, index) {
+      separatorBuilder: (_, __) {
         return SizedBox(height: 12.h);
       },
       itemBuilder: (context, index) {
         final student = students[index];
 
+        final gradeName = gradeNames[student.gradeId] ?? 'صف غير معروف';
+
+        final isActive =
+            student.isActive &&
+            student.subscriptionEndAt.isAfter(DateTime.now());
+
         return StudentCard(
           name: student.name,
-          grade: student.grade,
-          isActive: student.isActive,
+          grade: gradeName,
+          isActive: isActive,
           onTap: () {
             onStudentTap(student);
           },
