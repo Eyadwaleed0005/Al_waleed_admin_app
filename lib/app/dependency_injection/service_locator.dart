@@ -145,11 +145,11 @@ void setupServiceLocator() {
   );
 
   getIt.registerLazySingleton<DeleteStudentUseCase>(
-    () => DeleteStudentUseCase(
-      studentAuthRepository: getIt<StudentAuthRepository>(),
-      studentsRepository: getIt<StudentsRepository>(),
-    ),
-  );
+  () => DeleteStudentUseCase(
+    studentAuthRepository:
+        getIt<StudentAuthRepository>(),
+  ),
+);
 
   // Grades remote data source
 
@@ -179,6 +179,8 @@ void setupServiceLocator() {
       firebaseFirestore: getIt<FirebaseFirestore>(),
     ),
   );
+
+  
 
   // Dashboard repository
 

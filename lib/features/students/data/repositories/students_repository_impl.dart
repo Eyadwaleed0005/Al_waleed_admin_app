@@ -1,5 +1,7 @@
+import 'dart:async';
+
 import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/core/errors/exceptions/firebase_remote_exception.dart';
+import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
 import 'package:alwaleed_admain/features/students/domain/entities/student_entity.dart';
 import 'package:alwaleed_admain/features/students/domain/repositories/students_repository.dart';
 import 'package:dartz/dartz.dart';
@@ -14,36 +16,25 @@ class StudentsRepositoryImpl implements StudentsRepository {
     required StudentsRemoteDataSource remoteDataSource,
   }) : _remoteDataSource = remoteDataSource;
 
+  static const Duration _requestTimeout = Duration(seconds: 10);
+
   @override
   Future<Either<AppErrorModel, List<StudentEntity>>> getStudents({
     String? gradeId,
-  }) async {
-    try {
-      final students = await _remoteDataSource.getStudents(
-        gradeId: gradeId,
-      );
-
-      final entities = List<StudentEntity>.from(students);
-
-      return Right(entities);
-    } on FirebaseRemoteException catch (error) {
-      return Left(error.errorModel);
-    }
+  }) {
+    return _execute<List<StudentEntity>>(() async {
+      final students = await _remoteDataSource.getStudents(gradeId: gradeId);
+      return List<StudentEntity>.from(students);
+    });
   }
 
   @override
   Future<Either<AppErrorModel, StudentEntity>> getStudentById({
     required String studentId,
-  }) async {
-    try {
-      final student = await _remoteDataSource.getStudentById(
-        studentId: studentId,
-      );
-
-      return Right(student);
-    } on FirebaseRemoteException catch (error) {
-      return Left(error.errorModel);
-    }
+  }) {
+    return _execute<StudentEntity>(() async {
+      return _remoteDataSource.getStudentById(studentId: studentId);
+    });
   }
 
   @override
@@ -54,61 +45,62 @@ class StudentsRepositoryImpl implements StudentsRepository {
       await for (final students in _remoteDataSource.streamStudents(
         gradeId: gradeId,
       )) {
-        final entities = List<StudentEntity>.from(students);
-
-        yield Right(entities);
+        yield Right<AppErrorModel, List<StudentEntity>>(
+          List<StudentEntity>.from(students),
+        );
       }
-    } on FirebaseRemoteException catch (error) {
-      yield Left(error.errorModel);
+    } catch (error) {
+      yield Left<AppErrorModel, List<StudentEntity>>(
+        FirebaseErrorHandler.handle(error),
+      );
     }
   }
 
   @override
   Future<Either<AppErrorModel, Unit>> createStudent({
     required StudentEntity student,
-  }) async {
-    try {
+  }) {
+    return _execute<Unit>(() async {
       final studentModel = StudentModel.fromEntity(student);
 
-      await _remoteDataSource.createStudent(
-        student: studentModel,
-      );
+      await _remoteDataSource.createStudent(student: studentModel);
 
-      return Right(unit);
-    } on FirebaseRemoteException catch (error) {
-      return Left(error.errorModel);
-    }
+      return unit;
+    });
   }
 
   @override
   Future<Either<AppErrorModel, Unit>> updateStudent({
     required StudentEntity student,
-  }) async {
-    try {
+  }) {
+    return _execute<Unit>(() async {
       final studentModel = StudentModel.fromEntity(student);
 
-      await _remoteDataSource.updateStudent(
-        student: studentModel,
-      );
+      await _remoteDataSource.updateStudent(student: studentModel);
 
-      return Right(unit);
-    } on FirebaseRemoteException catch (error) {
-      return Left(error.errorModel);
-    }
+      return unit;
+    });
   }
 
   @override
   Future<Either<AppErrorModel, Unit>> deleteStudent({
     required String studentId,
-  }) async {
-    try {
-      await _remoteDataSource.deleteStudent(
-        studentId: studentId,
-      );
+  }) {
+    return _execute<Unit>(() async {
+      await _remoteDataSource.deleteStudent(studentId: studentId);
+      return unit;
+    });
+  }
 
-      return Right(unit);
-    } on FirebaseRemoteException catch (error) {
-      return Left(error.errorModel);
+  Future<Either<AppErrorModel, T>> _execute<T>(
+    Future<T> Function() operation,
+  ) async {
+    try {
+      final result = await operation().timeout(_requestTimeout);
+
+      return Right<AppErrorModel, T>(result);
+    } catch (error) {
+      return Left<AppErrorModel, T>(FirebaseErrorHandler.handle(error));
     }
   }
 }

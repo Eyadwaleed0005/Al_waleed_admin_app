@@ -1,5 +1,5 @@
 import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/core/errors/exceptions/firebase_remote_exception.dart';
+import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
 import 'package:alwaleed_admain/features/students/domain/repositories/student_auth_repository.dart';
 import 'package:dartz/dartz.dart';
 
@@ -16,82 +16,84 @@ class StudentAuthRepositoryImpl implements StudentAuthRepository {
   Future<Either<AppErrorModel, String>> createStudentAccount({
     required String email,
     required String password,
-  }) async {
-    try {
-      final studentId = await _remoteDataSource.createStudentAccount(
+  }) {
+    return _execute<String>(() {
+      return _remoteDataSource.createStudentAccount(
         email: email,
         password: password,
       );
-
-      return Right(studentId);
-    } on FirebaseRemoteException catch (error) {
-      return Left(error.errorModel);
-    }
+    });
   }
 
   @override
   Future<Either<AppErrorModel, Unit>> updateStudentPassword({
     required String studentId,
     required String newPassword,
-  }) async {
-    try {
+  }) {
+    return _execute<Unit>(() async {
       await _remoteDataSource.updateStudentPassword(
         studentId: studentId,
         newPassword: newPassword,
       );
 
-      return Right(unit);
-    } on FirebaseRemoteException catch (error) {
-      return Left(error.errorModel);
-    }
+      return unit;
+    });
   }
 
   @override
   Future<Either<AppErrorModel, Unit>> updateStudentEmail({
     required String studentId,
     required String newEmail,
-  }) async {
-    try {
+  }) {
+    return _execute<Unit>(() async {
       await _remoteDataSource.updateStudentEmail(
         studentId: studentId,
         newEmail: newEmail,
       );
 
-      return Right(unit);
-    } on FirebaseRemoteException catch (error) {
-      return Left(error.errorModel);
-    }
+      return unit;
+    });
   }
 
   @override
   Future<Either<AppErrorModel, Unit>> updateStudentAccountStatus({
     required String studentId,
     required bool isActive,
-  }) async {
-    try {
+  }) {
+    return _execute<Unit>(() async {
       await _remoteDataSource.updateStudentAccountStatus(
         studentId: studentId,
         isActive: isActive,
       );
 
-      return Right(unit);
-    } on FirebaseRemoteException catch (error) {
-      return Left(error.errorModel);
-    }
+      return unit;
+    });
   }
 
   @override
   Future<Either<AppErrorModel, Unit>> deleteStudentAccount({
     required String studentId,
-  }) async {
-    try {
+  }) {
+    return _execute<Unit>(() async {
       await _remoteDataSource.deleteStudentAccount(
         studentId: studentId,
       );
 
-      return Right(unit);
-    } on FirebaseRemoteException catch (error) {
-      return Left(error.errorModel);
+      return unit;
+    });
+  }
+
+  Future<Either<AppErrorModel, T>> _execute<T>(
+    Future<T> Function() operation,
+  ) async {
+    try {
+      final result = await operation();
+
+      return Right<AppErrorModel, T>(result);
+    } catch (error) {
+      return Left<AppErrorModel, T>(
+        FirebaseErrorHandler.handle(error),
+      );
     }
   }
 }

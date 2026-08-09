@@ -4,6 +4,7 @@ import 'package:alwaleed_admain/core/style/app_color.dart';
 import 'package:alwaleed_admain/core/style/textstyles.dart';
 import 'package:alwaleed_admain/core/widgets/app_toast.dart';
 import 'package:alwaleed_admain/core/widgets/custom_button.dart';
+import 'package:alwaleed_admain/core/widgets/custom_secondary_button.dart';
 import 'package:alwaleed_admain/core/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +27,7 @@ class CustomOperationResultDialog extends StatefulWidget {
   });
 
   final CustomOperationResultType type;
+
   final String title;
   final String message;
   final String actionText;
@@ -38,18 +40,6 @@ class CustomOperationResultDialog extends StatefulWidget {
   final IconData successIcon;
   final IconData failureIcon;
 
-  bool get isSuccess {
-    return type == CustomOperationResultType.success;
-  }
-
-  bool get hasCredentials {
-    return isSuccess &&
-        email != null &&
-        email!.trim().isNotEmpty &&
-        password != null &&
-        password!.isNotEmpty;
-  }
-
   @override
   State<CustomOperationResultDialog> createState() {
     return _CustomOperationResultDialogState();
@@ -59,8 +49,23 @@ class CustomOperationResultDialog extends StatefulWidget {
 class _CustomOperationResultDialogState
     extends State<CustomOperationResultDialog> {
   late final TextEditingController _emailController;
-
   late final TextEditingController _passwordController;
+
+  bool get isSuccess {
+    return widget.type == CustomOperationResultType.success;
+  }
+
+  bool get hasEmail {
+    return isSuccess && widget.email != null && widget.email!.trim().isNotEmpty;
+  }
+
+  bool get hasPassword {
+    return isSuccess && widget.password != null && widget.password!.isNotEmpty;
+  }
+
+  bool get hasCredentials {
+    return hasEmail || hasPassword;
+  }
 
   @override
   void initState() {
@@ -71,6 +76,72 @@ class _CustomOperationResultDialogState
     _passwordController = TextEditingController(text: widget.password ?? '');
   }
 
+  Future<void> _copyEmail() async {
+    if (!hasEmail) {
+      return;
+    }
+
+    await Clipboard.setData(ClipboardData(text: _emailController.text));
+
+    if (!mounted) {
+      return;
+    }
+
+    showAppToast(
+      context,
+      message: 'تم نسخ البريد الإلكتروني',
+      icon: Icons.copy_rounded,
+    );
+  }
+
+  Future<void> _copyPassword() async {
+    if (!hasPassword) {
+      return;
+    }
+
+    await Clipboard.setData(ClipboardData(text: _passwordController.text));
+
+    if (!mounted) {
+      return;
+    }
+
+    showAppToast(
+      context,
+      message: 'تم نسخ كلمة المرور',
+      icon: Icons.copy_rounded,
+    );
+  }
+
+  Future<void> _copyCredentials() async {
+    final values = <String>[];
+
+    if (hasEmail) {
+      values.add('البريد الإلكتروني: ${_emailController.text}');
+    }
+
+    if (hasPassword) {
+      values.add('كلمة المرور: ${_passwordController.text}');
+    }
+
+    if (values.isEmpty) {
+      return;
+    }
+
+    await Clipboard.setData(ClipboardData(text: values.join('\n')));
+
+    if (!mounted) {
+      return;
+    }
+
+    showAppToast(
+      context,
+      message: hasPassword
+          ? 'تم نسخ بيانات تسجيل الدخول'
+          : 'تم نسخ البريد الإلكتروني',
+      icon: Icons.copy_all_rounded,
+    );
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -79,37 +150,11 @@ class _CustomOperationResultDialogState
     super.dispose();
   }
 
-  Future<void> _copyCredentials() async {
-    if (!widget.hasCredentials) {
-      return;
-    }
-
-    final credentials =
-        'البريد الإلكتروني: '
-        '${_emailController.text.trim()}\n'
-        'كلمة المرور: '
-        '${_passwordController.text}';
-
-    await Clipboard.setData(ClipboardData(text: credentials));
-
-    if (!mounted) {
-      return;
-    }
-
-    showAppToast(
-      context,
-      message: 'تم نسخ بيانات تسجيل الدخول',
-      icon: Icons.copy_rounded,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final statusColor = widget.isSuccess
-        ? ColorPalette.success
-        : ColorPalette.error;
+    final statusColor = isSuccess ? ColorPalette.success : ColorPalette.error;
 
-    final icon = widget.isSuccess ? widget.successIcon : widget.failureIcon;
+    final icon = isSuccess ? widget.successIcon : widget.failureIcon;
 
     return AppAnimations.operationDialogEntrance(
       child: Dialog(
@@ -154,9 +199,7 @@ class _CustomOperationResultDialogState
                 Text(
                   widget.title,
                   textAlign: TextAlign.center,
-                  style: AppTextStyle.font18PrimarySemiBoldKufam().copyWith(
-                    color: ColorPalette.textPrimary,
-                  ),
+                  style: AppTextStyle.font18TextPrimarySemiBoldKufam(),
                 ),
 
                 verticalSpace(10),
@@ -164,85 +207,54 @@ class _CustomOperationResultDialogState
                 Text(
                   widget.message,
                   textAlign: TextAlign.center,
-                  style: AppTextStyle.font14TextPrimaryRegularTajawal()
-                      .copyWith(color: ColorPalette.textSecondary),
+                  textDirection: TextDirection.rtl,
+                  style: AppTextStyle.font14TextSecondaryRegularTajawal(),
                 ),
 
-                if (widget.hasCredentials) ...[
+                if (hasCredentials) ...[
                   verticalSpace(24),
 
-                  AppAnimations.formFieldEntrance(
-                    order: 0,
-                    child: CustomTextFormField(
+                  if (hasEmail)
+                    CustomTextFormField(
                       controller: _emailController,
                       labelText: 'البريد الإلكتروني',
                       hintText: 'البريد الإلكتروني',
                       readOnly: true,
                       textDirection: TextDirection.ltr,
-                      keyboardType: TextInputType.emailAddress,
                       suffixIcon: Icon(
                         Icons.copy_rounded,
+                        color: ColorPalette.primary,
                         size: 22.sp,
-                        color: ColorPalette.textPrimary,
                       ),
-                      onSuffixTap: () async {
-                        await Clipboard.setData(
-                          ClipboardData(text: _emailController.text.trim()),
-                        );
-
-                        if (!mounted) {
-                          return;
-                        }
-
-                        showAppToast(
-                          context,
-                          message: 'تم نسخ البريد الإلكتروني',
-                          icon: Icons.check_circle_rounded,
-                        );
-                      },
+                      onSuffixTap: _copyEmail,
                     ),
-                  ),
 
-                  verticalSpace(16),
+                  if (hasEmail && hasPassword) verticalSpace(12),
 
-                  AppAnimations.formFieldEntrance(
-                    order: 1,
-                    child: CustomTextFormField(
+                  if (hasPassword)
+                    CustomTextFormField(
                       controller: _passwordController,
                       labelText: 'كلمة المرور',
                       hintText: 'كلمة المرور',
                       readOnly: true,
                       isPassword: true,
                       textDirection: TextDirection.ltr,
-                    ),
-                  ),
-
-                  verticalSpace(18),
-
-                  AppAnimations.formFieldEntrance(
-                    order: 2,
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 52.h,
-                      child: OutlinedButton.icon(
-                        onPressed: _copyCredentials,
-                        icon: Icon(Icons.copy_all_rounded, size: 21.sp),
-                        label: Text(
-                          'نسخ بيانات الدخول',
-                          style: AppTextStyle.font15TextPrimaryMediumTajawal(),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: ColorPalette.primary,
-                          side: BorderSide(
-                            color: ColorPalette.primary,
-                            width: 1.2.w,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14.r),
-                          ),
-                        ),
+                      suffixIcon: Icon(
+                        Icons.copy_rounded,
+                        color: ColorPalette.primary,
+                        size: 22.sp,
                       ),
+                      onSuffixTap: _copyPassword,
                     ),
+
+                  verticalSpace(16),
+
+                  CustomSecondaryButton(
+                    text: hasPassword
+                        ? 'نسخ بيانات الدخول'
+                        : 'نسخ البريد الإلكتروني',
+                    icon: Icons.copy_all_rounded,
+                    onPressed: _copyCredentials,
                   ),
                 ],
 

@@ -1,4 +1,6 @@
 import {getAuth} from "firebase-admin/auth";
+import {getFirestore} from "firebase-admin/firestore";
+import * as logger from "firebase-functions/logger";
 import {
   HttpsError,
   onCall,
@@ -199,6 +201,14 @@ function handleAuthError(
     );
 
   default:
+    logger.error(
+      "Unhandled student account operation error.",
+      {
+        errorCode,
+        error,
+      },
+    );
+
     throw new HttpsError(
       "internal",
       "The operation could not be completed.",
@@ -227,12 +237,12 @@ export const createStudentAccount = onCall(
       validatePassword(password);
 
       const studentAccount =
-          await getAuth().createUser({
-            email,
-            password,
-            emailVerified: false,
-            disabled: false,
-          });
+        await getAuth().createUser({
+          email,
+          password,
+          emailVerified: false,
+          disabled: false,
+        });
 
       return {
         studentId: studentAccount.uid,
@@ -369,8 +379,49 @@ export const deleteStudentAccount = onCall(
         "studentId",
       );
 
-      await getAuth().deleteUser(
-        studentId,
+      const auth = getAuth();
+      const firestore = getFirestore();
+
+      try {
+        await auth.deleteUser(
+          studentId,
+        );
+
+        logger.info(
+          "Student Authentication account deleted.",
+          {
+            studentId,
+          },
+        );
+      } catch (error) {
+        const errorCode = getErrorCode(error);
+
+        if (
+          errorCode !==
+          "auth/user-not-found"
+        ) {
+          throw error;
+        }
+
+        logger.warn(
+          "Student Authentication account was already deleted.",
+          {
+            studentId,
+          },
+        );
+      }
+
+      const studentDocument = firestore
+        .collection("students")
+        .doc(studentId);
+
+      await studentDocument.delete();
+
+      logger.info(
+        "Student Firestore document deleted.",
+        {
+          studentId,
+        },
       );
 
       return {
@@ -380,4 +431,6 @@ export const deleteStudentAccount = onCall(
       handleAuthError(error);
     }
   },
+
+  
 );

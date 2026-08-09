@@ -61,23 +61,23 @@ class AppTextStyle {
     );
   }
 
-   static TextStyle font20PrimarySemiBoldKufam() {
+  static TextStyle font20PrimarySemiBoldKufam() {
     return TextStyle(
       fontSize: 20.sp,
       fontWeight: FontWeightHelper.semiBold,
       fontFamily: kufam,
       color: ColorPalette.primary,
     );
-  } 
+  }
 
-   static TextStyle font12TextSecondaryRegularTajawal() {
+  static TextStyle font12TextSecondaryRegularTajawal() {
     return TextStyle(
       fontSize: 12.sp,
       fontWeight: FontWeightHelper.regular,
       fontFamily: tajawal,
       color: ColorPalette.textSecondary,
     );
-  } 
+  }
 
   static TextStyle font20TextSecondaryRegularKufam() {
     return TextStyle(
@@ -86,16 +86,16 @@ class AppTextStyle {
       fontFamily: kufam,
       color: ColorPalette.textPrimary,
     );
-  } 
+  }
 
-   static TextStyle font14TextPrimaryMediumKufam() {
+  static TextStyle font14TextPrimaryMediumKufam() {
     return TextStyle(
       fontSize: 14.sp,
       fontWeight: FontWeightHelper.medium,
       fontFamily: kufam,
       color: ColorPalette.textPrimary,
     );
-  } 
+  }
 
   static TextStyle font11TextMutedRegularTajawal() {
     return TextStyle(
@@ -104,15 +104,17 @@ class AppTextStyle {
       fontFamily: tajawal,
       color: ColorPalette.textMuted,
     );
-  } 
-   static TextStyle font11PrimaryBoldTajawal() {
+  }
+
+  static TextStyle font11PrimaryBoldTajawal() {
     return TextStyle(
       fontSize: 11.sp,
       fontWeight: FontWeightHelper.bold,
       fontFamily: tajawal,
       color: ColorPalette.primary,
     );
-  } 
+  }
+
   static TextStyle font15TextMutedRegularTajawal() {
     return TextStyle(
       fontSize: 15.sp,
@@ -120,7 +122,8 @@ class AppTextStyle {
       fontFamily: tajawal,
       color: ColorPalette.textMuted,
     );
-  } 
+  }
+
   static TextStyle font15TextPrimaryMediumTajawal() {
     return TextStyle(
       fontSize: 15.sp,
@@ -128,7 +131,26 @@ class AppTextStyle {
       fontFamily: tajawal,
       color: ColorPalette.textPrimary,
     );
-  } 
+  }
+
+  static TextStyle font15TextPrimaryBoldTajawal() {
+    return TextStyle(
+      fontSize: 15.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: tajawal,
+      color: ColorPalette.textPrimary,
+    );
+  }
+
+  static TextStyle font15PrimaryBoldTajawal() {
+    return TextStyle(
+      fontSize: 15.sp,
+      fontWeight: FontWeightHelper.bold,
+      fontFamily: tajawal,
+      color: ColorPalette.primary,
+    );
+  }
+
   static TextStyle font15SurfaceMediumTajawal() {
     return TextStyle(
       fontSize: 15.sp,
@@ -136,7 +158,8 @@ class AppTextStyle {
       fontFamily: tajawal,
       color: ColorPalette.surface,
     );
-  } 
+  }
+
   static TextStyle font16TextPrimaryMediumKufam() {
     return TextStyle(
       fontSize: 16.sp,
@@ -145,6 +168,7 @@ class AppTextStyle {
       color: ColorPalette.textPrimary,
     );
   }
+
   static TextStyle font14SuccessMediumTajawal() {
     return TextStyle(
       fontSize: 14.sp,
@@ -154,7 +178,7 @@ class AppTextStyle {
     );
   }
 
-   static TextStyle font15SurfaceBoldTajawal() {
+  static TextStyle font15SurfaceBoldTajawal() {
     return TextStyle(
       fontSize: 15.sp,
       fontWeight: FontWeightHelper.bold,
@@ -181,7 +205,25 @@ class AppTextStyle {
     );
   }
 
-   static TextStyle font14ErrorSemiBoldTajawal() {
+  static TextStyle font12ErrorRegularTajawal() {
+    return TextStyle(
+      fontSize: 12.sp,
+      fontWeight: FontWeightHelper.regular,
+      fontFamily: tajawal,
+      color: ColorPalette.error,
+    );
+  }
+
+  static TextStyle font14TextSecondaryRegularTajawal() {
+    return TextStyle(
+      fontSize: 14.sp,
+      fontWeight: FontWeightHelper.regular,
+      fontFamily: tajawal,
+      color: ColorPalette.textSecondary,
+    );
+  }
+
+  static TextStyle font14ErrorSemiBoldTajawal() {
     return TextStyle(
       fontSize: 14.sp,
       fontWeight: FontWeightHelper.semiBold,

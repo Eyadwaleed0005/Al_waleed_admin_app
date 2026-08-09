@@ -6,15 +6,12 @@ import 'package:dartz/dartz.dart';
 class GetStudentByIdUseCase {
   final StudentsRepository _studentsRepository;
 
-  const GetStudentByIdUseCase({
-    required this._studentsRepository,
-  });
+  const GetStudentByIdUseCase({required StudentsRepository studentsRepository})
+    : _studentsRepository = studentsRepository;
 
   Future<Either<AppErrorModel, StudentEntity>> call({
     required String studentId,
   }) {
-    return _studentsRepository.getStudentById(
-      studentId: studentId.trim(),
-    );
+    return _studentsRepository.getStudentById(studentId: studentId);
   }
 }

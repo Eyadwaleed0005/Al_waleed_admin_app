@@ -37,3 +37,51 @@ class StudentsFilterParams {
     this.subscriptionFilter = StudentSubscriptionFilter.all,
   });
 }
+
+class UpdateStudentProfileParams {
+  const UpdateStudentProfileParams({
+    required this.studentId,
+    required this.gradeId,
+    required this.name,
+    required this.age,
+    required this.phoneNumber,
+  });
+
+  final String studentId;
+  final String gradeId;
+  final String name;
+  final int age;
+  final String phoneNumber;
+}
+
+class UpdateStudentEmailParams {
+  const UpdateStudentEmailParams({
+    required this.studentId,
+    required this.newEmail,
+  });
+
+  final String studentId;
+  final String newEmail;
+}
+
+class UpdateStudentPasswordParams {
+  const UpdateStudentPasswordParams({
+    required this.studentId,
+    required this.newPassword,
+  });
+
+  final String studentId;
+  final String newPassword;
+}
+
+class UpdateStudentSubscriptionParams {
+  const UpdateStudentSubscriptionParams({
+    required this.studentId,
+    required this.subscriptionStartAt,
+    required this.subscriptionEndAt,
+  });
+
+  final String studentId;
+  final DateTime subscriptionStartAt;
+  final DateTime subscriptionEndAt;
+}

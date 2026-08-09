@@ -42,10 +42,8 @@ class StudentEntity {
       age: age ?? this.age,
       email: email ?? this.email,
       phoneNumber: phoneNumber ?? this.phoneNumber,
-      subscriptionStartAt:
-          subscriptionStartAt ?? this.subscriptionStartAt,
-      subscriptionEndAt:
-          subscriptionEndAt ?? this.subscriptionEndAt,
+      subscriptionStartAt: subscriptionStartAt ?? this.subscriptionStartAt,
+      subscriptionEndAt: subscriptionEndAt ?? this.subscriptionEndAt,
       isActive: isActive ?? this.isActive,
       isLoggedIn: isLoggedIn ?? this.isLoggedIn,
     );
