@@ -1,3 +1,4 @@
+import 'package:alwaleed_admain/core/connection/cubit/network_status_cubit.dart';
 import 'package:alwaleed_admain/core/connection/network/internet_connection_network_info.dart';
 import 'package:alwaleed_admain/core/connection/network/network_info.dart';
 import 'package:alwaleed_admain/core/firebase/firestore/firebase_firestore_service.dart';
@@ -199,4 +200,8 @@ void setupServiceLocator() {
       dashboardRepository: getIt<DashboardRepository>(),
     ),
   );
+
+  getIt.registerLazySingleton<NetworkStatusCubit>(() {
+    return NetworkStatusCubit(networkInfo: getIt<NetworkInfo>());
+  });
 }

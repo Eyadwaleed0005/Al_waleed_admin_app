@@ -3,5 +3,6 @@ class RouteNames {
   static const String homeScreen = '/homeScreen';
   static const String mainNavigationScreen = '/mainNavigationScreen';
   static const String studentManagementScreen = '/studentManagementScreen';
+  static const String addStudentScreen = '/addStudentScreen';
 
 }

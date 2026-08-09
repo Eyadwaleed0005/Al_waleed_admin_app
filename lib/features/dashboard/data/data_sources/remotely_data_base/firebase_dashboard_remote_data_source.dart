@@ -7,11 +7,11 @@ import 'package:alwaleed_admain/features/dashboard/data/models/dashboard_student
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseDashboardRemoteDataSource implements DashboardRemoteDataSource {
-  final FirebaseFirestore _firebaseFirestore;
-
   const FirebaseDashboardRemoteDataSource({
     required FirebaseFirestore firebaseFirestore,
   }) : _firebaseFirestore = firebaseFirestore;
+
+  final FirebaseFirestore _firebaseFirestore;
 
   @override
   Future<DashboardStudentsSummaryModel> getStudentsSummary() {
@@ -20,26 +20,21 @@ class FirebaseDashboardRemoteDataSource implements DashboardRemoteDataSource {
         FirestoreCollections.students,
       );
 
-      final currentTimestamp = Timestamp.fromDate(DateTime.now());
-
       final results = await Future.wait([
         studentsCollection.count().get(),
         studentsCollection
-            .where(
-              FirestoreFields.subscriptionEndAt,
-              isLessThanOrEqualTo: currentTimestamp,
-            )
+            .where(FirestoreFields.isActive, isEqualTo: false)
             .count()
             .get(),
       ]);
 
       final totalStudents = results[0].count ?? 0;
 
-      final expiredSubscriptions = results[1].count ?? 0;
+      final inactiveStudents = results[1].count ?? 0;
 
       return DashboardStudentsSummaryModel(
         totalStudents: totalStudents,
-        expiredSubscriptions: expiredSubscriptions,
+        expiredSubscriptions: inactiveStudents,
       );
     });
   }

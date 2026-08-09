@@ -6,10 +6,22 @@ import {
 
 const region = "us-central1";
 
+const callableFunctionOptions = {
+  region,
+  memory: "256MiB" as const,
+  cpu: "gcf_gen1" as const,
+  timeoutSeconds: 60,
+  minInstances: 0,
+  maxInstances: 1,
+};
+
 function getRequestData(
   data: unknown,
 ): Record<string, unknown> {
-  if (typeof data !== "object" || data === null) {
+  if (
+    typeof data !== "object" ||
+    data === null
+  ) {
     throw new HttpsError(
       "invalid-argument",
       "Request data is invalid.",
@@ -76,10 +88,49 @@ function getRequiredBoolean(
 function validatePassword(
   password: string,
 ): void {
-  if (password.length < 6) {
+  if (password.length < 8) {
     throw new HttpsError(
       "invalid-argument",
-      "Password must contain at least 6 characters.",
+      "Password must contain at least 8 characters.",
+    );
+  }
+
+  if (password.includes(" ")) {
+    throw new HttpsError(
+      "invalid-argument",
+      "Password must not contain spaces.",
+    );
+  }
+
+  if (!/[A-Z]/.test(password)) {
+    throw new HttpsError(
+      "invalid-argument",
+      "Password must contain an uppercase letter.",
+    );
+  }
+
+  if (!/[a-z]/.test(password)) {
+    throw new HttpsError(
+      "invalid-argument",
+      "Password must contain a lowercase letter.",
+    );
+  }
+
+  if (!/[0-9]/.test(password)) {
+    throw new HttpsError(
+      "invalid-argument",
+      "Password must contain a number.",
+    );
+  }
+
+  if (
+    !/[!@#$%^&*(),.?":{}|<>]/.test(
+      password,
+    )
+  ) {
+    throw new HttpsError(
+      "invalid-argument",
+      "Password must contain a special character.",
     );
   }
 }
@@ -140,6 +191,13 @@ function handleAuthError(
       "The operation is not permitted.",
     );
 
+  case "auth/too-many-requests":
+  case "auth/quota-exceeded":
+    throw new HttpsError(
+      "resource-exhausted",
+      "Too many requests. Please try again later.",
+    );
+
   default:
     throw new HttpsError(
       "internal",
@@ -149,7 +207,7 @@ function handleAuthError(
 }
 
 export const createStudentAccount = onCall(
-  {region},
+  callableFunctionOptions,
   async (request) => {
     try {
       const data = getRequestData(
@@ -186,7 +244,7 @@ export const createStudentAccount = onCall(
 );
 
 export const updateStudentPassword = onCall(
-  {region},
+  callableFunctionOptions,
   async (request) => {
     try {
       const data = getRequestData(
@@ -222,7 +280,7 @@ export const updateStudentPassword = onCall(
 );
 
 export const updateStudentEmail = onCall(
-  {region},
+  callableFunctionOptions,
   async (request) => {
     try {
       const data = getRequestData(
@@ -257,7 +315,7 @@ export const updateStudentEmail = onCall(
 );
 
 export const updateStudentAccountStatus = onCall(
-  {region},
+  callableFunctionOptions,
   async (request) => {
     try {
       const data = getRequestData(
@@ -299,7 +357,7 @@ export const updateStudentAccountStatus = onCall(
 );
 
 export const deleteStudentAccount = onCall(
-  {region},
+  callableFunctionOptions,
   async (request) => {
     try {
       const data = getRequestData(
