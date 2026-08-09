@@ -5,19 +5,21 @@ import 'package:alwaleed_admain/core/widgets/app_loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CustomButton extends StatelessWidget {
-  const CustomButton({
+class CustomDeleteButton extends StatelessWidget {
+  const CustomDeleteButton({
     super.key,
     required this.text,
     required this.onPressed,
-    this.icon,
+    this.icon = Icons.delete_outline_rounded,
     this.isLoading = false,
     this.isEnabled = true,
   });
 
   final String text;
   final VoidCallback onPressed;
-  final IconData? icon;
+
+  final IconData icon;
+
   final bool isLoading;
   final bool isEnabled;
 
@@ -25,57 +27,61 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool canPress = isEnabled && !isLoading;
 
+    final Color contentColor = isEnabled
+        ? ColorPalette.error
+        : ColorPalette.disabled;
+
+    final Color borderColor = isEnabled || isLoading
+        ? ColorPalette.error.withValues(alpha: 0.65)
+        : ColorPalette.disabled;
+
+    final Color backgroundColor = isEnabled || isLoading
+        ? ColorPalette.error.withValues(alpha: 0.06)
+        : ColorPalette.disabled.withValues(alpha: 0.08);
+
     return SizedBox(
       width: double.infinity,
       height: 56.h,
-      child: ElevatedButton(
+      child: OutlinedButton(
         onPressed: canPress ? onPressed : null,
-        style: ElevatedButton.styleFrom(
+        style: OutlinedButton.styleFrom(
           elevation: 0,
-          backgroundColor: ColorPalette.primary,
-          foregroundColor: ColorPalette.surface,
-          disabledBackgroundColor: isLoading
-              ? ColorPalette.primary
-              : ColorPalette.disabled,
-          disabledForegroundColor: ColorPalette.surface,
+          backgroundColor: backgroundColor,
+          foregroundColor: ColorPalette.error,
+          disabledForegroundColor: ColorPalette.disabled,
           padding: EdgeInsets.symmetric(horizontal: 20.w),
+          side: BorderSide(color: borderColor, width: 1.2.w),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
         ),
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeIn,
           child: isLoading
               ? AppLoadingIndicator(
-                  key: const ValueKey('button-loading'),
-                  color: ColorPalette.surface,
+                  key: const ValueKey('delete-button-loading'),
+                  color: ColorPalette.error,
                   size: 20.sp,
                   strokeWidth: 2.5.w,
                 )
-              : icon == null
-              ? Text(
-                  text,
-                  key: const ValueKey('button-text'),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyle.font15SurfaceBoldTajawal(),
-                )
               : Row(
-                  key: const ValueKey('button-icon-and-text'),
+                  key: const ValueKey('delete-button-icon-and-text'),
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  textDirection: TextDirection.rtl,
                   children: [
-                    Icon(icon, size: 22.sp, color: ColorPalette.surface),
+                    Icon(icon, size: 22.sp, color: contentColor),
                     horizontalSpace(8),
                     Flexible(
                       child: Text(
                         text,
                         textAlign: TextAlign.center,
+                        textDirection: TextDirection.rtl,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyle.font15SurfaceBoldTajawal(),
+                        style: AppTextStyle.font15TextPrimaryBoldTajawal()
+                            .copyWith(color: contentColor),
                       ),
                     ),
                   ],

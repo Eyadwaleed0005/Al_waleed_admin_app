@@ -86,7 +86,10 @@ class StudentManagementScreen extends StatelessWidget {
                       students: students,
                       grades: grades,
                       onStudentTap: (student) {
-                        // الانتقال لشاشة تعديل الطالب.
+                        Navigator.of(context).pushNamed(
+                          RouteNames.updateStudentScreen,
+                          arguments: student.studentId,
+                        );
                       },
                     ),
                   ),

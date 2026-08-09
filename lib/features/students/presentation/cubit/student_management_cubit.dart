@@ -12,53 +12,35 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'student_management_state.dart';
 
-class StudentManagementCubit
-    extends Cubit<StudentManagementState> {
-  final StreamStudentsUseCase
-      _streamStudentsUseCase;
+class StudentManagementCubit extends Cubit<StudentManagementState> {
+  final StreamStudentsUseCase _streamStudentsUseCase;
 
-  final StreamGradesUseCase
-      _streamGradesUseCase;
+  final StreamGradesUseCase _streamGradesUseCase;
 
-  StreamSubscription<
-      Either<
-          AppErrorModel,
-          List<StudentEntity>>>?
-      _studentsSubscription;
+  StreamSubscription<Either<AppErrorModel, List<StudentEntity>>>?
+  _studentsSubscription;
 
-  StreamSubscription<
-      Either<
-          AppErrorModel,
-          List<GradeEntity>>>?
-      _gradesSubscription;
+  StreamSubscription<Either<AppErrorModel, List<GradeEntity>>>?
+  _gradesSubscription;
 
-  List<StudentEntity> _allStudents =
-      const [];
+  List<StudentEntity> _allStudents = const [];
 
   List<GradeEntity> _grades = const [];
 
-  StudentsFilterParams _filters =
-      const StudentsFilterParams();
+  StudentsFilterParams _filters = const StudentsFilterParams();
 
   bool _studentsReceived = false;
   bool _gradesReceived = false;
   bool _hasFailure = false;
 
   StudentManagementCubit({
-    required StreamStudentsUseCase
-        streamStudentsUseCase,
-    required StreamGradesUseCase
-        streamGradesUseCase,
-  }) : _streamStudentsUseCase =
-           streamStudentsUseCase,
-       _streamGradesUseCase =
-           streamGradesUseCase,
-       super(
-         const StudentManagementInitial(),
-       );
+    required StreamStudentsUseCase streamStudentsUseCase,
+    required StreamGradesUseCase streamGradesUseCase,
+  }) : _streamStudentsUseCase = streamStudentsUseCase,
+       _streamGradesUseCase = streamGradesUseCase,
+       super(const StudentManagementInitial());
 
-  Future<void>
-      watchStudentManagement() async {
+  Future<void> watchStudentManagement() async {
     await _studentsSubscription?.cancel();
     await _gradesSubscription?.cancel();
 
@@ -68,9 +50,7 @@ class StudentManagementCubit
 
     if (isClosed) return;
 
-    emit(
-      const StudentManagementLoading(),
-    );
+    emit(const StudentManagementLoading());
 
     _startStudentsStream();
     _startGradesStream();
@@ -78,76 +58,56 @@ class StudentManagementCubit
 
   void _startStudentsStream() {
     _studentsSubscription =
-        _streamStudentsUseCase(
-      params:
-          const StudentsFilterParams(),
-    ).listen(
-      (result) {
-        result.fold(
-          _emitFailure,
-          (students) {
+        _streamStudentsUseCase(params: const StudentsFilterParams()).listen((
+          result,
+        ) {
+          result.fold(_emitFailure, (students) {
             if (isClosed) return;
 
             _allStudents = students;
             _studentsReceived = true;
 
             _emitCurrentState();
-          },
-        );
-      },
-    );
+          });
+        });
   }
 
   void _startGradesStream() {
-    _gradesSubscription =
-        _streamGradesUseCase(
-      activeOnly: true,
-    ).listen(
-      (result) {
-        result.fold(
-          _emitFailure,
-          (grades) {
-            if (isClosed) return;
+    _gradesSubscription = _streamGradesUseCase(activeOnly: true).listen((
+      result,
+    ) {
+      result.fold(_emitFailure, (grades) {
+        if (isClosed) return;
 
-            _grades = grades;
-            _gradesReceived = true;
+        _grades = grades;
+        _gradesReceived = true;
 
-            _emitCurrentState();
-          },
-        );
-      },
-    );
+        _emitCurrentState();
+      });
+    });
   }
 
-  void updateSearchQuery(
-    String searchQuery,
-  ) {
+  void updateSearchQuery(String searchQuery) {
     _filters = StudentsFilterParams(
       gradeId: _filters.gradeId,
       searchQuery: searchQuery,
-      subscriptionFilter:
-          _filters.subscriptionFilter,
+      subscriptionFilter: _filters.subscriptionFilter,
     );
 
     _emitCurrentState();
   }
 
-  void updateGradeFilter(
-    String gradeId,
-  ) {
+  void updateGradeFilter(String gradeId) {
     _filters = StudentsFilterParams(
       gradeId: gradeId,
       searchQuery: _filters.searchQuery,
-      subscriptionFilter:
-          _filters.subscriptionFilter,
+      subscriptionFilter: _filters.subscriptionFilter,
     );
 
     _emitCurrentState();
   }
 
-  void updateSubscriptionFilter(
-    StudentSubscriptionFilter filter,
-  ) {
+  void updateSubscriptionFilter(StudentSubscriptionFilter filter) {
     _filters = StudentsFilterParams(
       gradeId: _filters.gradeId,
       searchQuery: _filters.searchQuery,
@@ -158,54 +118,38 @@ class StudentManagementCubit
   }
 
   void clearFilters() {
-    _filters =
-        const StudentsFilterParams();
+    _filters = const StudentsFilterParams();
 
     _emitCurrentState();
   }
 
-  void _emitFailure(
-    AppErrorModel error,
-  ) {
+  void _emitFailure(AppErrorModel error) {
     if (isClosed) return;
 
     _hasFailure = true;
 
-    emit(
-      StudentManagementFailure(
-        error: error,
-      ),
-    );
+    emit(StudentManagementFailure(error: error));
   }
 
   void _emitCurrentState() {
-    if (isClosed ||
-        _hasFailure ||
-        !_studentsReceived ||
-        !_gradesReceived) {
+    if (isClosed || _hasFailure || !_studentsReceived || !_gradesReceived) {
       return;
     }
 
     if (_allStudents.isEmpty) {
-      emit(
-        const StudentManagementEmpty(),
-      );
+      emit(const StudentManagementEmpty());
 
       return;
     }
 
-    final filteredStudents =
-        StudentsFilterHelper.apply(
+    final filteredStudents = StudentsFilterHelper.apply(
       students: _allStudents,
       params: _filters,
     );
 
     if (filteredStudents.isEmpty) {
       emit(
-        StudentManagementNoSearchResults(
-          grades: _grades,
-          filters: _filters,
-        ),
+        StudentManagementNoSearchResults(grades: _grades, filters: _filters),
       );
 
       return;

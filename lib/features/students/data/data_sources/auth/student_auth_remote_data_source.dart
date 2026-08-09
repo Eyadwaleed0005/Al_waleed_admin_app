@@ -19,7 +19,5 @@ abstract interface class StudentAuthRemoteDataSource {
     required bool isActive,
   });
 
-  Future<void> deleteStudentAccount({
-    required String studentId,
-  });
+  Future<void> deleteStudentAccount({required String studentId});
 }

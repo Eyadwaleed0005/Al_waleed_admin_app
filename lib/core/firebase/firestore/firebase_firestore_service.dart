@@ -31,10 +31,7 @@ class FirebaseFirestoreService implements FirestoreService {
       operation: 'GET DOCUMENT',
       path: path,
       action: () {
-        return _firestore
-            .collection(collectionPath)
-            .doc(documentId)
-            .get();
+        return _firestore.collection(collectionPath).doc(documentId).get();
       },
     );
   }
@@ -47,9 +44,7 @@ class FirebaseFirestoreService implements FirestoreService {
     return _execute(
       operation: 'GET COLLECTION',
       path: collectionPath,
-      requestData: {
-        'customQuery': queryBuilder != null,
-      },
+      requestData: {'customQuery': queryBuilder != null},
       action: () {
         final collection = _firestore.collection(collectionPath);
         final query = queryBuilder?.call(collection) ?? collection;
@@ -70,16 +65,12 @@ class FirebaseFirestoreService implements FirestoreService {
     return _watch(
       operation: 'STREAM DOCUMENT',
       path: path,
-      requestData: {
-        'includeMetadataChanges': includeMetadataChanges,
-      },
+      requestData: {'includeMetadataChanges': includeMetadataChanges},
       streamBuilder: () {
         return _firestore
             .collection(collectionPath)
             .doc(documentId)
-            .snapshots(
-              includeMetadataChanges: includeMetadataChanges,
-            );
+            .snapshots(includeMetadataChanges: includeMetadataChanges);
       },
     );
   }
@@ -101,9 +92,7 @@ class FirebaseFirestoreService implements FirestoreService {
         final collection = _firestore.collection(collectionPath);
         final query = queryBuilder?.call(collection) ?? collection;
 
-        return query.snapshots(
-          includeMetadataChanges: includeMetadataChanges,
-        );
+        return query.snapshots(includeMetadataChanges: includeMetadataChanges);
       },
     );
   }
@@ -117,9 +106,7 @@ class FirebaseFirestoreService implements FirestoreService {
     final id = documentId?.trim();
     final hasDocumentId = id != null && id.isNotEmpty;
 
-    final path = hasDocumentId
-        ? '$collectionPath/$id'
-        : collectionPath;
+    final path = hasDocumentId ? '$collectionPath/$id' : collectionPath;
 
     return _execute(
       operation: 'POST',
@@ -139,26 +126,31 @@ class FirebaseFirestoreService implements FirestoreService {
     );
   }
 
-  @override
-  Future<void> patchData({
-    required String collectionPath,
-    required String documentId,
-    required Map<String, dynamic> data,
-  }) {
-    final path = '$collectionPath/$documentId';
+ Future<void> patchData({
+  required String collectionPath,
+  required String documentId,
+  required Map<String, dynamic> data,
+}) async {
+  final documentReference = _firestore
+      .collection(collectionPath)
+      .doc(documentId);
 
-    return _execute(
-      operation: 'PATCH',
-      path: path,
-      requestData: data,
-      action: () {
-        return _firestore
-            .collection(collectionPath)
-            .doc(documentId)
-            .update(data);
-      },
+  final snapshot = await documentReference.get(
+    const GetOptions(
+      source: Source.server,
+    ),
+  );
+
+  if (!snapshot.exists) {
+    throw FirebaseException(
+      plugin: 'cloud_firestore',
+      code: 'not-found',
+      message: 'The requested document was not found.',
     );
   }
+
+  await documentReference.update(data);
+}
 
   @override
   Future<void> deleteData({
@@ -171,10 +163,7 @@ class FirebaseFirestoreService implements FirestoreService {
       operation: 'DELETE',
       path: path,
       action: () {
-        return _firestore
-            .collection(collectionPath)
-            .doc(documentId)
-            .delete();
+        return _firestore.collection(collectionPath).doc(documentId).delete();
       },
     );
   }
@@ -185,11 +174,7 @@ class FirebaseFirestoreService implements FirestoreService {
     required Future<T> Function() action,
     Object? requestData,
   }) async {
-    _logRequest(
-      operation: operation,
-      path: path,
-      data: requestData,
-    );
+    _logRequest(operation: operation, path: path, data: requestData);
 
     final stopwatch = Stopwatch()..start();
 
@@ -226,19 +211,11 @@ class FirebaseFirestoreService implements FirestoreService {
     required Stream<T> Function() streamBuilder,
     Object? requestData,
   }) async* {
-    _logRequest(
-      operation: operation,
-      path: path,
-      data: requestData,
-    );
+    _logRequest(operation: operation, path: path, data: requestData);
 
     try {
       await for (final event in streamBuilder()) {
-        _logResponse(
-          operation: operation,
-          path: path,
-          response: event,
-        );
+        _logResponse(operation: operation, path: path, response: event);
 
         yield event;
       }
@@ -272,14 +249,9 @@ class FirebaseFirestoreService implements FirestoreService {
         ..writeln(_addLinePrefix(_prettyPrint(data)));
     }
 
-    buffer.writeln(
-      '└──────────────────────────────────────────',
-    );
+    buffer.writeln('└──────────────────────────────────────────');
 
-    developer.log(
-      buffer.toString(),
-      name: 'FirebaseFirestoreService',
-    );
+    developer.log(buffer.toString(), name: 'FirebaseFirestoreService');
   }
 
   void _logResponse({
@@ -296,31 +268,18 @@ class FirebaseFirestoreService implements FirestoreService {
       ..writeln('│ Path: $path');
 
     if (duration != null) {
-      buffer.writeln(
-        '│ Duration: ${duration.inMilliseconds} ms',
-      );
+      buffer.writeln('│ Duration: ${duration.inMilliseconds} ms');
     }
 
     if (logResponseData) {
       buffer
         ..writeln('│ Data:')
-        ..writeln(
-          _addLinePrefix(
-            _prettyPrint(
-              _formatResponse(response),
-            ),
-          ),
-        );
+        ..writeln(_addLinePrefix(_prettyPrint(_formatResponse(response))));
     }
 
-    buffer.writeln(
-      '└──────────────────────────────────────────',
-    );
+    buffer.writeln('└──────────────────────────────────────────');
 
-    developer.log(
-      buffer.toString(),
-      name: 'FirebaseFirestoreService',
-    );
+    developer.log(buffer.toString(), name: 'FirebaseFirestoreService');
   }
 
   void _logError({
@@ -338,16 +297,12 @@ class FirebaseFirestoreService implements FirestoreService {
       ..writeln('│ Path: $path');
 
     if (duration != null) {
-      buffer.writeln(
-        '│ Duration: ${duration.inMilliseconds} ms',
-      );
+      buffer.writeln('│ Duration: ${duration.inMilliseconds} ms');
     }
 
     buffer
       ..writeln('│ Error: $error')
-      ..writeln(
-        '└──────────────────────────────────────────',
-      );
+      ..writeln('└──────────────────────────────────────────');
 
     developer.log(
       buffer.toString(),
@@ -359,9 +314,7 @@ class FirebaseFirestoreService implements FirestoreService {
 
   Object? _formatResponse(Object? response) {
     if (response == null) {
-      return {
-        'status': 'success',
-      };
+      return {'status': 'success'};
     }
 
     if (response is DocumentSnapshot<Map<String, dynamic>>) {
@@ -377,10 +330,7 @@ class FirebaseFirestoreService implements FirestoreService {
       final documents = response.docs
           .take(maxLoggedDocuments)
           .map(
-            (document) => {
-              'documentId': document.id,
-              'data': document.data(),
-            },
+            (document) => {'documentId': document.id, 'data': document.data()},
           )
           .toList();
 
@@ -394,10 +344,7 @@ class FirebaseFirestoreService implements FirestoreService {
     }
 
     if (response is String) {
-      return {
-        'documentId': response,
-        'status': 'success',
-      };
+      return {'documentId': response, 'status': 'success'};
     }
 
     return response;
@@ -405,19 +352,16 @@ class FirebaseFirestoreService implements FirestoreService {
 
   String _prettyPrint(Object? value) {
     try {
-      return const JsonEncoder.withIndent('  ').convert(
-        _convertToLoggableValue(value),
-      );
+      return const JsonEncoder.withIndent(
+        '  ',
+      ).convert(_convertToLoggableValue(value));
     } catch (_) {
       return value.toString();
     }
   }
 
   Object? _convertToLoggableValue(Object? value) {
-    if (value == null ||
-        value is String ||
-        value is num ||
-        value is bool) {
+    if (value == null || value is String || value is num || value is bool) {
       return value;
     }
 
@@ -430,10 +374,7 @@ class FirebaseFirestoreService implements FirestoreService {
     }
 
     if (value is GeoPoint) {
-      return {
-        'latitude': value.latitude,
-        'longitude': value.longitude,
-      };
+      return {'latitude': value.latitude, 'longitude': value.longitude};
     }
 
     if (value is DocumentReference) {
@@ -441,30 +382,20 @@ class FirebaseFirestoreService implements FirestoreService {
     }
 
     if (value is Map) {
-      return value.map(
-        (key, item) {
-          return MapEntry(
-            key.toString(),
-            _convertToLoggableValue(item),
-          );
-        },
-      );
+      return value.map((key, item) {
+        return MapEntry(key.toString(), _convertToLoggableValue(item));
+      });
     }
 
     if (value is Iterable) {
-      return value
-          .map(_convertToLoggableValue)
-          .toList();
+      return value.map(_convertToLoggableValue).toList();
     }
 
     return value.toString();
   }
 
   String _addLinePrefix(String value) {
-    return value
-        .split('\n')
-        .map((line) => '│ $line')
-        .join('\n');
+    return value.split('\n').map((line) => '│ $line').join('\n');
   }
 
   bool get _canLog {

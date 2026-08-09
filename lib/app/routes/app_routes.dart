@@ -7,11 +7,19 @@ import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_scr
 import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
 import 'package:alwaleed_admain/features/main_navigation/presentation/screens/main_navigation_screen.dart';
 import 'package:alwaleed_admain/features/students/domain/use_cases/create_student_use_case.dart';
+import 'package:alwaleed_admain/features/students/domain/use_cases/delete_student_use_case.dart';
+import 'package:alwaleed_admain/features/students/domain/use_cases/get_student_by_id_use_case.dart';
 import 'package:alwaleed_admain/features/students/domain/use_cases/stream_students_use_case.dart';
+import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_email_use_case.dart';
+import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_password_use_case.dart';
+import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_profile_use_case.dart';
+import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_subscription_use_case.dart';
 import 'package:alwaleed_admain/features/students/presentation/cubit/add_student_cubit.dart';
 import 'package:alwaleed_admain/features/students/presentation/cubit/student_management_cubit.dart';
+import 'package:alwaleed_admain/features/students/presentation/cubit/update_student_cubit.dart';
 import 'package:alwaleed_admain/features/students/presentation/screens/add_student_screen.dart';
 import 'package:alwaleed_admain/features/students/presentation/screens/student_management_screen.dart';
+import 'package:alwaleed_admain/features/students/presentation/screens/update_student_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -76,6 +84,41 @@ class AppRoutes {
                 )..watchGrades();
               },
               child: const AddStudentScreen(),
+            );
+          },
+        );
+
+      case RouteNames.updateStudentScreen:
+        final studentId = settings.arguments;
+
+        if (studentId is! String || studentId.trim().isEmpty) {
+          return null;
+        }
+
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) {
+            return BlocProvider<UpdateStudentCubit>(
+              create: (_) {
+                return UpdateStudentCubit(
+                  studentId: studentId,
+                  getStudentByIdUseCase: GetIt.instance
+                      .get<GetStudentByIdUseCase>(),
+                  streamGradesUseCase: GetIt.instance
+                      .get<StreamGradesUseCase>(),
+                  updateStudentProfileUseCase: GetIt.instance
+                      .get<UpdateStudentProfileUseCase>(),
+                  updateStudentEmailUseCase: GetIt.instance
+                      .get<UpdateStudentEmailUseCase>(),
+                  updateStudentPasswordUseCase: GetIt.instance
+                      .get<UpdateStudentPasswordUseCase>(),
+                  updateStudentSubscriptionUseCase: GetIt.instance
+                      .get<UpdateStudentSubscriptionUseCase>(),
+                  deleteStudentUseCase: GetIt.instance
+                      .get<DeleteStudentUseCase>(),
+                )..initialize();
+              },
+              child: const UpdateStudentScreen(),
             );
           },
         );

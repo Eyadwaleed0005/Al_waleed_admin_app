@@ -29,9 +29,7 @@ class FirebaseStudentAuthRemoteDataSource
         FirebaseFunctionKeys.password: password,
       });
 
-      final studentId = result.data[
-        FirebaseFunctionKeys.studentId
-      ];
+      final studentId = result.data[FirebaseFunctionKeys.studentId];
 
       if (studentId is! String || studentId.isEmpty) {
         throw FirebaseRemoteException(
@@ -97,41 +95,31 @@ class FirebaseStudentAuthRemoteDataSource
   }
 
   @override
-  Future<void> deleteStudentAccount({
-    required String studentId,
-  }) {
-    return _execute(() async {
-      final callable = _firebaseFunctions.httpsCallable(
-        FirebaseFunctionNames.deleteStudentAccount,
-      );
+  Future<void> deleteStudentAccount({required String studentId}) async {
+    try {
+      final callable = _firebaseFunctions.httpsCallable('deleteStudentAccount');
 
-      await callable.call<Object?>({
-        FirebaseFunctionKeys.studentId: studentId,
-      });
-    });
+      await callable.call<void>({'studentId': studentId});
+    } on FirebaseFunctionsException catch (error) {
+      throw FirebaseRemoteException(
+        errorModel: FirebaseErrorHandler.handle(error),
+      );
+    }
   }
 
-  Future<T> _execute<T>(
-    Future<T> Function() operation,
-  ) async {
+  Future<T> _execute<T>(Future<T> Function() operation) async {
     try {
       return await operation();
     } catch (error, stackTrace) {
       if (error is FirebaseRemoteException) {
-        Error.throwWithStackTrace(
-          error,
-          stackTrace,
-        );
+        Error.throwWithStackTrace(error, stackTrace);
       }
 
       final remoteException = FirebaseRemoteException(
         errorModel: FirebaseErrorHandler.handle(error),
       );
 
-      Error.throwWithStackTrace(
-        remoteException,
-        stackTrace,
-      );
+      Error.throwWithStackTrace(remoteException, stackTrace);
     }
   }
 }

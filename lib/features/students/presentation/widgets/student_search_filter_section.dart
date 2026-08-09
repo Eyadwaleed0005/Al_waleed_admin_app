@@ -1,11 +1,10 @@
 import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_color.dart';
-import 'package:alwaleed_admain/core/widgets/custom_filter_button.dart';
+import 'package:alwaleed_admain/core/widgets/custom_popup_menu_field.dart';
 import 'package:alwaleed_admain/core/widgets/custom_search_bar.dart';
 import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
 import 'package:alwaleed_admain/features/students/domain/params/student_params.dart';
+import 'package:alwaleed_admain/features/students/presentation/widgets/grade_popup_menu_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class StudentSearchFilterSection extends StatelessWidget {
   const StudentSearchFilterSection({
@@ -28,6 +27,7 @@ class StudentSearchFilterSection extends StatelessWidget {
   final VoidCallback? onSearchTap;
 
   final List<GradeEntity> grades;
+
   final String selectedGradeId;
 
   final StudentSubscriptionFilter selectedSubscriptionFilter;
@@ -48,16 +48,12 @@ class StudentSearchFilterSection extends StatelessWidget {
           onSubmitted: onSearchSubmitted,
           onSearchTap: onSearchTap,
         ),
-
         verticalSpace(16),
-
         Row(
           textDirection: TextDirection.rtl,
           children: [
             Expanded(child: _buildGradesPopupMenu()),
-
             horizontalSpace(16),
-
             Expanded(child: _buildStatusPopupMenu()),
           ],
         ),
@@ -66,96 +62,46 @@ class StudentSearchFilterSection extends StatelessWidget {
   }
 
   Widget _buildGradesPopupMenu() {
-    return PopupMenuButton<String>(
+    return GradePopupMenuField(
+      grades: grades,
+      selectedGradeId: selectedGradeId,
+      placeholderText: 'كل الصفوف',
       tooltip: 'اختيار الصف',
-      position: PopupMenuPosition.under,
-      color: ColorPalette.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-        side: BorderSide(color: ColorPalette.border, width: 1.w),
-      ),
-      initialValue: selectedGradeId,
-      onSelected: onGradeSelected,
-      itemBuilder: (context) {
-        return [
-          CheckedPopupMenuItem<String>(
-            value: '',
-            checked: selectedGradeId.isEmpty,
-            child: const Text('كل الصفوف'),
-          ),
-          ...grades.map((grade) {
-            return CheckedPopupMenuItem<String>(
-              value: grade.gradeId,
-              checked: selectedGradeId == grade.gradeId,
-              child: Text(grade.name),
-            );
-          }),
-        ];
-      },
-      child: IgnorePointer(
-        child: CustomFilterButton(text: _selectedGradeName()),
-      ),
+      emptyTooltip: 'لا توجد صفوف متاحة حاليًا',
+      includeAllOption: true,
+      allGradesText: 'كل الصفوف',
+      onGradeSelected: onGradeSelected,
     );
   }
 
   Widget _buildStatusPopupMenu() {
-    return PopupMenuButton<StudentSubscriptionFilter>(
+    return CustomPopupMenuField<StudentSubscriptionFilter>(
+      items: const [
+        PopupSelectionItem<StudentSubscriptionFilter>(
+          value: StudentSubscriptionFilter.all,
+          label: 'كل الحالات',
+        ),
+        PopupSelectionItem<StudentSubscriptionFilter>(
+          value: StudentSubscriptionFilter.active,
+          label: 'نشط',
+        ),
+        PopupSelectionItem<StudentSubscriptionFilter>(
+          value: StudentSubscriptionFilter.expired,
+          label: 'منتهي',
+        ),
+      ],
+      value: selectedSubscriptionFilter,
+      selectedText: _selectedStatusName,
       tooltip: 'اختيار حالة الاشتراك',
-      position: PopupMenuPosition.under,
-      color: ColorPalette.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-        side: BorderSide(color: ColorPalette.border, width: 1.w),
-      ),
-      initialValue: selectedSubscriptionFilter,
       onSelected: onStatusSelected,
-      itemBuilder: (context) {
-        return [
-          CheckedPopupMenuItem<StudentSubscriptionFilter>(
-            value: StudentSubscriptionFilter.all,
-            checked:
-                selectedSubscriptionFilter == StudentSubscriptionFilter.all,
-            child: const Text('كل الحالات'),
-          ),
-          CheckedPopupMenuItem<StudentSubscriptionFilter>(
-            value: StudentSubscriptionFilter.active,
-            checked:
-                selectedSubscriptionFilter == StudentSubscriptionFilter.active,
-            child: const Text('نشط'),
-          ),
-          CheckedPopupMenuItem<StudentSubscriptionFilter>(
-            value: StudentSubscriptionFilter.expired,
-            checked:
-                selectedSubscriptionFilter == StudentSubscriptionFilter.expired,
-            child: const Text('منتهي'),
-          ),
-        ];
-      },
-      child: IgnorePointer(
-        child: CustomFilterButton(text: _selectedStatusName()),
-      ),
     );
   }
 
-  String _selectedGradeName() {
-    if (selectedGradeId.isEmpty) {
-      return 'كل الصفوف';
-    }
-
-    for (final grade in grades) {
-      if (grade.gradeId == selectedGradeId) {
-        return grade.name;
-      }
-    }
-
-    return 'كل الصفوف';
-  }
- 
-  String _selectedStatusName() {
+  String get _selectedStatusName {
     return switch (selectedSubscriptionFilter) {
       StudentSubscriptionFilter.all => 'كل الحالات',
-      StudentSubscriptionFilter.active => ' نشط',
-      StudentSubscriptionFilter.expired => ' منتهي',
+      StudentSubscriptionFilter.active => 'نشط',
+      StudentSubscriptionFilter.expired => 'منتهي',
     };
   }
 }
