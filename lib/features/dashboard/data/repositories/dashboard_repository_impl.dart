@@ -8,14 +8,15 @@ import 'package:alwaleed_admain/features/dashboard/domin/repositories/dashboard_
 import 'package:dartz/dartz.dart';
 
 class DashboardRepositoryImpl implements DashboardRepository {
-  final DashboardRemoteDataSource _remoteDataSource;
-  final DashboardLocalDataSource _localDataSource;
-
   const DashboardRepositoryImpl({
     required DashboardRemoteDataSource remoteDataSource,
     required DashboardLocalDataSource localDataSource,
   }) : _remoteDataSource = remoteDataSource,
        _localDataSource = localDataSource;
+
+  final DashboardRemoteDataSource _remoteDataSource;
+
+  final DashboardLocalDataSource _localDataSource;
 
   @override
   Future<Either<AppErrorModel, DashboardStudentsSummaryEntity>>
@@ -26,21 +27,32 @@ class DashboardRepositoryImpl implements DashboardRepository {
       await _cacheSummarySafely(remoteModel);
 
       return Right<AppErrorModel, DashboardStudentsSummaryEntity>(
-        DashboardStudentsSummaryEntity(
-          totalStudents: remoteModel.totalStudents,
-          expiredSubscriptions: remoteModel.expiredSubscriptions,
-        ),
+        _mapToEntity(remoteModel),
       );
     } on FirebaseRemoteException {
       final cachedModel = await _getCachedSummarySafely();
 
+      if (cachedModel != null) {
+        return Right<AppErrorModel, DashboardStudentsSummaryEntity>(
+          _mapToEntity(cachedModel),
+        );
+      }
       return Right<AppErrorModel, DashboardStudentsSummaryEntity>(
         DashboardStudentsSummaryEntity(
-          totalStudents: cachedModel?.totalStudents ?? 0,
-          expiredSubscriptions: cachedModel?.expiredSubscriptions ?? 0,
+          totalStudents: 0,
+          expiredSubscriptions: 0,
         ),
       );
     }
+  }
+
+  DashboardStudentsSummaryEntity _mapToEntity(
+    DashboardStudentsSummaryModel model,
+  ) {
+    return DashboardStudentsSummaryEntity(
+      totalStudents: model.totalStudents,
+      expiredSubscriptions: model.expiredSubscriptions,
+    );
   }
 
   Future<void> _cacheSummarySafely(

@@ -10,13 +10,13 @@ class QuickActionsSection extends StatelessWidget {
     required this.onStudentsTap,
     required this.onContentTap,
     required this.onExamsTap,
-    required this.onResultsTap,
+    required this.onLiveLinkTap,
   });
 
   final VoidCallback onStudentsTap;
   final VoidCallback onContentTap;
   final VoidCallback onExamsTap;
-  final VoidCallback onResultsTap;
+  final VoidCallback onLiveLinkTap;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,7 @@ class QuickActionsSection extends StatelessWidget {
                 icon: Icons.menu,
                 backgroundColor: ColorPalette.secondary,
                 iconBackgroundColor: ColorPalette.secondary,
-                onTap: onStudentsTap,
+                onTap: onContentTap,
               ),
             ),
             horizontalSpace(12),
@@ -50,7 +50,7 @@ class QuickActionsSection extends StatelessWidget {
                 icon: Icons.add,
                 backgroundColor: ColorPalette.background,
                 iconBackgroundColor: ColorPalette.primary,
-                onTap: onContentTap,
+                onTap: onStudentsTap,
               ),
             ),
           ],
@@ -65,7 +65,7 @@ class QuickActionsSection extends StatelessWidget {
                 icon: Icons.videocam_outlined,
                 backgroundColor: ColorPalette.background,
                 iconBackgroundColor: ColorPalette.primary,
-                onTap: onExamsTap,
+                onTap: onLiveLinkTap,
               ),
             ),
             horizontalSpace(12),
@@ -75,7 +75,7 @@ class QuickActionsSection extends StatelessWidget {
                icon: Icons.done,
                 backgroundColor: ColorPalette.warning,
                 iconBackgroundColor: ColorPalette.warning,
-                onTap: onResultsTap,
+                onTap: onExamsTap,
               ),
             ),
           ],

@@ -1,3 +1,4 @@
+import 'package:alwaleed_admain/app/routes/route_names.dart';
 import 'package:alwaleed_admain/core/helper/app_system_ui.dart';
 import 'package:alwaleed_admain/core/style/app_color.dart';
 import 'package:alwaleed_admain/core/widgets/app_empty_widget.dart';
@@ -50,7 +51,7 @@ class StudentManagementScreen extends StatelessWidget {
                     actionText: 'إضافة طالب',
                     icon: Icons.person_outline_rounded,
                     onActionPressed: () {
-                      // الانتقال لشاشة إضافة الطالب.
+                      Navigator.pushNamed(context, RouteNames.addStudentScreen);
                     },
                   ),
                 ),
@@ -63,7 +64,7 @@ class StudentManagementScreen extends StatelessWidget {
                     grades: grades,
                     filters: filters,
                     onAddStudent: () {
-                      // الانتقال لشاشة إضافة الطالب.
+                      Navigator.pushNamed(context, RouteNames.addStudentScreen);
                     },
                     content: const AppNoSearchResultsWidget(
                       message: 'جرب البحث باسم آخر أو تغيير الفلاتر المستخدمة.',
@@ -79,7 +80,7 @@ class StudentManagementScreen extends StatelessWidget {
                     grades: grades,
                     filters: filters,
                     onAddStudent: () {
-                      // الانتقال لشاشة إضافة الطالب.
+                      Navigator.pushNamed(context, RouteNames.addStudentScreen);
                     },
                     content: StudentsList(
                       students: students,

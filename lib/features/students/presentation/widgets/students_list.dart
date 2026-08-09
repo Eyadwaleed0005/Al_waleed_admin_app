@@ -1,3 +1,4 @@
+import 'package:alwaleed_admain/core/helper/spacer.dart';
 import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
 import 'package:alwaleed_admain/features/students/domain/entities/student_entity.dart';
 import 'package:alwaleed_admain/features/students/presentation/widgets/student_card.dart';
@@ -26,17 +27,14 @@ class StudentsList extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 20.h),
       itemCount: students.length,
       separatorBuilder: (_, __) {
-        return SizedBox(height: 12.h);
+        return verticalSpace(12);
       },
       itemBuilder: (context, index) {
         final student = students[index];
-
         final gradeName = gradeNames[student.gradeId] ?? 'صف غير معروف';
-
         final isActive =
             student.isActive &&
             student.subscriptionEndAt.isAfter(DateTime.now());
-
         return StudentCard(
           name: student.name,
           grade: gradeName,

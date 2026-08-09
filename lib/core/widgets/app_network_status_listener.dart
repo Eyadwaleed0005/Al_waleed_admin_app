@@ -8,13 +8,9 @@ class AppNetworkStatusListener extends StatefulWidget {
   const AppNetworkStatusListener({
     super.key,
     required this.child,
-    required this.scaffoldMessengerKey,
   });
 
   final Widget child;
-
-  final GlobalKey<ScaffoldMessengerState>
-      scaffoldMessengerKey;
 
   @override
   State<AppNetworkStatusListener> createState() =>
@@ -23,6 +19,9 @@ class AppNetworkStatusListener extends StatefulWidget {
 
 class _AppNetworkStatusListenerState
     extends State<AppNetworkStatusListener> {
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
   bool _initialStateChecked = false;
   bool _isOfflineBannerActive = false;
 
@@ -65,7 +64,7 @@ class _AppNetworkStatusListenerState
       }
 
       final scaffoldMessenger =
-          widget.scaffoldMessengerKey.currentState;
+          _scaffoldMessengerKey.currentState;
 
       if (scaffoldMessenger == null) {
         _isOfflineBannerActive = false;
@@ -83,7 +82,6 @@ class _AppNetworkStatusListenerState
           shadowColor: Colors.transparent,
           dividerColor: Colors.transparent,
           elevation: 0,
-          forceActionsBelow: false,
           content: AppOfflineBanner(
             onHidden: _hideOfflineBanner,
           ),
@@ -98,7 +96,7 @@ class _AppNetworkStatusListenerState
   void _hideOfflineBanner() {
     _isOfflineBannerActive = false;
 
-    widget.scaffoldMessengerKey.currentState
+    _scaffoldMessengerKey.currentState
         ?.clearMaterialBanners();
   }
 
@@ -110,27 +108,32 @@ class _AppNetworkStatusListenerState
       return;
     }
 
-    _hideOfflineBanner();
+    if (state is NetworkStatusConnected) {
+      _hideOfflineBanner();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<
-        NetworkStatusCubit,
-        NetworkStatusState>(
-      listenWhen: (previous, current) {
-        final wasOffline =
-            previous is NetworkStatusDisconnected;
+    return ScaffoldMessenger(
+      key: _scaffoldMessengerKey,
+      child: BlocListener<
+          NetworkStatusCubit,
+          NetworkStatusState>(
+        listenWhen: (previous, current) {
+          final wasOffline =
+              previous is NetworkStatusDisconnected;
 
-        final isOffline =
-            current is NetworkStatusDisconnected;
+          final isOffline =
+              current is NetworkStatusDisconnected;
 
-        return wasOffline != isOffline;
-      },
-      listener: (context, state) {
-        _handleNetworkState(state);
-      },
-      child: widget.child,
+          return wasOffline != isOffline;
+        },
+        listener: (context, state) {
+          _handleNetworkState(state);
+        },
+        child: widget.child,
+      ),
     );
   }
 }

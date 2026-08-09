@@ -125,6 +125,50 @@ abstract final class AppAnimations {
         );
   }
 
+  static Widget formFieldEntrance({required Widget child, required int order}) {
+    final delay = 80 + (order * 65);
+
+    return child
+        .animate(delay: delay.ms)
+        .fadeIn(duration: 420.ms, curve: Curves.easeOut)
+        .slideX(
+          begin: 0.08,
+          end: 0,
+          duration: 480.ms,
+          curve: Curves.easeOutCubic,
+        )
+        .slideY(
+          begin: 0.035,
+          end: 0,
+          duration: 480.ms,
+          curve: Curves.easeOutCubic,
+        )
+        .scale(
+          begin: const Offset(0.985, 0.985),
+          end: const Offset(1, 1),
+          duration: 480.ms,
+          curve: Curves.easeOut,
+        );
+  }
+
+  static Widget operationDialogEntrance({required Widget child}) {
+    return child
+        .animate()
+        .fadeIn(duration: 280.ms, curve: Curves.easeOut)
+        .slideY(
+          begin: 0.08,
+          end: 0,
+          duration: 420.ms,
+          curve: Curves.easeOutCubic,
+        )
+        .scale(
+          begin: const Offset(0.90, 0.90),
+          end: const Offset(1, 1),
+          duration: 460.ms,
+          curve: Curves.easeOutBack,
+        );
+  }
+
   static Widget bottomNavItem({
     required Widget child,
     required bool isSelected,

@@ -129,6 +129,14 @@ class AppTextStyle {
       color: ColorPalette.textPrimary,
     );
   } 
+  static TextStyle font15SurfaceMediumTajawal() {
+    return TextStyle(
+      fontSize: 15.sp,
+      fontWeight: FontWeightHelper.medium,
+      fontFamily: tajawal,
+      color: ColorPalette.surface,
+    );
+  } 
   static TextStyle font16TextPrimaryMediumKufam() {
     return TextStyle(
       fontSize: 16.sp,

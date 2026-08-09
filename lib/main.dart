@@ -9,25 +9,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
-    GlobalKey<ScaffoldMessengerState>();
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   setupServiceLocator();
   await ScreenUtil.ensureScreenSize();
+  getIt<NetworkStatusCubit>().startMonitoring();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<NetworkStatusCubit>(
-      create: (_) {
-        return NetworkStatusCubit(networkInfo: getIt())..startMonitoring();
-      },
+    return BlocProvider<NetworkStatusCubit>.value(
+      value: getIt<NetworkStatusCubit>(),
       child: ScreenUtilInit(
         designSize: const Size(375, 812),
         minTextAdapt: true,
@@ -36,13 +33,11 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'الوليد',
             debugShowCheckedModeBanner: false,
-            scaffoldMessengerKey: scaffoldMessengerKey,
             theme: ThemeData(fontFamily: 'Tajawal'),
             initialRoute: RouteNames.mainNavigationScreen,
             onGenerateRoute: AppRoutes.generateRoute,
             builder: (context, child) {
               return AppNetworkStatusListener(
-                scaffoldMessengerKey: scaffoldMessengerKey,
                 child: child ?? const SizedBox.shrink(),
               );
             },

@@ -4,17 +4,13 @@ import 'package:alwaleed_admain/features/dashboard/domin/repositories/dashboard_
 import 'package:dartz/dartz.dart';
 
 class GetDashboardStudentsSummaryUseCase {
-  final DashboardRepository _dashboardRepository;
-
   const GetDashboardStudentsSummaryUseCase({
     required DashboardRepository dashboardRepository,
   }) : _dashboardRepository = dashboardRepository;
 
-  Future<
-      Either<
-          AppErrorModel,
-          DashboardStudentsSummaryEntity>>
-      call() {
+  final DashboardRepository _dashboardRepository;
+
+  Future<Either<AppErrorModel, DashboardStudentsSummaryEntity>> call() {
     return _dashboardRepository.getStudentsSummary();
   }
 }
