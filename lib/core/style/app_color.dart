@@ -6,11 +6,14 @@ class ColorPalette {
   static const Color primaryHover = Color(0xFF0B5C3B);
   static const Color primaryPressed = Color(0xFF012415);
   static const Color primarySoftBackground = Color(0xFFF0F7F3);
+  static const Color primaryDark = Color(0xFF032E1F);
 
   // ===== Brand Colors =====
   static const Color secondary = Color(0xFF28729F);
   static const Color accent = Color(0xFFABC8A3);
   static const Color highlight = Color(0xFFF0E295);
+  static const Color paleSage = Color(0xFFDCEBE1);
+
 
   // Highlight with 12% opacity: #F0E2951F
   static const Color highlightShadow = Color(0x1FF0E295);

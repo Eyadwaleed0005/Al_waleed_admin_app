@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/core/style/app_color.dart';
+import 'package:alwaleed_admain/core/style/textstyles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -19,11 +19,7 @@ class CustomFormFieldErrorText extends StatelessWidget {
         errorText!,
         textAlign: TextAlign.right,
         textDirection: TextDirection.rtl,
-        style: TextStyle(
-          color: ColorPalette.error,
-          fontSize: 12.sp,
-          fontFamily: 'Tajawal',
-        ),
+        style:AppTextStyle.font12ErrorRegularTajawal(),
       ),
     );
   }
