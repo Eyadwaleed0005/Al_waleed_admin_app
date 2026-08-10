@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
             title: 'الوليد',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(fontFamily: 'Tajawal'),
-            initialRoute: RouteNames.mainNavigationScreen,
+            initialRoute: RouteNames.liveSession,
             onGenerateRoute: AppRoutes.generateRoute,
             builder: (context, child) {
               return AppNetworkStatusListener(
@@ -44,6 +44,7 @@ class MyApp extends StatelessWidget {
           );
         },
       ),
+      
     );
   }
 }

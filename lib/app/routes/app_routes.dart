@@ -5,6 +5,7 @@ import 'package:alwaleed_admain/features/dashboard/domin/use_cases/get_dashboard
 import 'package:alwaleed_admain/features/dashboard/presentation/cubit/home_dashboard_cubit.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
 import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
+import 'package:alwaleed_admain/features/live_session/presentation/screens/live_session_screen.dart';
 import 'package:alwaleed_admain/features/main_navigation/presentation/screens/main_navigation_screen.dart';
 import 'package:alwaleed_admain/features/students/domain/use_cases/create_student_use_case.dart';
 import 'package:alwaleed_admain/features/students/domain/use_cases/delete_student_use_case.dart';
@@ -27,8 +28,10 @@ import 'package:get_it/get_it.dart';
 import 'route_names.dart';
 
 class AppRoutes {
-  AppRoutes._();
-  static final GetIt _getIt = GetIt.instance;
+  const AppRoutes._();
+
+  static final GetIt getIt = GetIt.instance;
+
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteNames.splashScreen:
@@ -77,10 +80,8 @@ class AppRoutes {
             return BlocProvider<AddStudentCubit>(
               create: (_) {
                 return AddStudentCubit(
-                  createStudentUseCase: GetIt.instance
-                      .get<CreateStudentUseCase>(),
-                  streamGradesUseCase: GetIt.instance
-                      .get<StreamGradesUseCase>(),
+                  createStudentUseCase: _getIt<CreateStudentUseCase>(),
+                  streamGradesUseCase: _getIt<StreamGradesUseCase>(),
                 )..watchGrades();
               },
               child: const AddStudentScreen(),
@@ -102,20 +103,17 @@ class AppRoutes {
               create: (_) {
                 return UpdateStudentCubit(
                   studentId: studentId,
-                  getStudentByIdUseCase: GetIt.instance
-                      .get<GetStudentByIdUseCase>(),
-                  streamGradesUseCase: GetIt.instance
-                      .get<StreamGradesUseCase>(),
-                  updateStudentProfileUseCase: GetIt.instance
-                      .get<UpdateStudentProfileUseCase>(),
-                  updateStudentEmailUseCase: GetIt.instance
-                      .get<UpdateStudentEmailUseCase>(),
-                  updateStudentPasswordUseCase: GetIt.instance
-                      .get<UpdateStudentPasswordUseCase>(),
-                  updateStudentSubscriptionUseCase: GetIt.instance
-                      .get<UpdateStudentSubscriptionUseCase>(),
-                  deleteStudentUseCase: GetIt.instance
-                      .get<DeleteStudentUseCase>(),
+                  getStudentByIdUseCase: _getIt<GetStudentByIdUseCase>(),
+                  streamGradesUseCase: _getIt<StreamGradesUseCase>(),
+                  updateStudentProfileUseCase:
+                      _getIt<UpdateStudentProfileUseCase>(),
+                  updateStudentEmailUseCase:
+                      _getIt<UpdateStudentEmailUseCase>(),
+                  updateStudentPasswordUseCase:
+                      _getIt<UpdateStudentPasswordUseCase>(),
+                  updateStudentSubscriptionUseCase:
+                      _getIt<UpdateStudentSubscriptionUseCase>(),
+                  deleteStudentUseCase: _getIt<DeleteStudentUseCase>(),
                 )..initialize();
               },
               child: const UpdateStudentScreen(),
@@ -123,9 +121,21 @@ class AppRoutes {
           },
         );
 
+      case RouteNames.liveSession:
+        return MaterialPageRoute(
+          settings: settings,
+          builder: (_) {
+            return const LiveSessionScreen();
+          },
+        );
+
       default:
         return null;
     }
+  }
+
+  static T _getIt<T extends Object>() {
+    return getIt.get<T>();
   }
 
   static HomeDashboardCubit _createHomeDashboardCubit() {
@@ -147,14 +157,10 @@ class AppRoutes {
     return MultiBlocProvider(
       providers: [
         BlocProvider<HomeDashboardCubit>(
-          create: (_) {
-            return _createHomeDashboardCubit();
-          },
+          create: (_) => _createHomeDashboardCubit(),
         ),
         BlocProvider<StudentManagementCubit>(
-          create: (_) {
-            return _createStudentManagementCubit();
-          },
+          create: (_) => _createStudentManagementCubit(),
         ),
       ],
       child: child,
@@ -163,18 +169,14 @@ class AppRoutes {
 
   static Widget _provideHomeDashboardCubit({required Widget child}) {
     return BlocProvider<HomeDashboardCubit>(
-      create: (_) {
-        return _createHomeDashboardCubit();
-      },
+      create: (_) => _createHomeDashboardCubit(),
       child: child,
     );
   }
 
   static Widget _provideStudentManagementCubit({required Widget child}) {
     return BlocProvider<StudentManagementCubit>(
-      create: (_) {
-        return _createStudentManagementCubit();
-      },
+      create: (_) => _createStudentManagementCubit(),
       child: child,
     );
   }

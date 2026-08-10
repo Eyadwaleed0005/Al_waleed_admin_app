@@ -2,6 +2,7 @@ import 'package:alwaleed_admain/app/routes/route_nav_bottom.dart';
 import 'package:alwaleed_admain/core/style/app_animations.dart';
 import 'package:alwaleed_admain/core/style/app_color.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
+import 'package:alwaleed_admain/features/live_session/presentation/screens/live_session_screen.dart';
 import 'package:alwaleed_admain/features/main_navigation/presentation/cubit/bottom_navigation_cubit.dart';
 import 'package:alwaleed_admain/features/main_navigation/presentation/widgets/custom_bottom_nav_bar.dart';
 import 'package:alwaleed_admain/features/students/presentation/screens/student_management_screen.dart';
@@ -30,7 +31,7 @@ class MainNavigationView extends StatelessWidget {
       students: const StudentManagementScreen(),
       examsScreen: const TemporaryScreen(title: 'إدارة الامتحانات'),
       studyNotesScreen: const TemporaryScreen(title: 'إدارة المذكرات'),
-      liveSessionScreen: const TemporaryScreen(title: 'الحصص المباشرة'),
+      liveSessionScreen: const LiveSessionScreen(),
     );
 
     return Scaffold(
