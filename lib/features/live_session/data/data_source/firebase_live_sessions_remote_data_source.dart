@@ -1,38 +1,40 @@
-import 'package:alwaleed_admain/core/errors/exceptions/firebase_remote_exception.dart';
 import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
 import 'package:alwaleed_admain/core/firebase/firestore/firestore_collections.dart';
 import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
 import 'package:alwaleed_admain/core/firebase/firestore/firestore_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/live_session_model.dart';
 import 'live_sessions_remote_data_source.dart';
 
 class FirebaseLiveSessionsRemoteDataSource
     implements LiveSessionsRemoteDataSource {
+  final FirestoreService _firestoreService;
+
   const FirebaseLiveSessionsRemoteDataSource({
     required FirestoreService firestoreService,
   }) : _firestoreService = firestoreService;
 
-  final FirestoreService _firestoreService;
-
   @override
-  Future<LiveSessionModel?> getLiveSession({required String gradeId}) {
+  Future<LiveSessionModel?> getLiveSession() {
     return _execute(() async {
-      final document = await _firestoreService.getDocument(
-        collectionPath: FirestoreCollections.liveSessions,
-        documentId: gradeId,
-      );
+      final snapshot = await _firestoreService
+          .streamCollection(
+            collectionPath: FirestoreCollections.liveSessions,
+            queryBuilder: (collection) {
+              return collection.limit(1);
+            },
+            includeMetadataChanges: true,
+          )
+          .firstWhere((snapshot) {
+            final hasCachedLiveSession = snapshot.docs.isNotEmpty;
 
-      final data = document.data();
+            final hasServerResponse = !snapshot.metadata.isFromCache;
 
-      if (!document.exists || data == null) {
-        return null;
-      }
+            return hasCachedLiveSession || hasServerResponse;
+          });
 
-      return LiveSessionModel.fromMap({
-        ...data,
-        FirestoreFields.gradeId: document.id,
-      });
+      return _mapLiveSession(snapshot);
     });
   }
 
@@ -57,15 +59,22 @@ class FirebaseLiveSessionsRemoteDataSource
     });
   }
 
-  Future<T> _execute<T>(Future<T> Function() operation) async {
-    try {
-      return await operation();
-    } on FirebaseRemoteException {
-      rethrow;
-    } catch (error) {
-      throw FirebaseRemoteException(
-        errorModel: FirebaseErrorHandler.handle(error),
-      );
+  LiveSessionModel? _mapLiveSession(
+    QuerySnapshot<Map<String, dynamic>> snapshot,
+  ) {
+    if (snapshot.docs.isEmpty) {
+      return null;
     }
+
+    final document = snapshot.docs.first;
+
+    return LiveSessionModel.fromMap({
+      ...document.data(),
+      FirestoreFields.gradeId: document.id,
+    });
+  }
+
+  Future<T> _execute<T>(Future<T> Function() operation) {
+    return FirebaseErrorHandler.execute(operation);
   }
 }

@@ -1,16 +1,17 @@
-import 'package:alwaleed_admain/features/live_session/domain/entities/live_session_entity.dart';
+import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
+import 'package:dartz/dartz.dart';
 
+import '../entities/live_session_entity.dart';
 
 abstract interface class LiveSessionsRepository {
-  Future<LiveSessionEntity?> getLiveSession({
-    required String gradeId,
-  });
+  Future<Either<AppErrorModel, LiveSessionEntity?>>
+      getLiveSession();
 
-  Future<void> saveLiveSession({
+  Future<Either<AppErrorModel, Unit>> saveLiveSession({
     required LiveSessionEntity liveSession,
   });
 
-  Future<void> deleteLiveSession({
+  Future<Either<AppErrorModel, Unit>> deleteLiveSession({
     required String gradeId,
   });
 }

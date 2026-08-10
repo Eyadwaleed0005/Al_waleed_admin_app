@@ -1,9 +1,7 @@
 import '../models/live_session_model.dart';
 
 abstract interface class LiveSessionsRemoteDataSource {
-  Future<LiveSessionModel?> getLiveSession({
-    required String gradeId,
-  });
+  Future<LiveSessionModel?> getLiveSession();
 
   Future<void> saveLiveSession({
     required LiveSessionModel liveSession,

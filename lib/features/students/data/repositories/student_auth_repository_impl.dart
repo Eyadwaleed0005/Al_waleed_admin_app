@@ -75,9 +75,7 @@ class StudentAuthRepositoryImpl implements StudentAuthRepository {
     required String studentId,
   }) {
     return _execute<Unit>(() async {
-      await _remoteDataSource.deleteStudentAccount(
-        studentId: studentId,
-      );
+      await _remoteDataSource.deleteStudentAccount(studentId: studentId);
 
       return unit;
     });
@@ -91,9 +89,7 @@ class StudentAuthRepositoryImpl implements StudentAuthRepository {
 
       return Right<AppErrorModel, T>(result);
     } catch (error) {
-      return Left<AppErrorModel, T>(
-        FirebaseErrorHandler.handle(error),
-      );
+      return Left<AppErrorModel, T>(FirebaseErrorHandler.handle(error));
     }
   }
 }

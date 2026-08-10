@@ -8,9 +8,7 @@ class AppValidator {
       return 'من فضلك اكتب اسم الطالب';
     }
 
-    if (!RegExp(
-      r'^[\u0600-\u06FFa-zA-Z\s]+$',
-    ).hasMatch(name)) {
+    if (!RegExp(r'^[\u0600-\u06FFa-zA-Z\s]+$').hasMatch(name)) {
       return 'اسم الطالب يجب أن يحتوي على حروف فقط';
     }
 
@@ -95,6 +93,25 @@ class AppValidator {
     return null;
   }
 
+  static String? liveSessionUrl(String? value) {
+    final url = value?.trim() ?? '';
+
+    if (url.isEmpty) {
+      return 'من فضلك اكتب رابط الحصة';
+    }
+
+    final uri = Uri.tryParse(url);
+
+    if (uri == null ||
+        !uri.hasScheme ||
+        !uri.hasAuthority ||
+        (uri.scheme != 'https' && uri.scheme != 'http')) {
+      return 'من فضلك اكتب رابطًا صحيحًا';
+    }
+
+    return null;
+  }
+
   static String? strongPassword(String? value) {
     final password = value ?? '';
 
@@ -122,9 +139,7 @@ class AppValidator {
       return 'كلمة المرور يجب أن تحتوي على رقم';
     }
 
-    if (!RegExp(
-      r'[!@#$%^&*(),.?":{}|<>]',
-    ).hasMatch(password)) {
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password)) {
       return 'كلمة المرور يجب أن تحتوي على رمز خاص';
     }
 
@@ -148,20 +163,14 @@ class AppValidator {
     return null;
   }
 
-  static String? subscriptionStartDate(
-    DateTime? startDate,
-  ) {
+  static String? subscriptionStartDate(DateTime? startDate) {
     if (startDate == null) {
       return 'من فضلك اختر تاريخ بداية الاشتراك';
     }
 
     final now = DateTime.now();
 
-    final today = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    );
+    final today = DateTime(now.year, now.month, now.day);
 
     final normalizedStartDate = DateTime(
       startDate.year,
@@ -200,9 +209,7 @@ class AppValidator {
       endDate.day,
     );
 
-    if (!normalizedEndDate.isAfter(
-      normalizedStartDate,
-    )) {
+    if (!normalizedEndDate.isAfter(normalizedStartDate)) {
       return 'تاريخ انتهاء الاشتراك يجب أن يكون بعد تاريخ البداية';
     }
 

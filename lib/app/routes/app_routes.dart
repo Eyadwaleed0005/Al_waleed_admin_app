@@ -5,6 +5,10 @@ import 'package:alwaleed_admain/features/dashboard/domin/use_cases/get_dashboard
 import 'package:alwaleed_admain/features/dashboard/presentation/cubit/home_dashboard_cubit.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
 import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
+import 'package:alwaleed_admain/features/live_session/domain/use_case/delete_live_session_use_case.dart';
+import 'package:alwaleed_admain/features/live_session/domain/use_case/get_live_session_use_case.dart';
+import 'package:alwaleed_admain/features/live_session/domain/use_case/save_live_session_use_case.dart';
+import 'package:alwaleed_admain/features/live_session/presentation/cubit/live_session_cubit.dart';
 import 'package:alwaleed_admain/features/live_session/presentation/screens/live_session_screen.dart';
 import 'package:alwaleed_admain/features/main_navigation/presentation/screens/main_navigation_screen.dart';
 import 'package:alwaleed_admain/features/students/domain/use_cases/create_student_use_case.dart';
@@ -35,7 +39,7 @@ class AppRoutes {
   static Route<dynamic>? generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteNames.splashScreen:
-        return MaterialPageRoute(
+        return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
             return BlocProvider<AppStartupCubit>(
@@ -46,7 +50,7 @@ class AppRoutes {
         );
 
       case RouteNames.homeScreen:
-        return MaterialPageRoute(
+        return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
             return _provideHomeDashboardCubit(child: const HomeScreen());
@@ -54,7 +58,7 @@ class AppRoutes {
         );
 
       case RouteNames.mainNavigationScreen:
-        return MaterialPageRoute(
+        return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
             return _provideMainNavigationCubits(
@@ -64,7 +68,7 @@ class AppRoutes {
         );
 
       case RouteNames.studentManagementScreen:
-        return MaterialPageRoute(
+        return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
             return _provideStudentManagementCubit(
@@ -74,7 +78,7 @@ class AppRoutes {
         );
 
       case RouteNames.addStudentScreen:
-        return MaterialPageRoute(
+        return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
             return BlocProvider<AddStudentCubit>(
@@ -96,7 +100,7 @@ class AppRoutes {
           return null;
         }
 
-        return MaterialPageRoute(
+        return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
             return BlocProvider<UpdateStudentCubit>(
@@ -122,10 +126,13 @@ class AppRoutes {
         );
 
       case RouteNames.liveSession:
-        return MaterialPageRoute(
+        return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
-            return const LiveSessionScreen();
+            return BlocProvider<LiveSessionCubit>(
+              create: (_) => _createLiveSessionCubit(),
+              child: const LiveSessionScreen(),
+            );
           },
         );
 
@@ -153,6 +160,16 @@ class AppRoutes {
     )..watchStudentManagement();
   }
 
+  static LiveSessionCubit _createLiveSessionCubit() {
+    return LiveSessionCubit(
+      streamGradesUseCase: _getIt<StreamGradesUseCase>(),
+      getLiveSessionUseCase: _getIt<GetLiveSessionUseCase>(),
+      saveLiveSessionUseCase: _getIt<SaveLiveSessionUseCase>(),
+      deleteLiveSessionUseCase: _getIt<DeleteLiveSessionUseCase>(),
+      networkStatusCubit: _getIt<NetworkStatusCubit>(),
+    )..initialize();
+  }
+
   static Widget _provideMainNavigationCubits({required Widget child}) {
     return MultiBlocProvider(
       providers: [
@@ -161,6 +178,9 @@ class AppRoutes {
         ),
         BlocProvider<StudentManagementCubit>(
           create: (_) => _createStudentManagementCubit(),
+        ),
+        BlocProvider<LiveSessionCubit>(
+          create: (_) => _createLiveSessionCubit(),
         ),
       ],
       child: child,

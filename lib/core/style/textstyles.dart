@@ -42,6 +42,15 @@ class AppTextStyle {
       color: ColorPalette.deepSurface,
     );
   }
+
+   static TextStyle font12PrimaryMediumTajawal() {
+    return TextStyle(
+      fontSize: 12.sp,
+      fontWeight: FontWeightHelper.medium,
+      fontFamily: tajawal,
+      color: ColorPalette.primary,
+    );
+  }
   static TextStyle font12PrimaryBoldTajawal() {
     return TextStyle(
       fontSize: 12.sp,
@@ -153,6 +162,16 @@ class AppTextStyle {
   static TextStyle font15TextPrimaryMediumTajawal() {
     return TextStyle(
       fontSize: 15.sp,
+      fontWeight: FontWeightHelper.medium,
+      fontFamily: tajawal,
+      color: ColorPalette.textPrimary,
+    );
+  }
+  
+  
+  static TextStyle font13TextPrimaryMediumTajawal() {
+    return TextStyle(
+      fontSize: 13.sp,
       fontWeight: FontWeightHelper.medium,
       fontFamily: tajawal,
       color: ColorPalette.textPrimary,

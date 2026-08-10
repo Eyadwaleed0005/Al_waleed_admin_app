@@ -1,3 +1,5 @@
+import 'meeting_type.dart';
+
 class LiveSessionEntity {
   const LiveSessionEntity({
     required this.gradeId,
@@ -6,6 +8,6 @@ class LiveSessionEntity {
   });
 
   final String gradeId;
-  final String platformType;
+  final MeetingType platformType;
   final String meetingUrl;
 }

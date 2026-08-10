@@ -9,6 +9,28 @@ import 'firebase_functions_error_handler.dart';
 import 'firestore_error_handler.dart';
 
 abstract final class FirebaseErrorHandler {
+  // Temporary workaround. Firestore may keep the request pending when
+  // there is no internet instead of returning an error.
+  // This 9-second timeout stops the loading state and returns a failure.
+  // Move this logic to a dedicated Firebase execution layer later.
+  // By MeEyad
+  static const Duration _operationTimeout = Duration(seconds: 9);
+
+  static Future<T> execute<T>(Future<T> Function() operation) async {
+    try {
+      return await operation().timeout(_operationTimeout);
+    } catch (error, stackTrace) {
+      if (error is FirebaseRemoteException) {
+        Error.throwWithStackTrace(error, stackTrace);
+      }
+
+      final remoteException = FirebaseRemoteException(
+        errorModel: handle(error),
+      );
+      Error.throwWithStackTrace(remoteException, stackTrace);
+    }
+  }
+
   static AppErrorModel handle(Object error) {
     if (error is FirebaseRemoteException) {
       return error.errorModel;
@@ -27,9 +49,7 @@ abstract final class FirebaseErrorHandler {
     }
 
     if (error is FirebaseException) {
-      return _serverError(
-        code: error.code,
-      );
+      return _serverError(code: error.code);
     }
 
     return _unknownError();
@@ -51,15 +71,14 @@ abstract final class FirebaseErrorHandler {
   static AppErrorModel _timeoutError() {
     return const AppErrorModel(
       code: 'timeout',
-      message: 'انتهت مهلة الاتصال، حاول مرة أخرى.',
+      message:
+          'تعذر تأكيد تنفيذ الطلب حاليًا بسبب انقطاع الاتصال. تم حفظ الطلب وسيتم تنفيذه تلقائيًا عند عودة الإنترنت.',
       type: AppErrorType.timeout,
-      isRetryable: true,
+      isRetryable: false,
     );
   }
 
-  static AppErrorModel _serverError({
-    required String code,
-  }) {
+  static AppErrorModel _serverError({required String code}) {
     return AppErrorModel(
       code: code,
       message: 'حدث خطأ في الخادم، حاول مرة أخرى.',

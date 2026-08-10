@@ -1,5 +1,8 @@
-import 'package:alwaleed_admain/features/live_session/domain/repository/live_sessions_repository.dart';
+import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
+import 'package:dartz/dartz.dart';
+
 import '../entities/live_session_entity.dart';
+import '../repository/live_sessions_repository.dart';
 
 class GetLiveSessionUseCase {
   const GetLiveSessionUseCase({
@@ -8,11 +11,8 @@ class GetLiveSessionUseCase {
 
   final LiveSessionsRepository _repository;
 
-  Future<LiveSessionEntity?> call({
-    required String gradeId,
-  }) {
-    return _repository.getLiveSession(
-      gradeId: gradeId,
-    );
+  Future<Either<AppErrorModel, LiveSessionEntity?>>
+      call() {
+    return _repository.getLiveSession();
   }
 }
