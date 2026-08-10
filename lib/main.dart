@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:alwaleed_admain/app/dependency_injection/service_locator.dart';
+import 'package:alwaleed_admain/app/routes/app_route_observer.dart';
 import 'package:alwaleed_admain/app/routes/app_routes.dart';
 import 'package:alwaleed_admain/app/routes/route_names.dart';
 import 'package:alwaleed_admain/core/connection/cubit/network_status_cubit.dart';
@@ -14,7 +16,7 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   setupServiceLocator();
   await ScreenUtil.ensureScreenSize();
-  getIt<NetworkStatusCubit>().startMonitoring();
+  unawaited(getIt<NetworkStatusCubit>().startMonitoring());
   runApp(const MyApp());
 }
 
@@ -23,6 +25,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final routeObserver = getIt<AppRouteObserver>();
     return BlocProvider<NetworkStatusCubit>.value(
       value: getIt<NetworkStatusCubit>(),
       child: ScreenUtilInit(
@@ -34,17 +37,18 @@ class MyApp extends StatelessWidget {
             title: 'الوليد',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(fontFamily: 'Tajawal'),
-            initialRoute: RouteNames.mainNavigationScreen,
+            initialRoute: RouteNames.splashScreen,
             onGenerateRoute: AppRoutes.generateRoute,
+            navigatorObservers: [routeObserver],
             builder: (context, child) {
               return AppNetworkStatusListener(
+                routeObserver: routeObserver,
                 child: child ?? const SizedBox.shrink(),
               );
             },
           );
         },
       ),
-      
     );
   }
 }

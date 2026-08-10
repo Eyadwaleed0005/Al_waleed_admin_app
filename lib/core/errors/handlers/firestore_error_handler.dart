@@ -53,6 +53,14 @@ abstract final class FirestoreErrorHandler {
           type: AppErrorType.authentication,
         );
 
+      case 'no-internet':
+        return _error(
+          code: code,
+          message: 'لا يوجد اتصال بالإنترنت، تحقق من الشبكة وحاول مرة أخرى.',
+          type: AppErrorType.network,
+          isRetryable: true,
+        );
+
       case 'deadline-exceeded':
         return _error(
           code: code,
@@ -64,7 +72,16 @@ abstract final class FirestoreErrorHandler {
       case 'unavailable':
         return _error(
           code: code,
-          message: 'تعذر الاتصال بالخادم، تحقق من الإنترنت.',
+          message: 'خدمة Firebase غير متاحة حاليًا، حاول مرة أخرى.',
+          type: AppErrorType.server,
+          isRetryable: true,
+        );
+
+      case 'network-error':
+      case 'network-request-failed':
+        return _error(
+          code: code,
+          message: 'حدث خطأ في الاتصال، تحقق من الإنترنت.',
           type: AppErrorType.network,
           isRetryable: true,
         );

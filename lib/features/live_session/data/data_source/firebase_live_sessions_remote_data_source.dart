@@ -1,3 +1,4 @@
+import 'package:alwaleed_admain/core/connection/network/network_info.dart';
 import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
 import 'package:alwaleed_admain/core/firebase/firestore/firestore_collections.dart';
 import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
@@ -9,30 +10,49 @@ import 'live_sessions_remote_data_source.dart';
 
 class FirebaseLiveSessionsRemoteDataSource
     implements LiveSessionsRemoteDataSource {
-  final FirestoreService _firestoreService;
-
   const FirebaseLiveSessionsRemoteDataSource({
     required FirestoreService firestoreService,
-  }) : _firestoreService = firestoreService;
+    required NetworkInfo networkInfo,
+  }) : _firestoreService = firestoreService,
+       _networkInfo = networkInfo;
+
+  final FirestoreService _firestoreService;
+  final NetworkInfo _networkInfo;
 
   @override
   Future<LiveSessionModel?> getLiveSession() {
     return _execute(() async {
-      final snapshot = await _firestoreService
-          .streamCollection(
-            collectionPath: FirestoreCollections.liveSessions,
-            queryBuilder: (collection) {
-              return collection.limit(1);
-            },
-            includeMetadataChanges: true,
-          )
-          .firstWhere((snapshot) {
-            final hasCachedLiveSession = snapshot.docs.isNotEmpty;
+      final stream = _firestoreService.streamCollection(
+        collectionPath: FirestoreCollections.liveSessions,
+        queryBuilder: _liveSessionQuery,
+        includeMetadataChanges: true,
+      );
 
-            final hasServerResponse = !snapshot.metadata.isFromCache;
+      final isConnected = await _hasInternetConnection();
 
-            return hasCachedLiveSession || hasServerResponse;
-          });
+      if (!isConnected) {
+        /*
+         * While offline, use the first cached snapshot immediately.
+         * If a cached live session exists, it will be displayed.
+         * If the cache is empty, the result will be null.
+         */
+        final cachedSnapshot = await stream.first;
+
+        return _mapLiveSession(cachedSnapshot);
+      }
+
+      /*
+       * While online:
+       * - Return immediately if a cached live session exists.
+       * - Otherwise wait for the first confirmed server response.
+       */
+      final snapshot = await stream.firstWhere((snapshot) {
+        final hasCachedLiveSession = snapshot.docs.isNotEmpty;
+
+        final hasServerResponse = !snapshot.metadata.isFromCache;
+
+        return hasCachedLiveSession || hasServerResponse;
+      });
 
       return _mapLiveSession(snapshot);
     });
@@ -59,6 +79,20 @@ class FirebaseLiveSessionsRemoteDataSource
     });
   }
 
+  Query<Map<String, dynamic>> _liveSessionQuery(
+    CollectionReference<Map<String, dynamic>> collection,
+  ) {
+    return collection.limit(1);
+  }
+
+  Future<bool> _hasInternetConnection() async {
+    try {
+      return await _networkInfo.isConnected;
+    } catch (_) {
+      return false;
+    }
+  }
+
   LiveSessionModel? _mapLiveSession(
     QuerySnapshot<Map<String, dynamic>> snapshot,
   ) {
@@ -75,6 +109,6 @@ class FirebaseLiveSessionsRemoteDataSource
   }
 
   Future<T> _execute<T>(Future<T> Function() operation) {
-    return FirebaseErrorHandler.execute(operation);
+    return FirebaseErrorHandler.execute<T>(operation);
   }
 }

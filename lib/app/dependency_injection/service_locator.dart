@@ -1,3 +1,4 @@
+import 'package:alwaleed_admain/app/routes/app_route_observer.dart';
 import 'package:alwaleed_admain/core/connection/cubit/network_status_cubit.dart';
 import 'package:alwaleed_admain/core/connection/network/internet_connection_network_info.dart';
 import 'package:alwaleed_admain/core/connection/network/network_info.dart';
@@ -59,12 +60,12 @@ void setupServiceLocator() {
 
   // Core services
 
-  getIt.registerLazySingleton<FirestoreService>(
-    () => FirebaseFirestoreService(firestore: getIt<FirebaseFirestore>()),
-  );
-
   getIt.registerLazySingleton<NetworkInfo>(
     () => InternetConnectionNetworkInfo(),
+  );
+
+  getIt.registerLazySingleton<FirestoreService>(
+    () => FirebaseFirestoreService(networkInfo: getIt<NetworkInfo>()),
   );
 
   // Students remote data sources
@@ -152,42 +153,35 @@ void setupServiceLocator() {
   );
 
   getIt.registerLazySingleton<DeleteStudentUseCase>(
-  () => DeleteStudentUseCase(
-    studentAuthRepository:
-        getIt<StudentAuthRepository>(),
-  ),
-);
+    () => DeleteStudentUseCase(
+      studentAuthRepository: getIt<StudentAuthRepository>(),
+    ),
+  );
 
-getIt.registerLazySingleton<LiveSessionsRemoteDataSource>(
-  () => FirebaseLiveSessionsRemoteDataSource(
-    firestoreService: getIt<FirestoreService>(),
-  ),
-);
+  getIt.registerLazySingleton<LiveSessionsRemoteDataSource>(
+    () => FirebaseLiveSessionsRemoteDataSource(
+      firestoreService: getIt<FirestoreService>(),
+      networkInfo: getIt<NetworkInfo>(),
+    ),
+  );
 
-getIt.registerLazySingleton<LiveSessionsRepository>(
-  () => LiveSessionsRepositoryImpl(
-    remoteDataSource:
-        getIt<LiveSessionsRemoteDataSource>(),
-  ),
-);
+  getIt.registerLazySingleton<LiveSessionsRepository>(
+    () => LiveSessionsRepositoryImpl(
+      remoteDataSource: getIt<LiveSessionsRemoteDataSource>(),
+    ),
+  );
 
-getIt.registerLazySingleton<GetLiveSessionUseCase>(
-  () => GetLiveSessionUseCase(
-    repository: getIt<LiveSessionsRepository>(),
-  ),
-);
+  getIt.registerLazySingleton<GetLiveSessionUseCase>(
+    () => GetLiveSessionUseCase(repository: getIt<LiveSessionsRepository>()),
+  );
 
-getIt.registerLazySingleton<SaveLiveSessionUseCase>(
-  () => SaveLiveSessionUseCase(
-    repository: getIt<LiveSessionsRepository>(),
-  ),
-);
+  getIt.registerLazySingleton<SaveLiveSessionUseCase>(
+    () => SaveLiveSessionUseCase(repository: getIt<LiveSessionsRepository>()),
+  );
 
-getIt.registerLazySingleton<DeleteLiveSessionUseCase>(
-  () => DeleteLiveSessionUseCase(
-    repository: getIt<LiveSessionsRepository>(),
-  ),
-);
+  getIt.registerLazySingleton<DeleteLiveSessionUseCase>(
+    () => DeleteLiveSessionUseCase(repository: getIt<LiveSessionsRepository>()),
+  );
 
   // Grades remote data source
 
@@ -218,8 +212,6 @@ getIt.registerLazySingleton<DeleteLiveSessionUseCase>(
     ),
   );
 
-  
-
   // Dashboard repository
 
   getIt.registerLazySingleton<DashboardRepository>(
@@ -244,4 +236,6 @@ getIt.registerLazySingleton<DeleteLiveSessionUseCase>(
   getIt.registerLazySingleton<NetworkStatusCubit>(() {
     return NetworkStatusCubit(networkInfo: getIt<NetworkInfo>());
   });
+
+  getIt.registerLazySingleton<AppRouteObserver>(() => AppRouteObserver());
 }
