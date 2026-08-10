@@ -126,31 +126,29 @@ class FirebaseFirestoreService implements FirestoreService {
     );
   }
 
- Future<void> patchData({
-  required String collectionPath,
-  required String documentId,
-  required Map<String, dynamic> data,
-}) async {
-  final documentReference = _firestore
-      .collection(collectionPath)
-      .doc(documentId);
+  Future<void> patchData({
+    required String collectionPath,
+    required String documentId,
+    required Map<String, dynamic> data,
+  }) async {
+    final documentReference = _firestore
+        .collection(collectionPath)
+        .doc(documentId);
 
-  final snapshot = await documentReference.get(
-    const GetOptions(
-      source: Source.server,
-    ),
-  );
-
-  if (!snapshot.exists) {
-    throw FirebaseException(
-      plugin: 'cloud_firestore',
-      code: 'not-found',
-      message: 'The requested document was not found.',
+    final snapshot = await documentReference.get(
+      const GetOptions(source: Source.server),
     );
-  }
 
-  await documentReference.update(data);
-}
+    if (!snapshot.exists) {
+      throw FirebaseException(
+        plugin: 'cloud_firestore',
+        code: 'not-found',
+        message: 'The requested document was not found.',
+      );
+    }
+
+    await documentReference.update(data);
+  }
 
   @override
   Future<void> deleteData({

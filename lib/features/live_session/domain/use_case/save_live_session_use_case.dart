@@ -1,5 +1,8 @@
-import 'package:alwaleed_admain/features/live_session/domain/repository/live_sessions_repository.dart';
+import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
+import 'package:dartz/dartz.dart';
+
 import '../entities/live_session_entity.dart';
+import '../repository/live_sessions_repository.dart';
 
 class SaveLiveSessionUseCase {
   const SaveLiveSessionUseCase({
@@ -8,7 +11,7 @@ class SaveLiveSessionUseCase {
 
   final LiveSessionsRepository _repository;
 
-  Future<void> call({
+  Future<Either<AppErrorModel, Unit>> call({
     required LiveSessionEntity liveSession,
   }) {
     return _repository.saveLiveSession(

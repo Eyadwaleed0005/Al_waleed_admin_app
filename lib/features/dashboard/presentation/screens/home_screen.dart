@@ -34,20 +34,15 @@ class HomeScreen extends StatelessWidget {
                   .refreshStudentsSummary();
             },
             child: SingleChildScrollView(
-              physics:
-                  const AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.symmetric(
-                horizontal: 24.w,
-                vertical: 20.h,
-              ),
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
               child: Column(
                 children: [
                   AppAnimations.screenSection(
                     delay: 0,
                     child: CustomHeaderBar(
                       title: 'لوحة التحكم',
-                      iconPath:
-                          AppImage().profileIcon,
+                      iconPath: AppImage().profileIcon,
                     ),
                   ),
                   verticalSpace(35),
@@ -58,36 +53,25 @@ class HomeScreen extends StatelessWidget {
                   verticalSpace(20),
                   AppAnimations.screenSection(
                     delay: 200,
-                    child: BlocBuilder<
-                      HomeDashboardCubit,
-                      HomeDashboardState
-                    >(
+                    child: BlocBuilder<HomeDashboardCubit, HomeDashboardState>(
                       builder: (context, state) {
                         return switch (state) {
                           HomeDashboardInitial() ||
-                          HomeDashboardLoading() =>
-                            SizedBox(
-                              height: 140.h,
-                              child: const Center(
-                                child:
-                                    AppLoadingIndicator(
-                                  color: ColorPalette
-                                      .primary,
-                                  size: 32,
-                                  strokeWidth: 3,
-                                ),
+                          HomeDashboardLoading() => SizedBox(
+                            height: 140.h,
+                            child: const Center(
+                              child: AppLoadingIndicator(
+                                color: ColorPalette.primary,
+                                size: 32,
+                                strokeWidth: 3,
                               ),
                             ),
-                          HomeDashboardLoaded(
-                            :final summary,
-                          ) =>
+                          ),
+                          HomeDashboardLoaded(:final summary) =>
                             StudentsOverviewCards(
-                              totalStudents:
-                                  summary
-                                      .totalStudents,
+                              totalStudents: summary.totalStudents,
                               expiredSubscriptions:
-                                  summary
-                                      .expiredSubscriptions,
+                                  summary.expiredSubscriptions,
                             ),
                         };
                       },
@@ -98,9 +82,9 @@ class HomeScreen extends StatelessWidget {
                     delay: 300,
                     child: QuickActionsSection(
                       onStudentsTap: () {
-                        Navigator.of(context).pushNamed(
-                          RouteNames.addStudentScreen,
-                        );
+                        Navigator.of(
+                          context,
+                        ).pushNamed(RouteNames.addStudentScreen);
                       },
                       onContentTap: () {},
                       onExamsTap: () {},

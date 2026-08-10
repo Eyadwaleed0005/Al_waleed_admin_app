@@ -1,5 +1,7 @@
 import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
-import 'package:alwaleed_admain/features/live_session/domain/entities/live_session_entity.dart';
+
+import '../../domain/entities/live_session_entity.dart';
+import '../../domain/entities/meeting_type.dart';
 
 class LiveSessionModel {
   const LiveSessionModel({
@@ -12,11 +14,16 @@ class LiveSessionModel {
   final String platformType;
   final String meetingUrl;
 
-  factory LiveSessionModel.fromMap(Map<String, dynamic> map) {
+  factory LiveSessionModel.fromMap(
+    Map<String, dynamic> map,
+  ) {
     return LiveSessionModel(
-      gradeId: map[FirestoreFields.gradeId] as String,
-      platformType: map[FirestoreFields.platformType] as String,
-      meetingUrl: map[FirestoreFields.meetingUrl] as String,
+      gradeId:
+          map[FirestoreFields.gradeId] as String,
+      platformType:
+          map[FirestoreFields.platformType] as String,
+      meetingUrl:
+          map[FirestoreFields.meetingUrl] as String,
     );
   }
 
@@ -25,7 +32,7 @@ class LiveSessionModel {
   ) {
     return LiveSessionModel(
       gradeId: entity.gradeId,
-      platformType: entity.platformType,
+      platformType: entity.platformType.value,
       meetingUrl: entity.meetingUrl,
     );
   }
@@ -41,7 +48,8 @@ class LiveSessionModel {
   LiveSessionEntity toEntity() {
     return LiveSessionEntity(
       gradeId: gradeId,
-      platformType: platformType,
+      platformType:
+          MeetingType.fromValue(platformType),
       meetingUrl: meetingUrl,
     );
   }
