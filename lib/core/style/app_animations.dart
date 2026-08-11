@@ -201,4 +201,22 @@ abstract final class AppAnimations {
           curve: Curves.easeOutBack,
         );
   }
+
+  static Widget emptyStateEntrance({required Widget child}) {
+    return child
+        .animate()
+        .fadeIn(duration: 450.ms, curve: Curves.easeOut)
+        .slideY(
+          begin: 0.10,
+          end: 0,
+          duration: 550.ms,
+          curve: Curves.easeOutCubic,
+        )
+        .scale(
+          begin: const Offset(0.96, 0.96),
+          end: const Offset(1, 1),
+          duration: 600.ms,
+          curve: Curves.easeOutBack,
+        );
+  }
 }

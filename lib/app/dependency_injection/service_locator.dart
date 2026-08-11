@@ -41,6 +41,16 @@ import 'package:alwaleed_admain/features/students/domain/use_cases/update_studen
 import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_profile_use_case.dart';
 import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_status_use_case.dart';
 import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_subscription_use_case.dart';
+import 'package:alwaleed_admain/features/study_notes/data/data_sources/firebase_study_notes_remote_data_source.dart';
+import 'package:alwaleed_admain/features/study_notes/data/data_sources/study_notes_remote_data_source.dart';
+import 'package:alwaleed_admain/features/study_notes/data/repositories/study_notes_repository_impl.dart';
+import 'package:alwaleed_admain/features/study_notes/domain/repositories/study_notes_repository.dart';
+import 'package:alwaleed_admain/features/study_notes/domain/use_case/create_study_note_use_case.dart';
+import 'package:alwaleed_admain/features/study_notes/domain/use_case/delete_study_note_use_case.dart';
+import 'package:alwaleed_admain/features/study_notes/domain/use_case/get_study_note_by_id_use_case.dart';
+import 'package:alwaleed_admain/features/study_notes/domain/use_case/get_study_notes_use_case.dart';
+import 'package:alwaleed_admain/features/study_notes/domain/use_case/stream_study_notes_use_case.dart';
+import 'package:alwaleed_admain/features/study_notes/domain/use_case/update_study_note_use_case.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:get_it/get_it.dart';
@@ -158,6 +168,8 @@ void setupServiceLocator() {
     ),
   );
 
+  // Live sessions remote data source
+
   getIt.registerLazySingleton<LiveSessionsRemoteDataSource>(
     () => FirebaseLiveSessionsRemoteDataSource(
       firestoreService: getIt<FirestoreService>(),
@@ -165,11 +177,15 @@ void setupServiceLocator() {
     ),
   );
 
+  // Live sessions repository
+
   getIt.registerLazySingleton<LiveSessionsRepository>(
     () => LiveSessionsRepositoryImpl(
       remoteDataSource: getIt<LiveSessionsRemoteDataSource>(),
     ),
   );
+
+  // Live sessions use cases
 
   getIt.registerLazySingleton<GetLiveSessionUseCase>(
     () => GetLiveSessionUseCase(repository: getIt<LiveSessionsRepository>()),
@@ -212,6 +228,12 @@ void setupServiceLocator() {
     ),
   );
 
+  // Dashboard local data source
+
+  getIt.registerLazySingleton<DashboardLocalDataSource>(
+    () => const SharedPreferencesDashboardLocalDataSource(),
+  );
+
   // Dashboard repository
 
   getIt.registerLazySingleton<DashboardRepository>(
@@ -219,10 +241,6 @@ void setupServiceLocator() {
       remoteDataSource: getIt<DashboardRemoteDataSource>(),
       localDataSource: getIt<DashboardLocalDataSource>(),
     ),
-  );
-
-  getIt.registerLazySingleton<DashboardLocalDataSource>(
-    () => const SharedPreferencesDashboardLocalDataSource(),
   );
 
   // Dashboard use cases
@@ -233,9 +251,55 @@ void setupServiceLocator() {
     ),
   );
 
-  getIt.registerLazySingleton<NetworkStatusCubit>(() {
-    return NetworkStatusCubit(networkInfo: getIt<NetworkInfo>());
-  });
+  // Network status cubit
+
+  getIt.registerLazySingleton<NetworkStatusCubit>(
+    () => NetworkStatusCubit(networkInfo: getIt<NetworkInfo>()),
+  );
+
+  // Study notes remote data source
+
+  getIt.registerLazySingleton<StudyNotesRemoteDataSource>(
+    () => FirebaseStudyNotesRemoteDataSource(
+      firestoreService: getIt<FirestoreService>(),
+    ),
+  );
+
+  // Study notes repository
+
+  getIt.registerLazySingleton<StudyNotesRepository>(
+    () => StudyNotesRepositoryImpl(
+      remoteDataSource: getIt<StudyNotesRemoteDataSource>(),
+    ),
+  );
+
+  // Study notes use cases
+
+  getIt.registerLazySingleton<GetStudyNotesUseCase>(
+    () => GetStudyNotesUseCase(repository: getIt<StudyNotesRepository>()),
+  );
+
+  getIt.registerLazySingleton<GetStudyNoteByIdUseCase>(
+    () => GetStudyNoteByIdUseCase(repository: getIt<StudyNotesRepository>()),
+  );
+
+  getIt.registerLazySingleton<StreamStudyNotesUseCase>(
+    () => StreamStudyNotesUseCase(repository: getIt<StudyNotesRepository>()),
+  );
+
+  getIt.registerLazySingleton<CreateStudyNoteUseCase>(
+    () => CreateStudyNoteUseCase(repository: getIt<StudyNotesRepository>()),
+  );
+
+  getIt.registerLazySingleton<UpdateStudyNoteUseCase>(
+    () => UpdateStudyNoteUseCase(repository: getIt<StudyNotesRepository>()),
+  );
+
+  getIt.registerLazySingleton<DeleteStudyNoteUseCase>(
+    () => DeleteStudyNoteUseCase(repository: getIt<StudyNotesRepository>()),
+  );
+
+  // App route observer
 
   getIt.registerLazySingleton<AppRouteObserver>(() => AppRouteObserver());
 }

@@ -8,7 +8,7 @@ abstract final class FirestoreFields {
   // Common
   static const String name = 'name';
   static const String title = 'title';
-  static const String subtitle = 'subtitle';
+  static const String description = 'description';
   static const String isActive = 'isActive';
   static const String isPublished = 'isPublished';
   static const String createdAt = 'createdAt';
