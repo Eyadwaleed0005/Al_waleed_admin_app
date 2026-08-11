@@ -177,6 +177,14 @@ class AppTextStyle {
       color: ColorPalette.textPrimary,
     );
   }
+    static TextStyle font20TextPrimarySemiBoldKufam() {
+    return TextStyle(
+      fontSize: 20.sp,
+      fontWeight: FontWeightHelper.semiBold,
+      fontFamily: kufam,
+      color: ColorPalette.textPrimary,
+    );
+  }
 
    static TextStyle font16TextPrimaryBoldTajawal() {
     return TextStyle(
@@ -287,4 +295,12 @@ class AppTextStyle {
       color: ColorPalette.error,
     );
   }
+  static TextStyle font21TextPrimaryBoldKufam() {
+  return TextStyle(
+    fontSize: 21.sp,
+    fontWeight: FontWeightHelper.bold,
+    fontFamily: kufam,
+    color: ColorPalette.textPrimary,
+  );
+}
 }

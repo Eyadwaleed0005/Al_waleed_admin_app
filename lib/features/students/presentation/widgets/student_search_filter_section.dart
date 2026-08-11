@@ -91,7 +91,8 @@ class StudentSearchFilterSection extends StatelessWidget {
         ),
       ],
       value: selectedSubscriptionFilter,
-      selectedText: _selectedStatusName,
+      selectedText: 'كل الحالات',
+      filterValue: _selectedStatusName,
       tooltip: 'اختيار حالة الاشتراك',
       onSelected: onStatusSelected,
     );
