@@ -6,5 +6,7 @@ class RouteNames {
   static const String addStudentScreen = '/addStudentScreen';
   static const String updateStudentScreen = '/update-student';
   static const String liveSession = '/liveSession';
+  static const String contentManagementScreen = '/content-management';
+  static const String viewNotesScreen = '/view-notes';
 
 }

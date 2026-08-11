@@ -25,6 +25,8 @@ import 'package:alwaleed_admain/features/students/presentation/cubit/update_stud
 import 'package:alwaleed_admain/features/students/presentation/screens/add_student_screen.dart';
 import 'package:alwaleed_admain/features/students/presentation/screens/student_management_screen.dart';
 import 'package:alwaleed_admain/features/students/presentation/screens/update_student_screen.dart';
+import 'package:alwaleed_admain/features/study_notes/presentation/screens/content_management_screen.dart';
+import 'package:alwaleed_admain/features/study_notes/presentation/screens/view_notes_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -47,6 +49,16 @@ class AppRoutes {
               child: const SplashScreen(),
             );
           },
+        );
+      case RouteNames.contentManagementScreen:
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (_) => const ContentManagementScreen(),
+        );
+      case RouteNames.viewNotesScreen:
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (_) => const ViewNotesScreen(),
         );
 
       case RouteNames.homeScreen:
