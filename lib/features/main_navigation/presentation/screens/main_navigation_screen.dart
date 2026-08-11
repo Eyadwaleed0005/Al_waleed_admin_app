@@ -6,6 +6,7 @@ import 'package:alwaleed_admain/features/live_session/presentation/screens/live_
 import 'package:alwaleed_admain/features/main_navigation/presentation/cubit/bottom_navigation_cubit.dart';
 import 'package:alwaleed_admain/features/main_navigation/presentation/widgets/custom_bottom_nav_bar.dart';
 import 'package:alwaleed_admain/features/students/presentation/screens/student_management_screen.dart';
+import 'package:alwaleed_admain/features/study_notes/presentation/screens/content_management_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,7 +15,7 @@ class MainNavigationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<BottomNavigationCubit>(
+    return BlocProvider(
       create: (_) => BottomNavigationCubit(),
       child: const MainNavigationView(),
     );
@@ -30,7 +31,7 @@ class MainNavigationView extends StatelessWidget {
       homeScreen: const HomeScreen(),
       students: const StudentManagementScreen(),
       examsScreen: const TemporaryScreen(title: 'إدارة الامتحانات'),
-      studyNotesScreen: const TemporaryScreen(title: 'إدارة المذكرات'),
+      studyNotesScreen: const ContentManagementScreen(),
       liveSessionScreen: const LiveSessionScreen(),
     );
 

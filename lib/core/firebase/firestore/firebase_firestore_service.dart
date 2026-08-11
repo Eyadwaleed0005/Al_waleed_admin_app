@@ -1,24 +1,31 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
+
+import 'package:alwaleed_admain/core/connection/network/network_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+
 import 'firestore_service.dart';
 
 class FirebaseFirestoreService implements FirestoreService {
-  final FirebaseFirestore _firestore;
-
-  final bool enableLogging;
-  final bool logRequestData;
-  final bool logResponseData;
-  final int maxLoggedDocuments;
-
   FirebaseFirestoreService({
+    required NetworkInfo networkInfo,
     FirebaseFirestore? firestore,
     this.enableLogging = kDebugMode,
     this.logRequestData = true,
     this.logResponseData = true,
     this.maxLoggedDocuments = 20,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance;
+  }) : _networkInfo = networkInfo,
+       _firestore = firestore ?? FirebaseFirestore.instance;
+
+  final FirebaseFirestore _firestore;
+  final NetworkInfo _networkInfo;
+
+  final bool enableLogging;
+  final bool logRequestData;
+  final bool logResponseData;
+  final int maxLoggedDocuments;
 
   @override
   Future<DocumentSnapshot<Map<String, dynamic>>> getDocument({
@@ -31,6 +38,10 @@ class FirebaseFirestoreService implements FirestoreService {
       operation: 'GET DOCUMENT',
       path: path,
       action: () {
+        /*
+         * Do not check the internet here.
+         * Firestore can return cached data while the device is offline.
+         */
         return _firestore.collection(collectionPath).doc(documentId).get();
       },
     );
@@ -46,6 +57,10 @@ class FirebaseFirestoreService implements FirestoreService {
       path: collectionPath,
       requestData: {'customQuery': queryBuilder != null},
       action: () {
+        /*
+         * Do not check the internet here.
+         * Firestore can return cached data while the device is offline.
+         */
         final collection = _firestore.collection(collectionPath);
         final query = queryBuilder?.call(collection) ?? collection;
 
@@ -103,51 +118,76 @@ class FirebaseFirestoreService implements FirestoreService {
     required Map<String, dynamic> data,
     String? documentId,
   }) {
-    final id = documentId?.trim();
-    final hasDocumentId = id != null && id.isNotEmpty;
+    final normalizedDocumentId = documentId?.trim();
 
-    final path = hasDocumentId ? '$collectionPath/$id' : collectionPath;
+    final hasDocumentId =
+        normalizedDocumentId != null && normalizedDocumentId.isNotEmpty;
+
+    final path = hasDocumentId
+        ? '$collectionPath/$normalizedDocumentId'
+        : collectionPath;
 
     return _execute(
       operation: 'POST',
       path: path,
       requestData: data,
       action: () async {
+        /*
+         * Check the connection before creating the Firestore write.
+         * If there is no internet, the write is never sent to Firestore.
+         */
+        await _requireInternetConnection();
+
         final collection = _firestore.collection(collectionPath);
 
-        if (hasDocumentId) {
-          await collection.doc(id).set(data);
-          return id;
+        if (normalizedDocumentId != null && normalizedDocumentId.isNotEmpty) {
+          await collection.doc(normalizedDocumentId).set(data);
+
+          return normalizedDocumentId;
         }
 
         final document = await collection.add(data);
+
         return document.id;
       },
     );
   }
 
+  @override
   Future<void> patchData({
     required String collectionPath,
     required String documentId,
     required Map<String, dynamic> data,
-  }) async {
+  }) {
     final documentReference = _firestore
         .collection(collectionPath)
         .doc(documentId);
 
-    final snapshot = await documentReference.get(
-      const GetOptions(source: Source.server),
+    return _execute(
+      operation: 'PATCH',
+      path: documentReference.path,
+      requestData: data,
+      action: () async {
+        /*
+         * Prevent update() from being called when the device is offline.
+         */
+        await _requireInternetConnection();
+
+        final snapshot = await documentReference.get(
+          const GetOptions(source: Source.server),
+        );
+
+        if (!snapshot.exists) {
+          throw FirebaseException(
+            plugin: 'cloud_firestore',
+            code: 'not-found',
+            message: 'The requested document was not found.',
+          );
+        }
+
+        await documentReference.update(data);
+      },
     );
-
-    if (!snapshot.exists) {
-      throw FirebaseException(
-        plugin: 'cloud_firestore',
-        code: 'not-found',
-        message: 'The requested document was not found.',
-      );
-    }
-
-    await documentReference.update(data);
   }
 
   @override
@@ -155,14 +195,41 @@ class FirebaseFirestoreService implements FirestoreService {
     required String collectionPath,
     required String documentId,
   }) {
-    final path = '$collectionPath/$documentId';
+    final documentReference = _firestore
+        .collection(collectionPath)
+        .doc(documentId);
 
     return _execute(
       operation: 'DELETE',
-      path: path,
-      action: () {
-        return _firestore.collection(collectionPath).doc(documentId).delete();
+      path: documentReference.path,
+      action: () async {
+        /*
+         * Prevent delete() from being called when the device is offline.
+         */
+        await _requireInternetConnection();
+
+        await documentReference.delete();
       },
+    );
+  }
+
+  Future<void> _requireInternetConnection() async {
+    bool isConnected = false;
+
+    try {
+      isConnected = await _networkInfo.isConnected;
+    } catch (_) {
+      isConnected = false;
+    }
+
+    if (isConnected) {
+      return;
+    }
+
+    throw FirebaseException(
+      plugin: 'cloud_firestore',
+      code: 'no-internet',
+      message: 'No internet connection is currently available.',
     );
   }
 
@@ -178,6 +245,7 @@ class FirebaseFirestoreService implements FirestoreService {
 
     try {
       final result = await action();
+
       stopwatch.stop();
 
       _logResponse(
@@ -234,7 +302,9 @@ class FirebaseFirestoreService implements FirestoreService {
     required String path,
     Object? data,
   }) {
-    if (!_canLog) return;
+    if (!_canLog) {
+      return;
+    }
 
     final buffer = StringBuffer()
       ..writeln('┌──────────── FIRESTORE REQUEST ────────────')
@@ -258,7 +328,9 @@ class FirebaseFirestoreService implements FirestoreService {
     Object? response,
     Duration? duration,
   }) {
-    if (!_canLog) return;
+    if (!_canLog) {
+      return;
+    }
 
     final buffer = StringBuffer()
       ..writeln('┌──────────── FIRESTORE RESPONSE ───────────')
@@ -287,7 +359,9 @@ class FirebaseFirestoreService implements FirestoreService {
     required StackTrace stackTrace,
     Duration? duration,
   }) {
-    if (!_canLog) return;
+    if (!_canLog) {
+      return;
+    }
 
     final buffer = StringBuffer()
       ..writeln('┌───────────── FIRESTORE ERROR ─────────────')
