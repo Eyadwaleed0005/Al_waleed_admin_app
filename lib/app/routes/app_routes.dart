@@ -25,6 +25,8 @@ import 'package:alwaleed_admain/features/students/presentation/cubit/update_stud
 import 'package:alwaleed_admain/features/students/presentation/screens/add_student_screen.dart';
 import 'package:alwaleed_admain/features/students/presentation/screens/student_management_screen.dart';
 import 'package:alwaleed_admain/features/students/presentation/screens/update_student_screen.dart';
+import 'package:alwaleed_admain/features/study_notes/domain/use_case/stream_study_notes_use_case.dart';
+import 'package:alwaleed_admain/features/study_notes/presentation/cubit/view_notes_cubit.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/screens/content_management_screen.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/screens/view_notes_screen.dart';
 import 'package:flutter/material.dart';
@@ -50,15 +52,21 @@ class AppRoutes {
             );
           },
         );
+
       case RouteNames.contentManagementScreen:
         return MaterialPageRoute<dynamic>(
           settings: settings,
-          builder: (_) => const ContentManagementScreen(),
+          builder: (_) {
+            return const ContentManagementScreen();
+          },
         );
+
       case RouteNames.viewNotesScreen:
         return MaterialPageRoute<dynamic>(
           settings: settings,
-          builder: (_) => const ViewNotesScreen(),
+          builder: (_) {
+            return _provideViewNotesCubit(child: const ViewNotesScreen());
+          },
         );
 
       case RouteNames.homeScreen:
@@ -172,6 +180,13 @@ class AppRoutes {
     )..watchStudentManagement();
   }
 
+  static ViewNotesCubit _createViewNotesCubit() {
+    return ViewNotesCubit(
+      streamGradesUseCase: _getIt<StreamGradesUseCase>(),
+      streamStudyNotesUseCase: _getIt<StreamStudyNotesUseCase>(),
+    )..initialize();
+  }
+
   static LiveSessionCubit _createLiveSessionCubit() {
     return LiveSessionCubit(
       streamGradesUseCase: _getIt<StreamGradesUseCase>(),
@@ -209,6 +224,13 @@ class AppRoutes {
   static Widget _provideStudentManagementCubit({required Widget child}) {
     return BlocProvider<StudentManagementCubit>(
       create: (_) => _createStudentManagementCubit(),
+      child: child,
+    );
+  }
+
+  static Widget _provideViewNotesCubit({required Widget child}) {
+    return BlocProvider<ViewNotesCubit>(
+      create: (_) => _createViewNotesCubit(),
       child: child,
     );
   }

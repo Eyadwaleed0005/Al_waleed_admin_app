@@ -5,7 +5,7 @@ abstract final class FirestoreCollections {
   static const String lessons = 'lessons';
   static const String lessonQuestions = 'lessonQuestions';
 
-  static const String studyNotes = 'studyNotes';
+  static const String studyNotes = 'study_notes';
 
   static const String exams = 'exams';
   static const String examQuestions = 'examQuestions';
