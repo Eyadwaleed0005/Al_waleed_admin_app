@@ -1,3 +1,4 @@
+import 'package:alwaleed_admain/app/routes/route_names.dart';
 import 'package:alwaleed_admain/core/helper/app_system_ui.dart';
 import 'package:alwaleed_admain/core/helper/spacer.dart';
 import 'package:alwaleed_admain/core/style/app_animations.dart';
@@ -88,13 +89,15 @@ class ViewNotesScreen extends StatelessWidget {
   }
 
   void _onAddNotePressed(BuildContext context) {
-    if (onAddNotePressed != null) {
-      onAddNotePressed!();
-      return;
-    }
-
-    debugPrint('Add new note button pressed');
+  if (onAddNotePressed != null) {
+    onAddNotePressed!();
+    return;
   }
+
+  Navigator.of(context).pushNamed(
+    RouteNames.addNoteScreen,
+  );
+}
 
   void _onNoteTap(BuildContext context, StudyNoteEntity note) {
     if (onNoteTap != null) {
