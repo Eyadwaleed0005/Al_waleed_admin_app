@@ -27,6 +27,7 @@ import 'package:alwaleed_admain/features/students/presentation/screens/student_m
 import 'package:alwaleed_admain/features/students/presentation/screens/update_student_screen.dart';
 import 'package:alwaleed_admain/features/study_notes/domain/use_case/stream_study_notes_use_case.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/cubit/view_notes_cubit.dart';
+import 'package:alwaleed_admain/features/study_notes/presentation/screens/add_note_screen.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/screens/content_management_screen.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/screens/view_notes_screen.dart';
 import 'package:flutter/material.dart';
@@ -94,6 +95,14 @@ class AppRoutes {
             return _provideStudentManagementCubit(
               child: const StudentManagementScreen(),
             );
+          },
+        );
+
+      case RouteNames.addNoteScreen:
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (_) {
+            return const AddNoteScreen();
           },
         );
 

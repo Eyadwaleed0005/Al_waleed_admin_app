@@ -13,7 +13,7 @@ class ColorPalette {
   static const Color accent = Color(0xFFABC8A3);
   static const Color highlight = Color(0xFFF0E295);
   static const Color paleSage = Color(0xFFDCEBE1);
-
+   static const Color black = Color.fromARGB(255, 0, 0, 0);
 
   // Highlight with 12% opacity: #F0E2951F
   static const Color highlightShadow = Color(0x1FF0E295);
@@ -40,4 +40,5 @@ class ColorPalette {
   static const Color warning = Color(0xFFB8860B);
   static const Color error = Color(0xFFC0392B);
   static const Color info = Color(0xFF28729F);
+  static const Color infoSoftBg = Color(0xFFE3EFF6);
 }

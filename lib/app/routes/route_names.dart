@@ -8,5 +8,6 @@ class RouteNames {
   static const String liveSession = '/liveSession';
   static const String contentManagementScreen = '/content-management';
   static const String viewNotesScreen = '/view-notes';
+  static const String addNoteScreen = '/add-note';
 
 }
