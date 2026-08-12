@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:alwaleed_admain/core/errors/exceptions/firebase_remote_exception.dart';
 import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
 import 'package:alwaleed_admain/core/firebase/firestore/firestore_collections.dart';
@@ -20,6 +22,7 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
   static const String _pdfContentType = 'application/pdf';
   static const String _metadataNoteId = 'noteId';
   static const String _metadataOriginalFileName = 'originalFileName';
+  static const int _maximumPdfFileSizeInBytes = 15 * 1024 * 1024;
 
   final FirestoreService _firestoreService;
   final StorageService _storageService;
@@ -87,6 +90,8 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
         value: note.pdfFileName,
         fieldName: FirestoreFields.pdfFileName,
       );
+
+      await _validateLocalPdfFile(localFilePath: normalizedLocalPdfFilePath);
 
       final newStoragePath = _buildPdfStoragePath(noteId: normalizedNoteId);
 
@@ -163,6 +168,8 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
         return;
       }
 
+      await _validateLocalPdfFile(localFilePath: normalizedReplacementPath);
+
       final normalizedPdfFileName = _normalizeRequiredValue(
         value: note.pdfFileName,
         fieldName: FirestoreFields.pdfFileName,
@@ -223,16 +230,25 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
 
       final currentNote = await _getRequiredStudyNote(noteId: normalizedNoteId);
 
+      final currentStoragePath = currentNote.pdfStoragePath.trim();
+
+      /*
+       * نحذف ملف Storage أولًا.
+       *
+       * لو حذف Firestore فشل بعد ذلك، تظل المذكرة موجودة
+       * ويمكن للمستخدم إعادة محاولة الحذف.
+       *
+       * FirebaseStorageService يعتبر object-not-found نجاحًا،
+       * لذلك إعادة المحاولة تظل آمنة.
+       */
+      if (currentStoragePath.isNotEmpty) {
+        await _deleteStorageFile(storagePath: currentStoragePath);
+      }
+
       await _firestoreService.deleteData(
         collectionPath: FirestoreCollections.studyNotes,
         documentId: normalizedNoteId,
       );
-
-      final currentStoragePath = currentNote.pdfStoragePath.trim();
-
-      if (currentStoragePath.isNotEmpty) {
-        await _tryDeleteStorageFile(storagePath: currentStoragePath);
-      }
     });
   }
 
@@ -258,6 +274,35 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
     return StudyNoteModel.fromMap(documentId: snapshot.id, map: data);
   }
 
+  Future<void> _validateLocalPdfFile({required String localFilePath}) async {
+    final normalizedPath = _normalizeRequiredValue(
+      value: localFilePath,
+      fieldName: 'localPdfFilePath',
+    );
+
+    final localFile = File(normalizedPath);
+
+    final fileExists = await localFile.exists();
+
+    if (!fileExists) {
+      throw FirebaseException(
+        plugin: 'firebase_storage',
+        code: 'local-file-not-found',
+        message: 'The selected local PDF file was not found.',
+      );
+    }
+
+    final fileSize = await localFile.length();
+
+    if (fileSize > _maximumPdfFileSizeInBytes) {
+      throw FirebaseException(
+        plugin: 'firebase_storage',
+        code: 'file-too-large',
+        message: 'The PDF file size cannot exceed 15MB.',
+      );
+    }
+  }
+
   StudyNoteModel _copyNoteWithPdf({
     required StudyNoteModel note,
     required String pdfStoragePath,
@@ -273,11 +318,14 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
       pdfStoragePath: pdfStoragePath,
       pdfFileName: pdfFileName,
       pdfFileSize: pdfFileSize,
+      createdAt: note.createdAt,
+      updatedAt: note.updatedAt,
     );
   }
 
   String _buildPdfStoragePath({required String noteId}) {
     final fileVersion = DateTime.now().microsecondsSinceEpoch;
+
     return '${FirestoreCollections.studyNotes}/'
         '$noteId/'
         '$fileVersion.pdf';
@@ -300,6 +348,15 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
     );
   }
 
+  Future<void> _deleteStorageFile({required String storagePath}) {
+    final normalizedStoragePath = _normalizeRequiredValue(
+      value: storagePath,
+      fieldName: FirestoreFields.pdfStoragePath,
+    );
+
+    return _storageService.deleteFile(storagePath: normalizedStoragePath);
+  }
+
   Future<void> _tryDeleteStorageFile({required String storagePath}) async {
     final normalizedStoragePath = storagePath.trim();
 
@@ -309,7 +366,15 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
 
     try {
       await _storageService.deleteFile(storagePath: normalizedStoragePath);
-    } catch (_) {}
+    } catch (_) {
+      /*
+       * هذه الدالة تستخدم فقط في:
+       * - Rollback بعد فشل Firestore.
+       * - تنظيف ملف PDF القديم بعد نجاح الاستبدال.
+       *
+       * لا يجب أن تخفي أخطاء الحذف الصريح للمذكرة.
+       */
+    }
   }
 
   FirestoreQueryBuilder? _getNotesQuery({String? gradeId, bool? isPublished}) {
@@ -356,6 +421,27 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
     }).toList();
 
     notes.sort((firstNote, secondNote) {
+      final firstCreatedAt = firstNote.createdAt;
+      final secondCreatedAt = secondNote.createdAt;
+
+      if (firstCreatedAt == null && secondCreatedAt == null) {
+        return firstNote.name.compareTo(secondNote.name);
+      }
+
+      if (firstCreatedAt == null) {
+        return 1;
+      }
+
+      if (secondCreatedAt == null) {
+        return -1;
+      }
+
+      final dateComparison = secondCreatedAt.compareTo(firstCreatedAt);
+
+      if (dateComparison != 0) {
+        return dateComparison;
+      }
+
       return firstNote.name.compareTo(secondNote.name);
     });
 
@@ -389,7 +475,6 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
       final remoteException = FirebaseRemoteException(
         errorModel: FirebaseErrorHandler.handle(error),
       );
-
       Error.throwWithStackTrace(remoteException, stackTrace);
     }
   }

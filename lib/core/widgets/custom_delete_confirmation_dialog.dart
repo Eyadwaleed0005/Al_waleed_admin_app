@@ -1,23 +1,27 @@
 import 'package:alwaleed_admain/core/helper/spacer.dart';
 import 'package:alwaleed_admain/core/style/app_color.dart';
 import 'package:alwaleed_admain/core/style/textstyles.dart';
-import 'package:alwaleed_admain/core/widgets/custom_delete_button.dart';
-import 'package:alwaleed_admain/core/widgets/custom_secondary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Future<bool> showCustomDeleteConfirmationDialog(
+Future<bool> showCustomDeleteConfirmationBottomSheet(
   BuildContext context, {
   required String title,
   required String message,
-  String confirmText = 'تأكيد الحذف',
+  required String confirmText,
   String cancelText = 'إلغاء',
+  bool isDismissible = true,
 }) async {
-  final bool? result = await showDialog<bool>(
+  final result = await showModalBottomSheet<bool>(
     context: context,
-    barrierDismissible: false,
-    builder: (dialogContext) {
-      return CustomDeleteConfirmationDialog(
+    useRootNavigator: true,
+    isScrollControlled: true,
+    isDismissible: isDismissible,
+    enableDrag: isDismissible,
+    backgroundColor: Colors.transparent,
+    barrierColor: ColorPalette.textPrimary.withValues(alpha: 0.35),
+    builder: (_) {
+      return CustomDeleteConfirmationBottomSheet(
         title: title,
         message: message,
         confirmText: confirmText,
@@ -29,13 +33,13 @@ Future<bool> showCustomDeleteConfirmationDialog(
   return result ?? false;
 }
 
-class CustomDeleteConfirmationDialog extends StatelessWidget {
-  const CustomDeleteConfirmationDialog({
+class CustomDeleteConfirmationBottomSheet extends StatelessWidget {
+  const CustomDeleteConfirmationBottomSheet({
     super.key,
     required this.title,
     required this.message,
-    this.confirmText = 'تأكيد الحذف',
-    this.cancelText = 'إلغاء',
+    required this.confirmText,
+    required this.cancelText,
   });
 
   final String title;
@@ -45,84 +49,148 @@ class CustomDeleteConfirmationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+    final bottomSafeArea = MediaQuery.paddingOf(context).bottom;
+
+    return Directionality(
+      textDirection: TextDirection.rtl,
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 30.h),
+        padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 20.h + bottomSafeArea),
         decoration: BoxDecoration(
           color: ColorPalette.surface,
-          borderRadius: BorderRadius.circular(28.r),
-          border: Border.all(
-            color: ColorPalette.error.withValues(alpha: 0.30),
-            width: 1.2.w,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: ColorPalette.error.withValues(alpha: 0.10),
-              blurRadius: 28.r,
-              offset: Offset(0, 10.h),
-            ),
-          ],
+          borderRadius: BorderRadius.vertical(top: Radius.circular(26.r)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              width: 72.w,
-              height: 72.h,
-              decoration: BoxDecoration(
-                color: ColorPalette.error.withValues(alpha: 0.09),
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Icon(
-                Icons.delete_outline_rounded,
-                color: ColorPalette.error,
-                size: 38.sp,
-              ),
-            ),
+            const _BottomSheetHandle(),
 
-            verticalSpace(22),
+            verticalSpace(20),
 
             Text(
               title,
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.right,
               textDirection: TextDirection.rtl,
-              style: AppTextStyle.font18PrimarySemiBoldKufam().copyWith(
-                color: ColorPalette.textPrimary,
-              ),
+              style: AppTextStyle.font18PrimarySemiBoldKufam(),
             ),
 
-            verticalSpace(10),
+            verticalSpace(14),
 
             Text(
               message,
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.right,
               textDirection: TextDirection.rtl,
-              style: AppTextStyle.font14TextPrimaryRegularTajawal().copyWith(
-                color: ColorPalette.textSecondary,
+              style: AppTextStyle.font14TextSecondaryRegularTajawal().copyWith(
+                height: 1.6,
               ),
             ),
 
-            verticalSpace(26),
+            verticalSpace(72),
 
-            CustomDeleteButton(
-              text: confirmText,
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-            verticalSpace(12),
-            CustomSecondaryButton(
-              text: cancelText,
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
+            Row(
+              textDirection: TextDirection.rtl,
+              children: [
+                Expanded(
+                  child: _ConfirmButton(
+                    text: confirmText,
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                  ),
+                ),
+
+                horizontalSpace(16),
+
+                Expanded(
+                  child: _CancelButton(
+                    text: cancelText,
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BottomSheetHandle extends StatelessWidget {
+  const _BottomSheetHandle();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        width: 42.w,
+        height: 4.h,
+        decoration: BoxDecoration(
+          color: ColorPalette.primary.withValues(alpha: 0.28),
+          borderRadius: BorderRadius.circular(100.r),
+        ),
+      ),
+    );
+  }
+}
+
+class _ConfirmButton extends StatelessWidget {
+  const _ConfirmButton({required this.text, required this.onPressed});
+
+  final String text;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 52.h,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          backgroundColor: ColorPalette.error,
+          foregroundColor: ColorPalette.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(13.r),
+          ),
+        ),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: AppTextStyle.font15SurfaceBoldTajawal(),
+        ),
+      ),
+    );
+  }
+}
+
+class _CancelButton extends StatelessWidget {
+  const _CancelButton({required this.text, required this.onPressed});
+
+  final String text;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 52.h,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          foregroundColor: ColorPalette.primary,
+          backgroundColor: ColorPalette.surface,
+          side: BorderSide(color: ColorPalette.primary, width: 1.4.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(13.r),
+          ),
+        ),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: AppTextStyle.font15PrimaryBoldTajawal(),
         ),
       ),
     );

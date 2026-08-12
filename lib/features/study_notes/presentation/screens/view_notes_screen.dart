@@ -20,6 +20,7 @@ class ViewNotesScreen extends StatelessWidget {
   const ViewNotesScreen({super.key, this.onAddNotePressed, this.onNoteTap});
 
   final VoidCallback? onAddNotePressed;
+
   final ValueChanged<StudyNoteEntity>? onNoteTap;
 
   @override
@@ -41,9 +42,7 @@ class ViewNotesScreen extends StatelessWidget {
                         title: 'عرض المذكرات',
                       ),
                     ),
-
                     verticalSpace(30),
-
                     Expanded(
                       child: AppAnimations.screenSection(
                         delay: 120,
@@ -53,7 +52,6 @@ class ViewNotesScreen extends StatelessWidget {
                                 state is ViewNotesLoading) {
                               return const ViewNotesLoadingSkeleton();
                             }
-
                             if (state is ViewNotesFailure) {
                               return AppErrorWidget(
                                 message: state.message,
@@ -62,18 +60,15 @@ class ViewNotesScreen extends StatelessWidget {
                                 },
                               );
                             }
-
                             if (state is ViewNotesDataSuccess) {
                               return ViewNoteContent(
                                 state: state,
                                 onAddNotePressed: () {
                                   final callback = onAddNotePressed;
-
                                   if (callback != null) {
                                     callback();
                                     return;
                                   }
-
                                   Navigator.of(
                                     context,
                                   ).pushNamed(RouteNames.addNoteScreen);
@@ -85,14 +80,13 @@ class ViewNotesScreen extends StatelessWidget {
                                     callback(note);
                                     return;
                                   }
-
-                                  debugPrint(
-                                    'Selected note ID: ${note.noteId}',
+                                  Navigator.of(context).pushNamed(
+                                    RouteNames.editNoteScreen,
+                                    arguments: note.noteId,
                                   );
                                 },
                               );
                             }
-
                             return const ViewNotesLoadingSkeleton();
                           },
                         ),

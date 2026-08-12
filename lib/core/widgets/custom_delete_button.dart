@@ -17,38 +17,35 @@ class CustomDeleteButton extends StatelessWidget {
 
   final String text;
   final VoidCallback onPressed;
-
   final IconData icon;
-
   final bool isLoading;
   final bool isEnabled;
 
   @override
   Widget build(BuildContext context) {
-    final bool canPress = isEnabled && !isLoading;
+    final canPress = isEnabled && !isLoading;
 
-    final Color contentColor = isEnabled
-        ? ColorPalette.error
-        : ColorPalette.disabled;
+    final backgroundColor = isLoading || isEnabled
+        ? ColorPalette.error.withValues(alpha: 0.055)
+        : ColorPalette.error.withValues(alpha: 0.025);
 
-    final Color borderColor = isEnabled || isLoading
-        ? ColorPalette.error.withValues(alpha: 0.65)
-        : ColorPalette.disabled;
-
-    final Color backgroundColor = isEnabled || isLoading
-        ? ColorPalette.error.withValues(alpha: 0.06)
-        : ColorPalette.disabled.withValues(alpha: 0.08);
+    final borderColor = isLoading || isEnabled
+        ? ColorPalette.error.withValues(alpha: 0.48)
+        : ColorPalette.error.withValues(alpha: 0.20);
 
     return SizedBox(
       width: double.infinity,
       height: 56.h,
-      child: OutlinedButton(
+      child: ElevatedButton(
         onPressed: canPress ? onPressed : null,
-        style: OutlinedButton.styleFrom(
+        style: ElevatedButton.styleFrom(
           elevation: 0,
           backgroundColor: backgroundColor,
           foregroundColor: ColorPalette.error,
-          disabledForegroundColor: ColorPalette.disabled,
+          disabledBackgroundColor: backgroundColor,
+          disabledForegroundColor: isLoading
+              ? ColorPalette.error
+              : ColorPalette.error.withValues(alpha: 0.45),
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           side: BorderSide(color: borderColor, width: 1.2.w),
           shape: RoundedRectangleBorder(
@@ -63,25 +60,31 @@ class CustomDeleteButton extends StatelessWidget {
               ? AppLoadingIndicator(
                   key: const ValueKey('delete-button-loading'),
                   color: ColorPalette.error,
-                  size: 20.sp,
+                  size: 21.sp,
                   strokeWidth: 2.5.w,
                 )
               : Row(
-                  key: const ValueKey('delete-button-icon-and-text'),
+                  key: const ValueKey('delete-button-content'),
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
+                  textDirection: TextDirection.ltr,
                   children: [
-                    Icon(icon, size: 22.sp, color: contentColor),
+                    Icon(
+                      icon,
+                      size: 20.sp,
+                      color: canPress
+                          ? ColorPalette.error
+                          : ColorPalette.error.withValues(alpha: 0.45),
+                    ),
                     horizontalSpace(8),
                     Flexible(
                       child: Text(
                         text,
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.rtl,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTextStyle.font15TextPrimaryBoldTajawal()
-                            .copyWith(color: contentColor),
+                        textAlign: TextAlign.center,
+                        textDirection: TextDirection.rtl,
+                        style: AppTextStyle.font15ErrorBoldTajawal(),
                       ),
                     ),
                   ],
