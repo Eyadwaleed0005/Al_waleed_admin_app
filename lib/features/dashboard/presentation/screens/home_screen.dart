@@ -97,7 +97,9 @@ class HomeScreen extends StatelessWidget {
                           },
                           onContentTap: () {},
                           onExamsTap: () {},
-                          onLiveLinkTap: () {},
+                          onLiveLinkTap: () {Navigator.of(
+                              context,
+                            ).pushNamed(RouteNames.liveSession);},
                         ),
                       ),
                     ],

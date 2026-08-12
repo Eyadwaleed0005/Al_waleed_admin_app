@@ -26,11 +26,16 @@ import 'package:alwaleed_admain/features/students/presentation/screens/add_stude
 import 'package:alwaleed_admain/features/students/presentation/screens/student_management_screen.dart';
 import 'package:alwaleed_admain/features/students/presentation/screens/update_student_screen.dart';
 import 'package:alwaleed_admain/features/study_notes/domain/use_case/create_study_note_use_case.dart';
+import 'package:alwaleed_admain/features/study_notes/domain/use_case/delete_study_note_use_case.dart';
+import 'package:alwaleed_admain/features/study_notes/domain/use_case/get_study_note_by_id_use_case.dart';
 import 'package:alwaleed_admain/features/study_notes/domain/use_case/stream_study_notes_use_case.dart';
+import 'package:alwaleed_admain/features/study_notes/domain/use_case/update_study_note_use_case.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/cubit/add_note_cubit.dart';
+import 'package:alwaleed_admain/features/study_notes/presentation/cubit/edit_note_cubit.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/cubit/view_notes_cubit.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/screens/add_note_screen.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/screens/content_management_screen.dart';
+import 'package:alwaleed_admain/features/study_notes/presentation/screens/edit_note_screen.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/screens/view_notes_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,6 +82,23 @@ class AppRoutes {
           settings: settings,
           builder: (_) {
             return _provideAddNoteCubit(child: const AddNoteScreen());
+          },
+        );
+
+      case RouteNames.editNoteScreen:
+        final noteId = settings.arguments;
+
+        if (noteId is! String || noteId.trim().isEmpty) {
+          return null;
+        }
+
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (_) {
+            return _provideEditNoteCubit(
+              noteId: noteId,
+              child: const EditNoteScreen(),
+            );
           },
         );
 
@@ -205,6 +227,16 @@ class AppRoutes {
     )..initialize();
   }
 
+  static EditNoteCubit _createEditNoteCubit({required String noteId}) {
+    return EditNoteCubit(
+      noteId: noteId,
+      getStudyNoteByIdUseCase: _getIt<GetStudyNoteByIdUseCase>(),
+      streamGradesUseCase: _getIt<StreamGradesUseCase>(),
+      updateStudyNoteUseCase: _getIt<UpdateStudyNoteUseCase>(),
+      deleteStudyNoteUseCase: _getIt<DeleteStudyNoteUseCase>(),
+    )..initialize();
+  }
+
   static LiveSessionCubit _createLiveSessionCubit() {
     return LiveSessionCubit(
       streamGradesUseCase: _getIt<StreamGradesUseCase>(),
@@ -256,6 +288,16 @@ class AppRoutes {
   static Widget _provideAddNoteCubit({required Widget child}) {
     return BlocProvider<AddNoteCubit>(
       create: (_) => _createAddNoteCubit(),
+      child: child,
+    );
+  }
+
+  static Widget _provideEditNoteCubit({
+    required String noteId,
+    required Widget child,
+  }) {
+    return BlocProvider<EditNoteCubit>(
+      create: (_) => _createEditNoteCubit(noteId: noteId),
       child: child,
     );
   }
