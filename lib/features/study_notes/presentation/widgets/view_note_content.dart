@@ -1,4 +1,5 @@
 import 'package:alwaleed_admain/core/helper/spacer.dart';
+import 'package:alwaleed_admain/core/style/app_animations.dart';
 import 'package:alwaleed_admain/core/widgets/app_empty_widget.dart';
 import 'package:alwaleed_admain/core/widgets/app_no_search_results_widget.dart';
 import 'package:alwaleed_admain/core/widgets/custom_button.dart';
@@ -19,20 +20,20 @@ class ViewNoteContent extends StatelessWidget {
   });
 
   final ViewNotesDataSuccess state;
-
   final VoidCallback onAddNotePressed;
-
   final ValueChanged<StudyNoteEntity> onNoteTap;
 
   @override
   Widget build(BuildContext context) {
     if (state.hasNoNotes) {
-      return AppEmptyWidget(
-        title: 'لا توجد مذكرات',
-        message: 'لم تتم إضافة أي مذكرات حتى الآن، يمكنك إضافة مذكرة جديدة.',
-        actionText: 'إضافة مذكرة جديدة',
-        icon: Icons.menu_book_outlined,
-        onActionPressed: onAddNotePressed,
+      return AppAnimations.emptyStateEntrance(
+        child: AppEmptyWidget(
+          title: 'لا توجد مذكرات',
+          message: 'لم تتم إضافة أي مذكرات حتى الآن، يمكنك إضافة مذكرة جديدة.',
+          actionText: 'إضافة مذكرة جديدة',
+          icon: Icons.menu_book_outlined,
+          onActionPressed: onAddNotePressed,
+        ),
       );
     }
 
@@ -41,31 +42,45 @@ class ViewNoteContent extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        NoteSearchFilterSection(
-          grades: state.grades,
-          selectedGradeId: state.selectedGradeId,
-          selectedPublicationFilter: state.selectedPublicationFilter,
-          onSearchChanged: cubit.searchNotes,
-          onSearchSubmitted: cubit.searchNotes,
-          onGradeSelected: cubit.selectGrade,
-          onPublicationStatusSelected: cubit.selectPublicationFilter,
+        AppAnimations.screenSection(
+          delay: 0,
+          child: NoteSearchFilterSection(
+            grades: state.grades,
+            selectedGradeId: state.selectedGradeId,
+            selectedPublicationFilter: state.selectedPublicationFilter,
+            onSearchChanged: cubit.searchNotes,
+            onSearchSubmitted: cubit.searchNotes,
+            onGradeSelected: cubit.selectGrade,
+            onPublicationStatusSelected: cubit.selectPublicationFilter,
+          ),
         ),
+
         verticalSpace(24),
+
         Expanded(
           child: state.hasNoSearchResults
-              ? const AppNoSearchResultsWidget(
-                  message: 'لا توجد مذكرات مطابقة للبحث أو الفلاتر المحددة.',
+              ? AppAnimations.emptyStateEntrance(
+                  child: const AppNoSearchResultsWidget(
+                    message: 'لا توجد مذكرات مطابقة للبحث أو الفلاتر المحددة.',
+                  ),
                 )
-              : StudyNotesList(
-                  notes: state.filteredNotes,
-                  onNoteTap: onNoteTap,
+              : AppAnimations.screenSection(
+                  delay: 120,
+                  child: StudyNotesList(
+                    notes: state.filteredNotes,
+                    onNoteTap: onNoteTap,
+                  ),
                 ),
         ),
+
         verticalSpace(16),
-        CustomButton(
-          text: 'إضافة مذكرة جديدة',
-          icon: Icons.add_rounded,
-          onPressed: onAddNotePressed,
+
+        AppAnimations.screenSection(
+          delay: 240,
+          child: CustomButton(
+            text: 'إضافة مذكرة جديدة',
+            onPressed: onAddNotePressed,
+          ),
         ),
       ],
     );

@@ -6,9 +6,7 @@ abstract class StudyNotesRemoteDataSource {
     bool? isPublished,
   });
 
-  Future<StudyNoteModel> getStudyNoteById({
-    required String noteId,
-  });
+  Future<StudyNoteModel> getStudyNoteById({required String noteId});
 
   Stream<List<StudyNoteModel>> streamStudyNotes({
     String? gradeId,
@@ -17,13 +15,13 @@ abstract class StudyNotesRemoteDataSource {
 
   Future<void> createStudyNote({
     required StudyNoteModel note,
+    required String localPdfFilePath,
   });
 
   Future<void> updateStudyNote({
     required StudyNoteModel note,
+    String? replacementPdfFilePath,
   });
 
-  Future<void> deleteStudyNote({
-    required String noteId,
-  });
+  Future<void> deleteStudyNote({required String noteId});
 }

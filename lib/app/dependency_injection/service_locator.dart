@@ -4,6 +4,8 @@ import 'package:alwaleed_admain/core/connection/network/internet_connection_netw
 import 'package:alwaleed_admain/core/connection/network/network_info.dart';
 import 'package:alwaleed_admain/core/firebase/firestore/firebase_firestore_service.dart';
 import 'package:alwaleed_admain/core/firebase/firestore/firestore_service.dart';
+import 'package:alwaleed_admain/core/firebase/storage/firebase_storage_service.dart';
+import 'package:alwaleed_admain/core/firebase/storage/storage_service.dart';
 import 'package:alwaleed_admain/features/dashboard/data/data_sources/cache/dashboard_local_data_source.dart';
 import 'package:alwaleed_admain/features/dashboard/data/data_sources/cache/shared_preferences_dashboard_local_data_source.dart';
 import 'package:alwaleed_admain/features/dashboard/data/data_sources/remotely_data_base/dashboard_remote_data_source.dart';
@@ -53,6 +55,7 @@ import 'package:alwaleed_admain/features/study_notes/domain/use_case/stream_stud
 import 'package:alwaleed_admain/features/study_notes/domain/use_case/update_study_note_use_case.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
 
 final GetIt getIt = GetIt.instance;
@@ -63,6 +66,8 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<FirebaseFirestore>(
     () => FirebaseFirestore.instance,
   );
+
+  getIt.registerLazySingleton<FirebaseStorage>(() => FirebaseStorage.instance);
 
   getIt.registerLazySingleton<FirebaseFunctions>(
     () => FirebaseFunctions.instanceFor(region: 'us-central1'),
@@ -75,7 +80,17 @@ void setupServiceLocator() {
   );
 
   getIt.registerLazySingleton<FirestoreService>(
-    () => FirebaseFirestoreService(networkInfo: getIt<NetworkInfo>()),
+    () => FirebaseFirestoreService(
+      networkInfo: getIt<NetworkInfo>(),
+      firestore: getIt<FirebaseFirestore>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<StorageService>(
+    () => FirebaseStorageService(
+      networkInfo: getIt<NetworkInfo>(),
+      firebaseStorage: getIt<FirebaseStorage>(),
+    ),
   );
 
   // Students remote data sources
@@ -262,6 +277,7 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<StudyNotesRemoteDataSource>(
     () => FirebaseStudyNotesRemoteDataSource(
       firestoreService: getIt<FirestoreService>(),
+      storageService: getIt<StorageService>(),
     ),
   );
 

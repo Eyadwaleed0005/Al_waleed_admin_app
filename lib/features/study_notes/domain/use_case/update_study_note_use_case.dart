@@ -4,17 +4,18 @@ import 'package:alwaleed_admain/features/study_notes/domain/repositories/study_n
 import 'package:dartz/dartz.dart';
 
 class UpdateStudyNoteUseCase {
-  const UpdateStudyNoteUseCase({
-    required StudyNotesRepository repository,
-  }) : _repository = repository;
+  const UpdateStudyNoteUseCase({required StudyNotesRepository repository})
+    : _repository = repository;
 
   final StudyNotesRepository _repository;
 
   Future<Either<AppErrorModel, Unit>> call({
     required StudyNoteEntity note,
+    String? replacementPdfFilePath,
   }) {
     return _repository.updateStudyNote(
       note: note,
+      replacementPdfFilePath: replacementPdfFilePath,
     );
   }
 }

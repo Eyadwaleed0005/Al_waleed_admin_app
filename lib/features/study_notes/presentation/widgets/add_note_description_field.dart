@@ -5,26 +5,23 @@ class AddNoteDescriptionField extends StatelessWidget {
   const AddNoteDescriptionField({
     super.key,
     required this.controller,
-    this.focusNode,
-    this.onChanged,
+    required this.onChanged,
   });
 
   final TextEditingController controller;
-  final FocusNode? focusNode;
-  final ValueChanged<String>? onChanged;
+  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {
     return CustomTextFormField(
       controller: controller,
-      focusNode: focusNode,
       labelText: 'وصف المذكرة',
-      hintText: 'أدخل وصفًا مختصرًا للمذكرة',
+      hintText: 'اكتب وصفًا مختصرًا للمذكرة',
+      isRequired: true,
       keyboardType: TextInputType.multiline,
       textInputAction: TextInputAction.newline,
-      minLines: 4,
-      maxLines: 6,
-      isRequired: true,
+      minLines: 3,
+      maxLines: 5,
       onChanged: onChanged,
     );
   }
