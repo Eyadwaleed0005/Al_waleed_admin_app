@@ -59,7 +59,11 @@ class ContentManagementScreen extends StatelessWidget {
                         iconColor: ColorPalette.surface,
                         titleColor: ColorPalette.deepSurface,
                         subtitleColor: ColorPalette.textSecondary,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(
+                            context,
+                          ).pushNamed(RouteNames.viewLessonsScreen);
+                        },
                       ),
                     ),
                     verticalSpace(14),
