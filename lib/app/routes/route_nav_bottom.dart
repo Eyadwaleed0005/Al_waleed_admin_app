@@ -23,15 +23,15 @@ class RouteNavBottom {
   static List<Widget> screens({
     required Widget homeScreen,
     required Widget students,
-    required Widget examsScreen,
     required Widget studyNotesScreen,
+    required Widget examsScreen,
     required Widget liveSessionScreen,
   }) {
     return [
       homeScreen,
       students,
-      examsScreen,
       studyNotesScreen,
+      examsScreen,
       liveSessionScreen,
     ];
   }

@@ -27,7 +27,7 @@ class AddNotePdfPicker extends StatefulWidget {
 }
 
 class _AddNotePdfPickerState extends State<AddNotePdfPicker> {
-  static const int _maximumFileSizeInBytes = 25 * 1024 * 1024;
+  static const int _maximumFileSizeInBytes = 15 * 1024 * 1024;
 
   PlatformFile? _selectedFile;
   bool _isPickingFile = false;
@@ -80,7 +80,7 @@ class _AddNotePdfPickerState extends State<AddNotePdfPicker> {
       if (selectedFile.size > _maximumFileSizeInBytes) {
         showAppToast(
           context,
-          message: 'حجم الملف أكبر من الحد الأقصى 25MB',
+          message: 'حجم الملف أكبر من الحد الأقصى 15MB',
           icon: Icons.error_outline_rounded,
         );
 
@@ -142,6 +142,7 @@ class _AddNotePdfPickerState extends State<AddNotePdfPicker> {
     if (sizeInMegabytes >= 1) {
       return '${sizeInMegabytes.toStringAsFixed(1)} MB';
     }
+
     return '${sizeInKilobytes.toStringAsFixed(0)} KB';
   }
 
@@ -224,7 +225,7 @@ class _EmptyPdfPicker extends StatelessWidget {
                       ),
                       verticalSpace(12),
                       Text(
-                        'الحد الأقصى 25MB',
+                        'الحد الأقصى 15MB',
                         textAlign: TextAlign.center,
                         style: AppTextStyle.font12TextMutedRegularTajawal(),
                       ),

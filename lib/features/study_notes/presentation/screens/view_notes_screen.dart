@@ -41,7 +41,9 @@ class ViewNotesScreen extends StatelessWidget {
                         title: 'عرض المذكرات',
                       ),
                     ),
+
                     verticalSpace(30),
+
                     Expanded(
                       child: AppAnimations.screenSection(
                         delay: 120,
@@ -65,10 +67,28 @@ class ViewNotesScreen extends StatelessWidget {
                               return ViewNoteContent(
                                 state: state,
                                 onAddNotePressed: () {
-                                  _onAddNotePressed(context);
+                                  final callback = onAddNotePressed;
+
+                                  if (callback != null) {
+                                    callback();
+                                    return;
+                                  }
+
+                                  Navigator.of(
+                                    context,
+                                  ).pushNamed(RouteNames.addNoteScreen);
                                 },
                                 onNoteTap: (note) {
-                                  _onNoteTap(context, note);
+                                  final callback = onNoteTap;
+
+                                  if (callback != null) {
+                                    callback(note);
+                                    return;
+                                  }
+
+                                  debugPrint(
+                                    'Selected note ID: ${note.noteId}',
+                                  );
                                 },
                               );
                             }
@@ -86,25 +106,5 @@ class ViewNotesScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void _onAddNotePressed(BuildContext context) {
-  if (onAddNotePressed != null) {
-    onAddNotePressed!();
-    return;
-  }
-
-  Navigator.of(context).pushNamed(
-    RouteNames.addNoteScreen,
-  );
-}
-
-  void _onNoteTap(BuildContext context, StudyNoteEntity note) {
-    if (onNoteTap != null) {
-      onNoteTap!(note);
-      return;
-    }
-
-    debugPrint('Selected note ID: ${note.noteId}');
   }
 }

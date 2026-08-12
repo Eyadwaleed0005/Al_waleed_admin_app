@@ -188,6 +188,8 @@ class ViewNotesCubit extends Cubit<ViewNotesState> {
     _notesSubscription = null;
   }
 
+  
+
   @override
   Future<void> close() async {
     await _cancelSubscriptions();

@@ -1,107 +1,165 @@
 import 'package:alwaleed_admain/core/helper/spacer.dart';
+import 'package:alwaleed_admain/core/style/app_animations.dart';
 import 'package:alwaleed_admain/core/widgets/custom_button.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admain/features/study_notes/presentation/cubit/add_note_cubit.dart';
+import 'package:alwaleed_admain/features/study_notes/presentation/cubit/add_note_state.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/widgets/add_note_description_field.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/widgets/add_note_hint_card.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/widgets/add_note_options_section.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/widgets/add_note_pdf_picker.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/widgets/add_note_title_field.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AddNoteContent extends StatelessWidget {
-  const AddNoteContent({
-    super.key,
-    required this.titleController,
-    required this.descriptionController,
-    required this.grades,
-    required this.selectedGradeId,
-    required this.isPublished,
-    required this.onGradeSelected,
-    required this.onPublicationChanged,
-    required this.onPdfSelected,
-    required this.onPdfRemoved,
-    required this.onAddNotePressed,
-    this.isLoading = false,
-    this.isButtonEnabled = true,
-  });
+class AddNoteContent extends StatefulWidget {
+  const AddNoteContent({super.key, required this.state});
 
-  final TextEditingController titleController;
-  final TextEditingController descriptionController;
+  final AddNoteState state;
 
-  final List<GradeEntity> grades;
-  final String selectedGradeId;
-  final bool isPublished;
+  @override
+  State<AddNoteContent> createState() {
+    return _AddNoteContentState();
+  }
+}
 
-  final ValueChanged<String> onGradeSelected;
-  final ValueChanged<bool> onPublicationChanged;
+class _AddNoteContentState extends State<AddNoteContent> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final ValueChanged<PlatformFile> onPdfSelected;
-  final VoidCallback onPdfRemoved;
+  late final TextEditingController _titleController;
+  late final TextEditingController _descriptionController;
 
-  final VoidCallback onAddNotePressed;
+  @override
+  void initState() {
+    super.initState();
 
-  final bool isLoading;
-  final bool isButtonEnabled;
+    _titleController = TextEditingController(text: widget.state.title);
+
+    _descriptionController = TextEditingController(
+      text: widget.state.description,
+    );
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            physics: const ClampingScrollPhysics(),
-            padding: EdgeInsets.only(bottom: 12.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const AddNoteHintCard(),
+    final state = widget.state;
+    final cubit = context.read<AddNoteCubit>();
 
-                verticalSpace(24),
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              physics: const ClampingScrollPhysics(),
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppAnimations.screenSection(
+                    delay: 0,
+                    child: const AddNoteHintCard(),
+                  ),
 
-                AddNoteTitleField(controller: titleController),
+                  verticalSpace(24),
 
-                verticalSpace(18),
+                  AppAnimations.formFieldEntrance(
+                    order: 0,
+                    child: AddNoteTitleField(
+                      controller: _titleController,
+                      onChanged: cubit.changeTitle,
+                    ),
+                  ),
 
-                AddNoteDescriptionField(controller: descriptionController),
+                  verticalSpace(18),
 
-                verticalSpace(20),
+                  AppAnimations.formFieldEntrance(
+                    order: 1,
+                    child: AddNoteDescriptionField(
+                      controller: _descriptionController,
+                      onChanged: cubit.changeDescription,
+                    ),
+                  ),
 
-                AddNoteOptionsSection(
-                  grades: grades,
-                  selectedGradeId: selectedGradeId,
-                  isPublished: isPublished,
-                  onGradeSelected: onGradeSelected,
-                  onPublicationChanged: onPublicationChanged,
-                ),
+                  verticalSpace(20),
 
-                verticalSpace(20),
+                  AppAnimations.formFieldEntrance(
+                    order: 2,
+                    child: AddNoteOptionsSection(
+                      grades: state.grades,
+                      selectedGradeId: state.selectedGradeId,
+                      isPublished: state.isPublished,
+                      onGradeSelected: cubit.selectGrade,
+                      onPublicationChanged: cubit.changePublicationStatus,
+                    ),
+                  ),
 
-                AddNotePdfPicker(
-                  onFileSelected: onPdfSelected,
-                  onFileRemoved: onPdfRemoved,
-                ),
-              ],
+                  verticalSpace(20),
+
+                  AppAnimations.formFieldEntrance(
+                    order: 3,
+                    child: AddNotePdfPicker(
+                      onFileSelected: (file) {
+                        final path = file.path?.trim();
+
+                        if (path == null || path.isEmpty) {
+                          return;
+                        }
+
+                        cubit.selectPdf(
+                          AddNotePdfFile(
+                            name: file.name,
+                            path: path,
+                            sizeInBytes: file.size,
+                          ),
+                        );
+                      },
+                      onFileRemoved: cubit.removePdf,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
 
-        verticalSpace(16),
+          verticalSpace(16),
 
-        SafeArea(
-          top: false,
-          minimum: EdgeInsets.only(bottom: 4.h),
-          child: CustomButton(
-            text: 'حفظ المذكرة',
-            isLoading: isLoading,
-            isEnabled: isButtonEnabled,
-            onPressed: onAddNotePressed,
+          SafeArea(
+            top: false,
+            minimum: EdgeInsets.only(bottom: 4.h),
+            child: AppAnimations.screenSection(
+              delay: 360,
+              child: CustomButton(
+                text: 'إضافة المذكرة',
+                isLoading: state.isSubmitting,
+                isEnabled: state.canSubmit,
+                onPressed: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+
+                  final isFormValid =
+                      _formKey.currentState?.validate() ?? false;
+
+                  if (!isFormValid) {
+                    return;
+                  }
+
+                  cubit.createNote();
+                },
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -3,66 +3,115 @@ import 'package:alwaleed_admain/core/style/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ViewNotesLoadingSkeleton extends StatelessWidget {
+class ViewNotesLoadingSkeleton extends StatefulWidget {
   const ViewNotesLoadingSkeleton({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _SkeletonBox(height: 56.h, borderRadius: BorderRadius.circular(16.r)),
-        verticalSpace(16),
-        Row(
-          textDirection: TextDirection.rtl,
-          children: [
-            Expanded(
-              child: _SkeletonBox(
-                height: 52.h,
-                borderRadius: BorderRadius.circular(14.r),
-              ),
-            ),
-            horizontalSpace(16),
-            Expanded(
-              child: _SkeletonBox(
-                height: 52.h,
-                borderRadius: BorderRadius.circular(14.r),
-              ),
-            ),
-          ],
-        ),
-        verticalSpace(24),
-        Expanded(
-          child: ListView.separated(
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: 4,
-            separatorBuilder: (_, __) {
-              return verticalSpace(12);
-            },
-            itemBuilder: (_, __) {
-              return const _NoteCardSkeleton();
-            },
-          ),
-        ),
-        verticalSpace(16),
-        _SkeletonBox(height: 56.h, borderRadius: BorderRadius.circular(16.r)),
-      ],
-    );
+  State<ViewNotesLoadingSkeleton> createState() {
+    return _ViewNotesLoadingSkeletonState();
   }
 }
 
-class _NoteCardSkeleton extends StatelessWidget {
-  const _NoteCardSkeleton();
+class _ViewNotesLoadingSkeletonState extends State<ViewNotesLoadingSkeleton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1300),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animationController,
+      builder: (context, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildSkeletonBox(
+              height: 56.h,
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+
+            verticalSpace(16),
+
+            Row(
+              textDirection: TextDirection.rtl,
+              children: [
+                Expanded(
+                  child: _buildSkeletonBox(
+                    height: 52.h,
+                    borderRadius: BorderRadius.circular(14.r),
+                  ),
+                ),
+
+                horizontalSpace(16),
+
+                Expanded(
+                  child: _buildSkeletonBox(
+                    height: 52.h,
+                    borderRadius: BorderRadius.circular(14.r),
+                  ),
+                ),
+              ],
+            ),
+
+            verticalSpace(24),
+
+            Expanded(
+              child: ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 4,
+                separatorBuilder: (_, _) {
+                  return verticalSpace(12);
+                },
+                itemBuilder: (_, _) {
+                  return _buildNoteCardSkeleton();
+                },
+              ),
+            ),
+
+            verticalSpace(16),
+
+            _buildSkeletonBox(
+              height: 56.h,
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildNoteCardSkeleton() {
     return Container(
+      width: double.infinity,
       constraints: BoxConstraints(minHeight: 116.h),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
-        color: ColorPalette.cardBackground,
+        color: ColorPalette.surface,
         borderRadius: BorderRadius.circular(18.r),
         border: Border.all(color: ColorPalette.border, width: 1.w),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8.r,
+            offset: Offset(0, 3.h),
+          ),
+        ],
       ),
       child: Row(
         textDirection: TextDirection.rtl,
@@ -75,25 +124,29 @@ class _NoteCardSkeleton extends StatelessWidget {
                 FractionallySizedBox(
                   widthFactor: 0.62,
                   alignment: Alignment.centerRight,
-                  child: _SkeletonBox(
+                  child: _buildSkeletonBox(
                     height: 18.h,
-                    borderRadius: BorderRadius.circular(8.r),
+                    borderRadius: BorderRadius.circular(6.r),
                   ),
                 ),
+
                 verticalSpace(12),
+
                 FractionallySizedBox(
                   widthFactor: 0.92,
                   alignment: Alignment.centerRight,
-                  child: _SkeletonBox(
+                  child: _buildSkeletonBox(
                     height: 12.h,
                     borderRadius: BorderRadius.circular(6.r),
                   ),
                 ),
+
                 verticalSpace(8),
+
                 FractionallySizedBox(
                   widthFactor: 0.72,
                   alignment: Alignment.centerRight,
-                  child: _SkeletonBox(
+                  child: _buildSkeletonBox(
                     height: 12.h,
                     borderRadius: BorderRadius.circular(6.r),
                   ),
@@ -101,8 +154,10 @@ class _NoteCardSkeleton extends StatelessWidget {
               ],
             ),
           ),
+
           horizontalSpace(12),
-          _SkeletonBox(
+
+          _buildSkeletonBox(
             width: 78.w,
             height: 34.h,
             borderRadius: BorderRadius.circular(20.r),
@@ -111,28 +166,33 @@ class _NoteCardSkeleton extends StatelessWidget {
       ),
     );
   }
-}
 
-class _SkeletonBox extends StatelessWidget {
-  const _SkeletonBox({
-    required this.height,
-    required this.borderRadius,
-    this.width,
-  });
+  Widget _buildSkeletonBox({
+    double? width,
+    required double height,
+    BorderRadius? borderRadius,
+    BoxShape shape = BoxShape.rectangle,
+  }) {
+    final movement = _animationController.value * 3;
 
-  final double? width;
-  final double height;
-
-  final BorderRadiusGeometry borderRadius;
-
-  @override
-  Widget build(BuildContext context) {
     return Container(
-      width: width,
+      width: width ?? double.infinity,
       height: height,
       decoration: BoxDecoration(
-        color: ColorPalette.border.withValues(alpha: 0.65),
-        borderRadius: borderRadius,
+        shape: shape,
+        borderRadius: shape == BoxShape.rectangle
+            ? borderRadius ?? BorderRadius.circular(8.r)
+            : null,
+        gradient: LinearGradient(
+          begin: Alignment(-1.5 + movement, 0),
+          end: Alignment(-0.5 + movement, 0),
+          colors: const [
+            Color(0xFFE0E7E2),
+            Color(0xFFF4F7F5),
+            Color(0xFFE0E7E2),
+          ],
+          stops: const [0.2, 0.5, 0.8],
+        ),
       ),
     );
   }

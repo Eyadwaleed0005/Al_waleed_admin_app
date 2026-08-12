@@ -24,9 +24,7 @@ class StudyNotesRepositoryImpl implements StudyNotesRepository {
         isPublished: isPublished,
       );
 
-      final entities = _mapModelsToEntities(models);
-
-      return Right(entities);
+      return Right(_mapModelsToEntities(models));
     } on FirebaseRemoteException catch (error) {
       return Left(error.errorModel);
     }
@@ -55,9 +53,7 @@ class StudyNotesRepositoryImpl implements StudyNotesRepository {
         gradeId: gradeId,
         isPublished: isPublished,
       )) {
-        final entities = _mapModelsToEntities(models);
-
-        yield Right(entities);
+        yield Right(_mapModelsToEntities(models));
       }
     } on FirebaseRemoteException catch (error) {
       yield Left(error.errorModel);
@@ -67,11 +63,15 @@ class StudyNotesRepositoryImpl implements StudyNotesRepository {
   @override
   Future<Either<AppErrorModel, Unit>> createStudyNote({
     required StudyNoteEntity note,
+    required String localPdfFilePath,
   }) async {
     try {
       final model = StudyNoteModel.fromEntity(note);
 
-      await _remoteDataSource.createStudyNote(note: model);
+      await _remoteDataSource.createStudyNote(
+        note: model,
+        localPdfFilePath: localPdfFilePath,
+      );
 
       return const Right(unit);
     } on FirebaseRemoteException catch (error) {
@@ -82,11 +82,15 @@ class StudyNotesRepositoryImpl implements StudyNotesRepository {
   @override
   Future<Either<AppErrorModel, Unit>> updateStudyNote({
     required StudyNoteEntity note,
+    String? replacementPdfFilePath,
   }) async {
     try {
       final model = StudyNoteModel.fromEntity(note);
 
-      await _remoteDataSource.updateStudyNote(note: model);
+      await _remoteDataSource.updateStudyNote(
+        note: model,
+        replacementPdfFilePath: replacementPdfFilePath,
+      );
 
       return const Right(unit);
     } on FirebaseRemoteException catch (error) {

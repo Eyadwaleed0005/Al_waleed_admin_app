@@ -1,24 +1,28 @@
 import 'dart:async';
 
 import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admain/core/errors/exceptions/firebase_remote_exception.dart';
+import 'package:alwaleed_admain/core/errors/handlers/firebase_functions_error_handler.dart';
+import 'package:alwaleed_admain/core/errors/handlers/firebase_storage_error_handler.dart';
+import 'package:alwaleed_admain/core/errors/handlers/firestore_error_handler.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import '../exceptions/firebase_remote_exception.dart';
-import 'firebase_functions_error_handler.dart';
-import 'firestore_error_handler.dart';
-
 abstract final class FirebaseErrorHandler {
-  // Temporary workaround. Firestore may keep the request pending when
-  // there is no internet instead of returning an error.
-  // This 9-second timeout stops the loading state and returns a failure.
-  // Move this logic to a dedicated Firebase execution layer later.
-  // By MeEyad
+  const FirebaseErrorHandler._();
+
   static const Duration _operationTimeout = Duration(seconds: 9);
 
-  static Future<T> execute<T>(Future<T> Function() operation) async {
+  static Future<T> execute<T>(
+    Future<T> Function() operation, {
+    Duration? timeout = _operationTimeout,
+  }) async {
     try {
-      return await operation().timeout(_operationTimeout);
+      if (timeout == null) {
+        return await operation();
+      }
+
+      return await operation().timeout(timeout);
     } catch (error, stackTrace) {
       if (error is FirebaseRemoteException) {
         Error.throwWithStackTrace(error, stackTrace);
@@ -27,6 +31,7 @@ abstract final class FirebaseErrorHandler {
       final remoteException = FirebaseRemoteException(
         errorModel: handle(error),
       );
+
       Error.throwWithStackTrace(remoteException, stackTrace);
     }
   }
@@ -42,6 +47,10 @@ abstract final class FirebaseErrorHandler {
 
     if (error is FirebaseException && _isFirestoreError(error)) {
       return FirestoreErrorHandler.handle(error);
+    }
+
+    if (error is FirebaseException && _isStorageError(error)) {
+      return FirebaseStorageErrorHandler.handle(error);
     }
 
     if (error is TimeoutException) {
@@ -63,24 +72,35 @@ abstract final class FirebaseErrorHandler {
     return FirebaseFunctionsErrorHandler.handleCode(code);
   }
 
+  static AppErrorModel handleStorageCode(String code) {
+    return FirebaseStorageErrorHandler.handleCode(code);
+  }
+
   static bool _isFirestoreError(FirebaseException error) {
-    return error.plugin.contains('cloud_firestore') ||
-        error.plugin.contains('firestore');
+    final plugin = error.plugin.trim().toLowerCase();
+
+    return plugin.contains('cloud_firestore') || plugin == 'firestore';
+  }
+
+  static bool _isStorageError(FirebaseException error) {
+    final plugin = error.plugin.trim().toLowerCase();
+
+    return plugin.contains('firebase_storage') || plugin == 'storage';
   }
 
   static AppErrorModel _timeoutError() {
     return const AppErrorModel(
       code: 'timeout',
       message:
-          'تعذر تأكيد تنفيذ الطلب حاليًا بسبب انقطاع الاتصال. تم حفظ الطلب وسيتم تنفيذه تلقائيًا عند عودة الإنترنت.',
+          'استغرق تنفيذ الطلب وقتًا أطول من المتوقع. تحقق من اتصالك وحاول مرة أخرى.',
       type: AppErrorType.timeout,
-      isRetryable: false,
+      isRetryable: true,
     );
   }
 
   static AppErrorModel _serverError({required String code}) {
     return AppErrorModel(
-      code: code,
+      code: code.trim().isEmpty ? 'server-error' : code,
       message: 'حدث خطأ في الخادم، حاول مرة أخرى.',
       type: AppErrorType.server,
       isRetryable: true,
@@ -92,7 +112,7 @@ abstract final class FirebaseErrorHandler {
       code: 'unknown',
       message: 'حدث خطأ غير متوقع، حاول مرة أخرى.',
       type: AppErrorType.unknown,
-      isRetryable: false,
+      isRetryable: true,
     );
   }
 }
