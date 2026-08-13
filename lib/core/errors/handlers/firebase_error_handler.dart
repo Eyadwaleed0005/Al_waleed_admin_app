@@ -24,16 +24,28 @@ abstract final class FirebaseErrorHandler {
 
       return await operation().timeout(timeout);
     } catch (error, stackTrace) {
-      if (error is FirebaseRemoteException) {
-        Error.throwWithStackTrace(error, stackTrace);
-      }
-
-      final remoteException = FirebaseRemoteException(
-        errorModel: handle(error),
-      );
-
-      Error.throwWithStackTrace(remoteException, stackTrace);
+      _throwRemoteException(error: error, stackTrace: stackTrace);
     }
+  }
+
+  static Stream<T> executeStream<T>(Stream<T> Function() operation) async* {
+    try {
+      yield* operation();
+    } catch (error, stackTrace) {
+      _throwRemoteException(error: error, stackTrace: stackTrace);
+    }
+  }
+
+  static Never throwFirestoreCode(String code) {
+    throw FirebaseRemoteException(errorModel: handleFirestoreCode(code));
+  }
+
+  static Never throwFunctionsCode(String code) {
+    throw FirebaseRemoteException(errorModel: handleFunctionsCode(code));
+  }
+
+  static Never throwStorageCode(String code) {
+    throw FirebaseRemoteException(errorModel: handleStorageCode(code));
   }
 
   static AppErrorModel handle(Object error) {
@@ -74,6 +86,17 @@ abstract final class FirebaseErrorHandler {
 
   static AppErrorModel handleStorageCode(String code) {
     return FirebaseStorageErrorHandler.handleCode(code);
+  }
+
+  static Never _throwRemoteException({
+    required Object error,
+    required StackTrace stackTrace,
+  }) {
+    final remoteException = error is FirebaseRemoteException
+        ? error
+        : FirebaseRemoteException(errorModel: handle(error));
+
+    Error.throwWithStackTrace(remoteException, stackTrace);
   }
 
   static bool _isFirestoreError(FirebaseException error) {

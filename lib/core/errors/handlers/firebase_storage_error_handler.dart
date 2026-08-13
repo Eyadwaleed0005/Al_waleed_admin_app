@@ -24,7 +24,7 @@ abstract final class FirebaseStorageErrorHandler {
       case 'object-not-found':
         return const AppErrorModel(
           code: 'object-not-found',
-          message: 'تعذر العثور على ملف المذكرة المطلوب.',
+          message: 'تعذر العثور على الملف المطلوب.',
           type: AppErrorType.notFound,
           isRetryable: false,
         );
@@ -33,8 +33,24 @@ abstract final class FirebaseStorageErrorHandler {
         return const AppErrorModel(
           code: 'local-file-not-found',
           message:
-              'ملف PDF المحدد لم يعد موجودًا على الجهاز. اختر الملف مرة أخرى.',
+              'الملف المحدد لم يعد موجودًا على الجهاز. اختر الملف مرة أخرى.',
           type: AppErrorType.notFound,
+          isRetryable: false,
+        );
+
+      case 'local-file-unavailable':
+        return const AppErrorModel(
+          code: 'local-file-unavailable',
+          message: 'تعذر الوصول إلى الملف المحدد. اختر الملف مرة أخرى.',
+          type: AppErrorType.validation,
+          isRetryable: false,
+        );
+
+      case 'file-too-large':
+        return const AppErrorModel(
+          code: 'file-too-large',
+          message: 'حجم الملف أكبر من الحد المسموح به.',
+          type: AppErrorType.validation,
           isRetryable: false,
         );
 
@@ -57,8 +73,7 @@ abstract final class FirebaseStorageErrorHandler {
       case 'quota-exceeded':
         return const AppErrorModel(
           code: 'quota-exceeded',
-          message:
-              'تم تجاوز الحد المتاح لخدمة تخزين الملفات. حاول لاحقًا أو تواصل مع الدعم.',
+          message: 'تم تجاوز الحد المتاح لخدمة تخزين الملفات. حاول لاحقًا.',
           type: AppErrorType.rateLimit,
           isRetryable: false,
         );
@@ -66,7 +81,7 @@ abstract final class FirebaseStorageErrorHandler {
       case 'retry-limit-exceeded':
         return const AppErrorModel(
           code: 'retry-limit-exceeded',
-          message: 'تعذر إكمال رفع الملف بسبب ضعف الاتصال. حاول مرة أخرى.',
+          message: 'تعذر إكمال العملية بسبب ضعف الاتصال. حاول مرة أخرى.',
           type: AppErrorType.timeout,
           isRetryable: true,
         );
@@ -83,7 +98,7 @@ abstract final class FirebaseStorageErrorHandler {
       case 'canceled':
         return const AppErrorModel(
           code: 'upload-canceled',
-          message: 'تم إلغاء رفع ملف PDF.',
+          message: 'تم إلغاء رفع الملف.',
           type: AppErrorType.unknown,
           isRetryable: true,
         );
@@ -104,8 +119,8 @@ abstract final class FirebaseStorageErrorHandler {
       case 'invalid-storage-path':
       case 'invalid-local-file-path':
         return const AppErrorModel(
-          code: 'invalid-pdf-file',
-          message: 'بيانات ملف PDF غير صالحة. اختر الملف مرة أخرى.',
+          code: 'invalid-file',
+          message: 'بيانات الملف المحدد غير صالحة.',
           type: AppErrorType.validation,
           isRetryable: false,
         );
@@ -113,7 +128,7 @@ abstract final class FirebaseStorageErrorHandler {
       case 'cannot-slice-blob':
         return const AppErrorModel(
           code: 'local-file-changed',
-          message: 'تم تغيير أو حذف ملف PDF بعد اختياره. اختر الملف مرة أخرى.',
+          message: 'تم تغيير أو حذف الملف بعد اختياره. اختر الملف مرة أخرى.',
           type: AppErrorType.validation,
           isRetryable: false,
         );
@@ -121,7 +136,7 @@ abstract final class FirebaseStorageErrorHandler {
       default:
         return AppErrorModel(
           code: normalizedCode.isEmpty ? 'storage-unknown' : normalizedCode,
-          message: 'تعذر التعامل مع ملف PDF. حاول مرة أخرى.',
+          message: 'تعذر تنفيذ العملية على الملف. حاول مرة أخرى.',
           type: AppErrorType.unknown,
           isRetryable: true,
         );

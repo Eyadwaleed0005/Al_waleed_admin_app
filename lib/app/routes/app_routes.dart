@@ -5,7 +5,10 @@ import 'package:alwaleed_admain/features/dashboard/domin/use_cases/get_dashboard
 import 'package:alwaleed_admain/features/dashboard/presentation/cubit/home_dashboard_cubit.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
 import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
+import 'package:alwaleed_admain/features/lessons/presentation/cubit/add_lesson_cubit.dart';
+import 'package:alwaleed_admain/features/lessons/presentation/cubit/add_lesson_pdf_picker_cubit.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/view_lessons_cubit.dart';
+import 'package:alwaleed_admain/features/lessons/presentation/screens/add_lesson_screen.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/screens/view_lessons_screen.dart';
 import 'package:alwaleed_admain/features/live_session/domain/use_case/delete_live_session_use_case.dart';
 import 'package:alwaleed_admain/features/live_session/domain/use_case/get_live_session_use_case.dart';
@@ -115,6 +118,29 @@ class AppRoutes {
                 )..initialize();
               },
               child: const ViewLessonsScreen(),
+            );
+          },
+        );
+      case RouteNames.addLessonScreen:
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (_) {
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<AddLessonCubit>(
+                  create: (_) {
+                    return AddLessonCubit(
+                      streamGradesUseCase: _getIt<StreamGradesUseCase>(),
+                    )..initialize();
+                  },
+                ),
+                BlocProvider<AddLessonPdfPickerCubit>(
+                  create: (_) {
+                    return AddLessonPdfPickerCubit();
+                  },
+                ),
+              ],
+              child: const AddLessonScreen(),
             );
           },
         );

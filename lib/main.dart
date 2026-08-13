@@ -22,7 +22,6 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     final routeObserver = getIt<AppRouteObserver>();
@@ -37,7 +36,7 @@ class MyApp extends StatelessWidget {
             title: 'الوليد',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(fontFamily: 'Tajawal'),
-            initialRoute: RouteNames.mainNavigationScreen,
+            initialRoute: RouteNames.splashScreen,
             onGenerateRoute: AppRoutes.generateRoute,
             navigatorObservers: [routeObserver],
             builder: (context, child) {

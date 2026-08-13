@@ -6,12 +6,12 @@ import 'package:alwaleed_admain/core/firebase/storage/storage_content_types.dart
 import 'package:alwaleed_admain/core/firebase/storage/storage_folders.dart';
 import 'package:alwaleed_admain/core/firebase/storage/storage_metadata_fields.dart';
 import 'package:alwaleed_admain/core/firebase/storage/storage_service.dart';
-import 'package:alwaleed_admain/features/study_notes/data/data_sources/study_notes_remote_data_source.dart';
-import 'package:alwaleed_admain/features/study_notes/data/models/study_note_model.dart';
+import 'package:alwaleed_admain/features/lessons/data/data_sources/lessons_remote_data_source.dart';
+import 'package:alwaleed_admain/features/lessons/data/models/lesson_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
-  const FirebaseStudyNotesRemoteDataSource({
+class FirebaseLessonsRemoteDataSource implements LessonsRemoteDataSource {
+  const FirebaseLessonsRemoteDataSource({
     required FirestoreService firestoreService,
     required StorageService storageService,
   }) : _firestoreService = firestoreService,
@@ -21,88 +21,83 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
   final StorageService _storageService;
 
   @override
-  Future<List<StudyNoteModel>> getStudyNotes({
-    String? gradeId,
-    bool? isPublished,
-  }) {
+  Future<List<LessonModel>> getLessons({String? gradeId, bool? isPublished}) {
     return FirebaseErrorHandler.execute(() async {
       final snapshot = await _firestoreService.getCollection(
-        collectionPath: FirestoreCollections.studyNotes,
-        queryBuilder: _getNotesQuery(
+        collectionPath: FirestoreCollections.lessons,
+        queryBuilder: _getLessonsQuery(
           gradeId: gradeId,
           isPublished: isPublished,
         ),
       );
 
-      return _mapStudyNotes(snapshot);
+      return _mapLessons(snapshot);
     });
   }
 
   @override
-  Future<StudyNoteModel> getStudyNoteById({required String noteId}) {
+  Future<LessonModel> getLessonById({required String lessonId}) {
     return FirebaseErrorHandler.execute(() {
-      return _getRequiredStudyNote(noteId: noteId);
+      return _getRequiredLesson(lessonId: lessonId);
     });
   }
 
   @override
-  Stream<List<StudyNoteModel>> streamStudyNotes({
+  Stream<List<LessonModel>> streamLessons({
     String? gradeId,
     bool? isPublished,
   }) {
     return FirebaseErrorHandler.executeStream(() {
       return _firestoreService
           .streamCollection(
-            collectionPath: FirestoreCollections.studyNotes,
-            queryBuilder: _getNotesQuery(
+            collectionPath: FirestoreCollections.lessons,
+            queryBuilder: _getLessonsQuery(
               gradeId: gradeId,
               isPublished: isPublished,
             ),
           )
-          .map(_mapStudyNotes);
+          .map(_mapLessons);
     });
   }
 
   @override
-  Future<void> createStudyNote({
-    required StudyNoteModel note,
+  Future<void> createLesson({
+    required LessonModel lesson,
     required String localPdfFilePath,
   }) {
     return FirebaseErrorHandler.execute(() async {
-      final normalizedNoteId = note.noteId.trim();
+      final lessonId = lesson.lessonId.trim();
+      final localPath = localPdfFilePath.trim();
+      final pdfFileName = lesson.pdfFileName?.trim() ?? '';
 
-      final normalizedLocalPdfFilePath = localPdfFilePath.trim();
-
-      final normalizedPdfFileName = note.pdfFileName.trim();
-
-      final newStoragePath = _buildPdfStoragePath(noteId: normalizedNoteId);
+      final newStoragePath = _buildPdfStoragePath(lessonId: lessonId);
 
       var didUploadPdf = false;
 
       try {
         final uploadedMetadata = await _storageService.uploadFile(
-          localFilePath: normalizedLocalPdfFilePath,
+          localFilePath: localPath,
           storagePath: newStoragePath,
           contentType: StorageContentTypes.pdf,
           customMetadata: {
-            StorageMetadataFields.noteId: normalizedNoteId,
-            StorageMetadataFields.originalFileName: normalizedPdfFileName,
+            StorageMetadataFields.lessonId: lessonId,
+            StorageMetadataFields.originalFileName: pdfFileName,
           },
         );
 
         didUploadPdf = true;
 
-        final persistedNote = _copyNoteWithPdf(
-          note: note,
+        final persistedLesson = _copyLessonWithPdf(
+          lesson: lesson,
           pdfStoragePath: uploadedMetadata.fullPath,
-          pdfFileName: normalizedPdfFileName,
-          pdfFileSize: uploadedMetadata.size ?? note.pdfFileSize,
+          pdfFileName: pdfFileName,
+          pdfFileSize: uploadedMetadata.size ?? lesson.pdfFileSize ?? 0,
         );
 
         await _firestoreService.postData(
-          collectionPath: FirestoreCollections.studyNotes,
-          documentId: normalizedNoteId,
-          data: persistedNote.toCreateMap(),
+          collectionPath: FirestoreCollections.lessons,
+          documentId: lessonId,
+          data: persistedLesson.toCreateMap(),
         );
       } catch (error, stackTrace) {
         if (didUploadPdf) {
@@ -115,68 +110,67 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
   }
 
   @override
-  Future<void> updateStudyNote({
-    required StudyNoteModel note,
+  Future<void> updateLesson({
+    required LessonModel lesson,
     String? replacementPdfFilePath,
   }) {
     return FirebaseErrorHandler.execute(() async {
-      final normalizedNoteId = note.noteId.trim();
+      final lessonId = lesson.lessonId.trim();
 
-      final currentNote = await _getRequiredStudyNote(noteId: normalizedNoteId);
+      final currentLesson = await _getRequiredLesson(lessonId: lessonId);
 
-      final normalizedReplacementPath = replacementPdfFilePath?.trim();
+      final replacementPath = replacementPdfFilePath?.trim();
 
       final hasReplacementPdf =
-          normalizedReplacementPath != null &&
-          normalizedReplacementPath.isNotEmpty;
+          replacementPath != null && replacementPath.isNotEmpty;
 
       if (!hasReplacementPdf) {
-        final updatedNote = _copyNoteWithPdf(
-          note: note,
-          pdfStoragePath: currentNote.pdfStoragePath,
-          pdfFileName: currentNote.pdfFileName,
-          pdfFileSize: currentNote.pdfFileSize,
+        final updatedLesson = _copyLessonWithPdf(
+          lesson: lesson,
+          pdfStoragePath: currentLesson.pdfStoragePath ?? '',
+          pdfFileName: currentLesson.pdfFileName ?? '',
+          pdfFileSize: currentLesson.pdfFileSize ?? 0,
         );
 
         await _firestoreService.patchData(
-          collectionPath: FirestoreCollections.studyNotes,
-          documentId: normalizedNoteId,
-          data: updatedNote.toUpdateMap(),
+          collectionPath: FirestoreCollections.lessons,
+          documentId: lessonId,
+          data: updatedLesson.toUpdateMap(),
         );
 
         return;
       }
 
-      final normalizedPdfFileName = note.pdfFileName.trim();
+      final newPdfFileName = lesson.pdfFileName?.trim() ?? '';
 
-      final newStoragePath = _buildPdfStoragePath(noteId: normalizedNoteId);
+      final newStoragePath = _buildPdfStoragePath(lessonId: lessonId);
 
       var didUploadNewPdf = false;
 
       try {
         final uploadedMetadata = await _storageService.uploadFile(
-          localFilePath: normalizedReplacementPath,
+          localFilePath: replacementPath,
           storagePath: newStoragePath,
           contentType: StorageContentTypes.pdf,
           customMetadata: {
-            StorageMetadataFields.noteId: normalizedNoteId,
-            StorageMetadataFields.originalFileName: normalizedPdfFileName,
+            StorageMetadataFields.lessonId: lessonId,
+            StorageMetadataFields.originalFileName: newPdfFileName,
           },
         );
 
         didUploadNewPdf = true;
 
-        final updatedNote = _copyNoteWithPdf(
-          note: note,
+        final updatedLesson = _copyLessonWithPdf(
+          lesson: lesson,
           pdfStoragePath: uploadedMetadata.fullPath,
-          pdfFileName: normalizedPdfFileName,
-          pdfFileSize: uploadedMetadata.size ?? note.pdfFileSize,
+          pdfFileName: newPdfFileName,
+          pdfFileSize: uploadedMetadata.size ?? lesson.pdfFileSize ?? 0,
         );
 
         await _firestoreService.patchData(
-          collectionPath: FirestoreCollections.studyNotes,
-          documentId: normalizedNoteId,
-          data: updatedNote.toUpdateMap(),
+          collectionPath: FirestoreCollections.lessons,
+          documentId: lessonId,
+          data: updatedLesson.toUpdateMap(),
         );
       } catch (error, stackTrace) {
         if (didUploadNewPdf) {
@@ -186,7 +180,7 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
         Error.throwWithStackTrace(error, stackTrace);
       }
 
-      final oldStoragePath = currentNote.pdfStoragePath.trim();
+      final oldStoragePath = currentLesson.pdfStoragePath?.trim() ?? '';
 
       if (oldStoragePath.isNotEmpty && oldStoragePath != newStoragePath) {
         await _deleteStorageFile(storagePath: oldStoragePath);
@@ -195,31 +189,33 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
   }
 
   @override
-  Future<void> deleteStudyNote({required String noteId}) {
+  Future<void> deleteLesson({required String lessonId}) {
     return FirebaseErrorHandler.execute(() async {
-      final normalizedNoteId = noteId.trim();
+      final normalizedLessonId = lessonId.trim();
 
-      final currentNote = await _getRequiredStudyNote(noteId: normalizedNoteId);
+      final currentLesson = await _getRequiredLesson(
+        lessonId: normalizedLessonId,
+      );
 
-      final currentStoragePath = currentNote.pdfStoragePath.trim();
+      final storagePath = currentLesson.pdfStoragePath?.trim() ?? '';
 
-      if (currentStoragePath.isNotEmpty) {
-        await _deleteStorageFile(storagePath: currentStoragePath);
+      if (storagePath.isNotEmpty) {
+        await _deleteStorageFile(storagePath: storagePath);
       }
 
       await _firestoreService.deleteData(
-        collectionPath: FirestoreCollections.studyNotes,
-        documentId: normalizedNoteId,
+        collectionPath: FirestoreCollections.lessons,
+        documentId: normalizedLessonId,
       );
     });
   }
 
-  Future<StudyNoteModel> _getRequiredStudyNote({required String noteId}) async {
-    final normalizedNoteId = noteId.trim();
+  Future<LessonModel> _getRequiredLesson({required String lessonId}) async {
+    final normalizedLessonId = lessonId.trim();
 
     final snapshot = await _firestoreService.getDocument(
-      collectionPath: FirestoreCollections.studyNotes,
-      documentId: normalizedNoteId,
+      collectionPath: FirestoreCollections.lessons,
+      documentId: normalizedLessonId,
     );
 
     final data = snapshot.data();
@@ -228,34 +224,35 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
       FirebaseErrorHandler.throwFirestoreCode('not-found');
     }
 
-    return StudyNoteModel.fromMap(documentId: snapshot.id, map: data);
+    return LessonModel.fromMap(documentId: snapshot.id, map: data);
   }
 
-  StudyNoteModel _copyNoteWithPdf({
-    required StudyNoteModel note,
+  LessonModel _copyLessonWithPdf({
+    required LessonModel lesson,
     required String pdfStoragePath,
     required String pdfFileName,
     required int pdfFileSize,
   }) {
-    return StudyNoteModel(
-      noteId: note.noteId,
-      name: note.name,
-      description: note.description,
-      gradeId: note.gradeId,
-      isPublished: note.isPublished,
+    return LessonModel(
+      lessonId: lesson.lessonId,
+      gradeId: lesson.gradeId,
+      title: lesson.title,
+      subtitle: lesson.subtitle,
+      youtubeUrl: lesson.youtubeUrl,
       pdfStoragePath: pdfStoragePath,
       pdfFileName: pdfFileName,
       pdfFileSize: pdfFileSize,
-      createdAt: note.createdAt,
-      updatedAt: note.updatedAt,
+      isPublished: lesson.isPublished,
+      createdAt: lesson.createdAt,
+      updatedAt: lesson.updatedAt,
     );
   }
 
-  String _buildPdfStoragePath({required String noteId}) {
+  String _buildPdfStoragePath({required String lessonId}) {
     final fileVersion = DateTime.now().microsecondsSinceEpoch;
 
-    return '${StorageFolders.studyNotes}/'
-        '$noteId/'
+    return '${StorageFolders.lessons}/'
+        '$lessonId/'
         '$fileVersion.pdf';
   }
 
@@ -272,12 +269,13 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
 
     try {
       await _storageService.deleteFile(storagePath: normalizedStoragePath);
-    } catch (_) {
-      // نحافظ على الخطأ الأصلي الذي أدى لتنفيذ الـrollback.
-    }
+    } catch (_) {}
   }
 
-  FirestoreQueryBuilder? _getNotesQuery({String? gradeId, bool? isPublished}) {
+  FirestoreQueryBuilder? _getLessonsQuery({
+    String? gradeId,
+    bool? isPublished,
+  }) {
     final normalizedGradeId = gradeId?.trim();
 
     final hasGradeFilter =
@@ -310,22 +308,17 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
     };
   }
 
-  List<StudyNoteModel> _mapStudyNotes(
-    QuerySnapshot<Map<String, dynamic>> snapshot,
-  ) {
-    final notes = snapshot.docs.map((document) {
-      return StudyNoteModel.fromMap(
-        documentId: document.id,
-        map: document.data(),
-      );
+  List<LessonModel> _mapLessons(QuerySnapshot<Map<String, dynamic>> snapshot) {
+    final lessons = snapshot.docs.map((document) {
+      return LessonModel.fromMap(documentId: document.id, map: document.data());
     }).toList();
 
-    notes.sort((firstNote, secondNote) {
-      final firstCreatedAt = firstNote.createdAt;
-      final secondCreatedAt = secondNote.createdAt;
+    lessons.sort((first, second) {
+      final firstCreatedAt = first.createdAt;
+      final secondCreatedAt = second.createdAt;
 
       if (firstCreatedAt == null && secondCreatedAt == null) {
-        return firstNote.name.compareTo(secondNote.name);
+        return first.title.compareTo(second.title);
       }
 
       if (firstCreatedAt == null) {
@@ -341,10 +334,9 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
       if (dateComparison != 0) {
         return dateComparison;
       }
-
-      return firstNote.name.compareTo(secondNote.name);
+      return first.title.compareTo(second.title);
     });
 
-    return List<StudyNoteModel>.unmodifiable(notes);
+    return List<LessonModel>.unmodifiable(lessons);
   }
 }
