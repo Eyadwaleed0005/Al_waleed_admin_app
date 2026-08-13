@@ -2,11 +2,7 @@ import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
 import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
 import 'package:alwaleed_admain/features/lessons/domain/entities/lesson_entity.dart';
 
-enum LessonPublicationFilter {
-  all,
-  published,
-  unpublished,
-}
+enum LessonPublicationFilter { all, published, unpublished }
 
 sealed class ViewLessonsState {
   const ViewLessonsState();
@@ -21,14 +17,11 @@ final class ViewLessonsLoading extends ViewLessonsState {
 }
 
 final class ViewLessonsFailure extends ViewLessonsState {
-  const ViewLessonsFailure({
-    required this.error,
-    this.message =
-        'تعذر تحميل بيانات الدروس، تحقق من اتصالك بالإنترنت وحاول مرة أخرى.',
-  });
+  const ViewLessonsFailure({required this.error});
 
   final AppErrorModel error;
-  final String message;
+
+  String get message => error.message;
 }
 
 final class ViewLessonsDataSuccess extends ViewLessonsState {
@@ -37,8 +30,7 @@ final class ViewLessonsDataSuccess extends ViewLessonsState {
     required this.lessons,
     this.searchQuery = '',
     this.selectedGradeId = '',
-    this.selectedPublicationFilter =
-        LessonPublicationFilter.all,
+    this.selectedPublicationFilter = LessonPublicationFilter.all,
   });
 
   final List<GradeEntity> grades;
@@ -54,48 +46,37 @@ final class ViewLessonsDataSuccess extends ViewLessonsState {
   bool get hasActiveFilters {
     return searchQuery.trim().isNotEmpty ||
         selectedGradeId.trim().isNotEmpty ||
-        selectedPublicationFilter !=
-            LessonPublicationFilter.all;
+        selectedPublicationFilter != LessonPublicationFilter.all;
   }
 
   List<LessonEntity> get filteredLessons {
-    final normalizedSearchQuery =
-        searchQuery.trim().toLowerCase();
+    final normalizedSearchQuery = searchQuery.trim().toLowerCase();
 
     final normalizedGradeId = selectedGradeId.trim();
 
-    return lessons.where((lesson) {
-      final normalizedTitle =
-          lesson.title.trim().toLowerCase();
+    return lessons
+        .where((lesson) {
+          final normalizedTitle = lesson.title.trim().toLowerCase();
 
-      final normalizedSubtitle =
-          lesson.subtitle.trim().toLowerCase();
+          final normalizedSubtitle = lesson.subtitle.trim().toLowerCase();
 
-      final matchesSearch =
-          normalizedSearchQuery.isEmpty ||
-          normalizedTitle.contains(normalizedSearchQuery) ||
-          normalizedSubtitle.contains(
-            normalizedSearchQuery,
-          );
+          final matchesSearch =
+              normalizedSearchQuery.isEmpty ||
+              normalizedTitle.contains(normalizedSearchQuery) ||
+              normalizedSubtitle.contains(normalizedSearchQuery);
 
-      final matchesGrade =
-          normalizedGradeId.isEmpty ||
-          lesson.gradeId == normalizedGradeId;
+          final matchesGrade =
+              normalizedGradeId.isEmpty || lesson.gradeId == normalizedGradeId;
 
-      final matchesPublicationStatus = switch (
-        selectedPublicationFilter
-      ) {
-        LessonPublicationFilter.all => true,
-        LessonPublicationFilter.published =>
-          lesson.isPublished,
-        LessonPublicationFilter.unpublished =>
-          !lesson.isPublished,
-      };
+          final matchesPublicationStatus = switch (selectedPublicationFilter) {
+            LessonPublicationFilter.all => true,
+            LessonPublicationFilter.published => lesson.isPublished,
+            LessonPublicationFilter.unpublished => !lesson.isPublished,
+          };
 
-      return matchesSearch &&
-          matchesGrade &&
-          matchesPublicationStatus;
-    }).toList(growable: false);
+          return matchesSearch && matchesGrade && matchesPublicationStatus;
+        })
+        .toList(growable: false);
   }
 
   bool get hasNoSearchResults {
@@ -103,12 +84,14 @@ final class ViewLessonsDataSuccess extends ViewLessonsState {
   }
 
   String getGradeName(String gradeId) {
-    if (gradeId.trim().isEmpty) {
+    final normalizedGradeId = gradeId.trim();
+
+    if (normalizedGradeId.isEmpty) {
       return 'غير محدد';
     }
 
     for (final grade in grades) {
-      if (grade.gradeId == gradeId) {
+      if (grade.gradeId == normalizedGradeId) {
         return grade.name;
       }
     }
@@ -127,11 +110,9 @@ final class ViewLessonsDataSuccess extends ViewLessonsState {
       grades: grades ?? this.grades,
       lessons: lessons ?? this.lessons,
       searchQuery: searchQuery ?? this.searchQuery,
-      selectedGradeId:
-          selectedGradeId ?? this.selectedGradeId,
+      selectedGradeId: selectedGradeId ?? this.selectedGradeId,
       selectedPublicationFilter:
-          selectedPublicationFilter ??
-          this.selectedPublicationFilter,
+          selectedPublicationFilter ?? this.selectedPublicationFilter,
     );
   }
 }
