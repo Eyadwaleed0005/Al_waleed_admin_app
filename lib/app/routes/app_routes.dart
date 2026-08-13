@@ -5,6 +5,8 @@ import 'package:alwaleed_admain/features/dashboard/domin/use_cases/get_dashboard
 import 'package:alwaleed_admain/features/dashboard/presentation/cubit/home_dashboard_cubit.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
 import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
+import 'package:alwaleed_admain/features/lessons/domain/use_case/create_lesson_use_case.dart';
+import 'package:alwaleed_admain/features/lessons/domain/use_case/stream_lessons_use_case.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/add_lesson_cubit.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/add_lesson_pdf_picker_cubit.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/view_lessons_cubit.dart';
@@ -110,38 +112,22 @@ class AppRoutes {
       case RouteNames.viewLessonsScreen:
         return MaterialPageRoute<dynamic>(
           settings: settings,
-          builder: (_) {
-            return BlocProvider<ViewLessonsCubit>(
-              create: (_) {
-                return ViewLessonsCubit(
-                  streamGradesUseCase: _getIt<StreamGradesUseCase>(),
-                )..initialize();
-              },
-              child: const ViewLessonsScreen(),
+          builder: (context) {
+            return _provideViewLessonsCubit(
+              child: ViewLessonsScreen(
+                onAddLessonPressed: () {
+                  Navigator.of(context).pushNamed(RouteNames.addLessonScreen);
+                },
+              ),
             );
           },
         );
+
       case RouteNames.addLessonScreen:
         return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
-            return MultiBlocProvider(
-              providers: [
-                BlocProvider<AddLessonCubit>(
-                  create: (_) {
-                    return AddLessonCubit(
-                      streamGradesUseCase: _getIt<StreamGradesUseCase>(),
-                    )..initialize();
-                  },
-                ),
-                BlocProvider<AddLessonPdfPickerCubit>(
-                  create: (_) {
-                    return AddLessonPdfPickerCubit();
-                  },
-                ),
-              ],
-              child: const AddLessonScreen(),
-            );
+            return _provideAddLessonCubits(child: const AddLessonScreen());
           },
         );
 
@@ -280,6 +266,20 @@ class AppRoutes {
     )..initialize();
   }
 
+  static ViewLessonsCubit _createViewLessonsCubit() {
+    return ViewLessonsCubit(
+      streamGradesUseCase: _getIt<StreamGradesUseCase>(),
+      streamLessonsUseCase: _getIt<StreamLessonsUseCase>(),
+    )..initialize();
+  }
+
+  static AddLessonCubit _createAddLessonCubit() {
+    return AddLessonCubit(
+      streamGradesUseCase: _getIt<StreamGradesUseCase>(),
+      createLessonUseCase: _getIt<CreateLessonUseCase>(),
+    )..initialize();
+  }
+
   static LiveSessionCubit _createLiveSessionCubit() {
     return LiveSessionCubit(
       streamGradesUseCase: _getIt<StreamGradesUseCase>(),
@@ -341,6 +341,25 @@ class AppRoutes {
   }) {
     return BlocProvider<EditNoteCubit>(
       create: (_) => _createEditNoteCubit(noteId: noteId),
+      child: child,
+    );
+  }
+
+  static Widget _provideViewLessonsCubit({required Widget child}) {
+    return BlocProvider<ViewLessonsCubit>(
+      create: (_) => _createViewLessonsCubit(),
+      child: child,
+    );
+  }
+
+  static Widget _provideAddLessonCubits({required Widget child}) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AddLessonCubit>(create: (_) => _createAddLessonCubit()),
+        BlocProvider<AddLessonPdfPickerCubit>(
+          create: (_) => AddLessonPdfPickerCubit(),
+        ),
+      ],
       child: child,
     );
   }
