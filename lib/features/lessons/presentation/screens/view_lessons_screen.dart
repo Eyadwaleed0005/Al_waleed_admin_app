@@ -1,3 +1,4 @@
+import 'package:alwaleed_admain/app/routes/route_names.dart';
 import 'package:alwaleed_admain/core/helper/app_system_ui.dart';
 import 'package:alwaleed_admain/core/helper/spacer.dart';
 import 'package:alwaleed_admain/core/style/app_animations.dart';
@@ -54,6 +55,7 @@ class ViewLessonsScreen extends StatelessWidget {
                                 state is ViewLessonsLoading) {
                               return const ViewLessonsLoadingSkeleton();
                             }
+
                             if (state is ViewLessonsFailure) {
                               return AppErrorWidget(
                                 message: state.message,
@@ -62,13 +64,32 @@ class ViewLessonsScreen extends StatelessWidget {
                                 },
                               );
                             }
+
                             if (state is ViewLessonsDataSuccess) {
                               return ViewLessonsContent(
                                 state: state,
-                                onAddLessonPressed: onAddLessonPressed ?? () {},
-                                onLessonTap: onLessonTap ?? (_) {},
+                                onAddLessonPressed: () {
+                                  final callback = onAddLessonPressed;
+
+                                  if (callback != null) {
+                                    callback();
+                                    return;
+                                  }
+
+                                  Navigator.of(
+                                    context,
+                                  ).pushNamed(RouteNames.addLessonScreen);
+                                },
+                                onLessonTap: (lesson) {
+                                  final callback = onLessonTap;
+
+                                  if (callback != null) {
+                                    callback(lesson);
+                                  }
+                                },
                               );
                             }
+
                             return const ViewLessonsLoadingSkeleton();
                           },
                         ),

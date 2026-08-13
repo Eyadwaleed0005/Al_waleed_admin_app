@@ -25,37 +25,28 @@ class ViewLessonsCubit extends Cubit<ViewLessonsState> {
   bool _isInitializing = false;
 
   Future<void> initialize() async {
-  if (_isInitializing) {
-    return;
-  }
-
-  _isInitializing = true;
-
-  try {
-    await _cancelSubscriptions();
-
-    _resetData();
-
-    if (isClosed) {
+    if (_isInitializing) {
       return;
     }
 
-    emit(const ViewLessonsLoading());
+    _isInitializing = true;
 
-    // تأخير مؤقت لمشاهدة الـLoading Skeleton.
-    await Future<void>.delayed(
-      const Duration(seconds: 3),
-    );
+    try {
+      await _cancelSubscriptions();
 
-    if (isClosed) {
-      return;
+      _resetData();
+
+      if (isClosed) {
+        return;
+      }
+
+      emit(const ViewLessonsLoading());
+
+      _watchGrades();
+    } finally {
+      _isInitializing = false;
     }
-
-    _watchGrades();
-  } finally {
-    _isInitializing = false;
   }
-}
 
   void searchLessons(String value) {
     final currentState = state;

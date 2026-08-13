@@ -163,6 +163,67 @@ class AppValidator {
     return null;
   }
 
+  static String? lessonTitle(String? value) {
+    final title = value?.trim() ?? '';
+
+    if (title.isEmpty) {
+      return 'من فضلك اكتب عنوان الدرس';
+    }
+
+    if (title.length > 120) {
+      return 'عنوان الدرس يجب ألا يزيد عن 120 حرفًا';
+    }
+
+    return null;
+  }
+
+  static String? lessonSubtitle(String? value) {
+    final subtitle = value?.trim() ?? '';
+
+    if (subtitle.isEmpty) {
+      return 'من فضلك اكتب وصف الدرس';
+    }
+
+    if (subtitle.length > 400) {
+      return 'وصف الدرس يجب ألا يزيد عن 400 حرف';
+    }
+
+    return null;
+  }
+
+  static String? youtubeUrl(String? value) {
+    final url = value?.trim() ?? '';
+
+    if (url.isEmpty) {
+      return 'من فضلك اكتب رابط فيديو YouTube';
+    }
+
+    final uri = Uri.tryParse(url);
+
+    if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
+      return 'من فضلك اكتب رابطًا صحيحًا';
+    }
+
+    final scheme = uri.scheme.toLowerCase();
+
+    if (scheme != 'http' && scheme != 'https') {
+      return 'الرابط يجب أن يبدأ بـ http أو https';
+    }
+
+    final host = uri.host.toLowerCase();
+
+    final isYoutubeHost =
+        host == 'youtu.be' ||
+        host == 'youtube.com' ||
+        host.endsWith('.youtube.com');
+
+    if (!isYoutubeHost) {
+      return 'من فضلك اكتب رابط YouTube صحيحًا';
+    }
+
+    return null;
+  }
+
   static String? subscriptionStartDate(DateTime? startDate) {
     if (startDate == null) {
       return 'من فضلك اختر تاريخ بداية الاشتراك';
