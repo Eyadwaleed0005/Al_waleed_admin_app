@@ -6,11 +6,16 @@ import 'package:alwaleed_admain/features/dashboard/presentation/cubit/home_dashb
 import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
 import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
 import 'package:alwaleed_admain/features/lessons/domain/use_case/create_lesson_use_case.dart';
+import 'package:alwaleed_admain/features/lessons/domain/use_case/delete_lesson_use_case.dart';
+import 'package:alwaleed_admain/features/lessons/domain/use_case/get_lesson_by_id_use_case.dart';
 import 'package:alwaleed_admain/features/lessons/domain/use_case/stream_lessons_use_case.dart';
+import 'package:alwaleed_admain/features/lessons/domain/use_case/update_lesson_use_case.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/add_lesson_cubit.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/add_lesson_pdf_picker_cubit.dart';
+import 'package:alwaleed_admain/features/lessons/presentation/cubit/edit_lesson_cubit.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/view_lessons_cubit.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/screens/add_lesson_screen.dart';
+import 'package:alwaleed_admain/features/lessons/presentation/screens/edit_lesson_screen.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/screens/view_lessons_screen.dart';
 import 'package:alwaleed_admain/features/live_session/domain/use_case/delete_live_session_use_case.dart';
 import 'package:alwaleed_admain/features/live_session/domain/use_case/get_live_session_use_case.dart';
@@ -112,14 +117,8 @@ class AppRoutes {
       case RouteNames.viewLessonsScreen:
         return MaterialPageRoute<dynamic>(
           settings: settings,
-          builder: (context) {
-            return _provideViewLessonsCubit(
-              child: ViewLessonsScreen(
-                onAddLessonPressed: () {
-                  Navigator.of(context).pushNamed(RouteNames.addLessonScreen);
-                },
-              ),
-            );
+          builder: (_) {
+            return _provideViewLessonsCubit(child: const ViewLessonsScreen());
           },
         );
 
@@ -128,6 +127,23 @@ class AppRoutes {
           settings: settings,
           builder: (_) {
             return _provideAddLessonCubits(child: const AddLessonScreen());
+          },
+        );
+
+      case RouteNames.editLessonScreen:
+        final lessonId = settings.arguments;
+
+        if (lessonId is! String || lessonId.trim().isEmpty) {
+          return null;
+        }
+
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (_) {
+            return _provideEditLessonCubit(
+              lessonId: lessonId,
+              child: const EditLessonScreen(),
+            );
           },
         );
 
@@ -280,6 +296,16 @@ class AppRoutes {
     )..initialize();
   }
 
+  static EditLessonCubit _createEditLessonCubit({required String lessonId}) {
+    return EditLessonCubit(
+      lessonId: lessonId,
+      getLessonByIdUseCase: _getIt<GetLessonByIdUseCase>(),
+      streamGradesUseCase: _getIt<StreamGradesUseCase>(),
+      updateLessonUseCase: _getIt<UpdateLessonUseCase>(),
+      deleteLessonUseCase: _getIt<DeleteLessonUseCase>(),
+    )..initialize();
+  }
+
   static LiveSessionCubit _createLiveSessionCubit() {
     return LiveSessionCubit(
       streamGradesUseCase: _getIt<StreamGradesUseCase>(),
@@ -340,7 +366,9 @@ class AppRoutes {
     required Widget child,
   }) {
     return BlocProvider<EditNoteCubit>(
-      create: (_) => _createEditNoteCubit(noteId: noteId),
+      create: (_) {
+        return _createEditNoteCubit(noteId: noteId);
+      },
       child: child,
     );
   }
@@ -360,6 +388,18 @@ class AppRoutes {
           create: (_) => AddLessonPdfPickerCubit(),
         ),
       ],
+      child: child,
+    );
+  }
+
+  static Widget _provideEditLessonCubit({
+    required String lessonId,
+    required Widget child,
+  }) {
+    return BlocProvider<EditLessonCubit>(
+      create: (_) {
+        return _createEditLessonCubit(lessonId: lessonId);
+      },
       child: child,
     );
   }
