@@ -13,4 +13,5 @@ class RouteNames {
   static const String editNoteScreen = '/edit-note';
   static const String viewLessonsScreen = '/view-lessons-screen';
   static const String addLessonScreen = '/add-lesson-screen';
+  static const String editLessonScreen = '/edit-lesson';
 }

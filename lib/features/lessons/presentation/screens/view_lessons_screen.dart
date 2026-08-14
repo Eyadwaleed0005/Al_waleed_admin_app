@@ -45,7 +45,9 @@ class ViewLessonsScreen extends StatelessWidget {
                         title: 'عرض الدروس',
                       ),
                     ),
+
                     verticalSpace(30),
+
                     Expanded(
                       child: AppAnimations.screenSection(
                         delay: 120,
@@ -85,7 +87,19 @@ class ViewLessonsScreen extends StatelessWidget {
 
                                   if (callback != null) {
                                     callback(lesson);
+                                    return;
                                   }
+
+                                  final lessonId = lesson.lessonId.trim();
+
+                                  if (lessonId.isEmpty) {
+                                    return;
+                                  }
+
+                                  Navigator.of(context).pushNamed(
+                                    RouteNames.editLessonScreen,
+                                    arguments: lessonId,
+                                  );
                                 },
                               );
                             }
