@@ -17,14 +17,9 @@ final class ViewNotesLoading extends ViewNotesState {
 }
 
 final class ViewNotesFailure extends ViewNotesState {
-  const ViewNotesFailure({
-    required this.error,
-    this.message =
-        'تعذر تحميل بيانات المذكرات، تحقق من اتصالك بالإنترنت وحاول مرة أخرى.',
-  });
+  const ViewNotesFailure({required this.error});
 
   final AppErrorModel error;
-  final String message;
 }
 
 final class ViewNotesDataSuccess extends ViewNotesState {
@@ -44,7 +39,9 @@ final class ViewNotesDataSuccess extends ViewNotesState {
 
   final NotePublicationFilter selectedPublicationFilter;
 
-  bool get hasNoNotes => notes.isEmpty;
+  bool get hasNoNotes {
+    return notes.isEmpty;
+  }
 
   bool get hasActiveFilters {
     return searchQuery.trim().isNotEmpty ||
@@ -59,12 +56,15 @@ final class ViewNotesDataSuccess extends ViewNotesState {
 
     return notes
         .where((note) {
+          final normalizedName = note.name.trim().toLowerCase();
+
           final matchesSearch =
               normalizedSearchQuery.isEmpty ||
-              note.name.toLowerCase().contains(normalizedSearchQuery);
+              normalizedName.contains(normalizedSearchQuery);
 
           final matchesGrade =
-              normalizedGradeId.isEmpty || note.gradeId == normalizedGradeId;
+              normalizedGradeId.isEmpty ||
+              note.gradeId.trim() == normalizedGradeId;
 
           final matchesPublicationStatus = switch (selectedPublicationFilter) {
             NotePublicationFilter.all => true,

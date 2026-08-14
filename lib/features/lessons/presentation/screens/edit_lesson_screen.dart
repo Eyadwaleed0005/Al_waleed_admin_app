@@ -34,43 +34,33 @@ class EditLessonScreen extends StatelessWidget {
                     vertical: 20.h,
                   ),
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.stretch,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       AppAnimations.screenSection(
                         delay: 0,
-                        child:
-                            const SecondaryCustomHeaderBar(
+                        child: const SecondaryCustomHeaderBar(
                           title: 'تعديل الدرس',
                         ),
                       ),
                       verticalSpace(30),
                       Expanded(
-                        child: BlocBuilder<
-                            EditLessonCubit,
-                            EditLessonState>(
+                        child: BlocBuilder<EditLessonCubit, EditLessonState>(
                           builder: (context, state) {
-                            if (state.isInitial ||
-                                state.isPageLoading) {
+                            if (state.isInitial || state.isPageLoading) {
                               return const EditLessonLoadingSkeleton();
                             }
 
                             if (state.hasPageFailure) {
-                              final error =
-                                  state.pageError;
+                              final error = state.pageError;
 
                               if (error == null) {
-                                return const SizedBox
-                                    .shrink();
+                                return const SizedBox.shrink();
                               }
 
                               return AppErrorWidget(
                                 message: error.message,
                                 onRetry: () {
-                                  context
-                                      .read<
-                                          EditLessonCubit>()
-                                      .retry();
+                                  context.read<EditLessonCubit>().retry();
                                 },
                               );
                             }
@@ -78,49 +68,35 @@ class EditLessonScreen extends StatelessWidget {
                             if (state.isPageReady) {
                               return EditLessonContent(
                                 state: state,
-                                onDeletePressed:
-                                    () async {
-                                  if (state.isDeleting ||
-                                      !state.canDelete) {
+                                onDeletePressed: () async {
+                                  if (state.isDeleting || !state.canDelete) {
                                     return;
                                   }
-
-                                  FocusManager
-                                      .instance
-                                      .primaryFocus
-                                      ?.unfocus();
-
+                                  FocusManager.instance.primaryFocus?.unfocus();
                                   final lessonTitle =
-                                      state.lesson?.title
-                                              .trim() ??
-                                          '';
+                                      state.lesson?.title.trim() ?? '';
 
                                   final confirmed =
                                       await showCustomDeleteConfirmationBottomSheet(
-                                    context,
-                                    title: 'حذف الدرس',
-                                    message: lessonTitle
-                                            .isNotEmpty
-                                        ? 'هل أنت متأكد من حذف درس "$lessonTitle"؟ سيتم حذف الدرس وملف PDF الخاص به نهائيًا، ولا يمكن التراجع عن هذه العملية.'
-                                        : 'هل أنت متأكد من حذف هذا الدرس؟ سيتم حذف الدرس وملف PDF الخاص به نهائيًا، ولا يمكن التراجع عن هذه العملية.',
-                                    confirmText:
-                                        'حذف الدرس',
-                                    cancelText: 'إلغاء',
-                                  );
+                                        context,
+                                        title: 'حذف الدرس',
+                                        message: lessonTitle.isNotEmpty
+                                            ? 'هل أنت متأكد من حذف درس "$lessonTitle"؟ سيتم حذف الدرس وملف PDF الخاص به نهائيًا، ولا يمكن التراجع عن هذه العملية.'
+                                            : 'هل أنت متأكد من حذف هذا الدرس؟ سيتم حذف الدرس وملف PDF الخاص به نهائيًا، ولا يمكن التراجع عن هذه العملية.',
+                                        confirmText: 'حذف الدرس',
+                                        cancelText: 'إلغاء',
+                                      );
 
-                                  if (!context.mounted ||
-                                      !confirmed) {
+                                  if (!context.mounted || !confirmed) {
                                     return;
                                   }
 
                                   context
-                                      .read<
-                                          EditLessonCubit>()
+                                      .read<EditLessonCubit>()
                                       .deleteLesson();
                                 },
                               );
                             }
-
                             return const EditLessonLoadingSkeleton();
                           },
                         ),

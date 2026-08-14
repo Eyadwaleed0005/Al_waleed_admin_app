@@ -54,9 +54,7 @@ class ViewNoteContent extends StatelessWidget {
             onPublicationStatusSelected: cubit.selectPublicationFilter,
           ),
         ),
-
         verticalSpace(24),
-
         Expanded(
           child: state.hasNoSearchResults
               ? AppAnimations.emptyStateEntrance(
@@ -72,9 +70,7 @@ class ViewNoteContent extends StatelessWidget {
                   ),
                 ),
         ),
-
         verticalSpace(16),
-
         AppAnimations.screenSection(
           delay: 240,
           child: CustomButton(

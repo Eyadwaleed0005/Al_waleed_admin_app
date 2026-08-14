@@ -45,9 +45,7 @@ class ViewLessonsScreen extends StatelessWidget {
                         title: 'عرض الدروس',
                       ),
                     ),
-
                     verticalSpace(30),
-
                     Expanded(
                       child: AppAnimations.screenSection(
                         delay: 120,
@@ -60,10 +58,8 @@ class ViewLessonsScreen extends StatelessWidget {
 
                             if (state is ViewLessonsFailure) {
                               return AppErrorWidget(
-                                message: state.message,
-                                onRetry: () {
-                                  context.read<ViewLessonsCubit>().retry();
-                                },
+                                message: state.error.message,
+                                onRetry: context.read<ViewLessonsCubit>().retry,
                               );
                             }
 

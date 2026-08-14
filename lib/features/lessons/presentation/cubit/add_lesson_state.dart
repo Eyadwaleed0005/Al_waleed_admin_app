@@ -1,9 +1,20 @@
 import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admain/core/helper/app_validator.dart';
 import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
 
-enum AddLessonPageStatus { initial, loading, ready, failure }
+enum AddLessonPageStatus {
+  initial,
+  loading,
+  ready,
+  failure,
+}
 
-enum AddLessonSubmissionStatus { idle, loading, success, failure }
+enum AddLessonSubmissionStatus {
+  idle,
+  loading,
+  success,
+  failure,
+}
 
 class AddLessonPdfFile {
   const AddLessonPdfFile({
@@ -32,7 +43,6 @@ class AddLessonState {
   });
 
   final AddLessonPageStatus pageStatus;
-
   final AddLessonSubmissionStatus submissionStatus;
 
   final List<GradeEntity> grades;
@@ -84,26 +94,6 @@ class AddLessonState {
     return youtubeUrl.trim().isNotEmpty;
   }
 
-  bool get hasValidYoutubeUrl {
-    final uri = Uri.tryParse(youtubeUrl.trim());
-
-    if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
-      return false;
-    }
-
-    final scheme = uri.scheme.toLowerCase();
-
-    if (scheme != 'http' && scheme != 'https') {
-      return false;
-    }
-
-    final host = uri.host.toLowerCase();
-
-    return host == 'youtu.be' ||
-        host == 'youtube.com' ||
-        host.endsWith('.youtube.com');
-  }
-
   bool get hasSelectedGrade {
     return selectedGradeId.trim().isNotEmpty;
   }
@@ -112,13 +102,33 @@ class AddLessonState {
     return selectedPdf != null;
   }
 
+  bool get hasValidTitle {
+    return AppValidator.lessonTitle(title) == null;
+  }
+
+  bool get hasValidSubtitle {
+    return AppValidator.lessonSubtitle(subtitle) == null;
+  }
+
+  bool get hasValidYoutubeUrl {
+    return AppValidator.youtubeUrl(youtubeUrl) == null;
+  }
+
+  bool get hasValidGrade {
+    return AppValidator.grade(selectedGradeId) == null;
+  }
+
+  bool get hasValidPdf {
+    return AppValidator.lessonPdf(selectedPdf) == null;
+  }
+
   bool get canSubmit {
     return isPageReady &&
-        hasTitle &&
-        hasSubtitle &&
+        hasValidTitle &&
+        hasValidSubtitle &&
         hasValidYoutubeUrl &&
-        hasSelectedGrade &&
-        hasSelectedPdf &&
+        hasValidGrade &&
+        hasValidPdf &&
         !isSubmitting;
   }
 
@@ -145,7 +155,9 @@ class AddLessonState {
       youtubeUrl: youtubeUrl ?? this.youtubeUrl,
       selectedGradeId: selectedGradeId ?? this.selectedGradeId,
       isPublished: isPublished ?? this.isPublished,
-      selectedPdf: clearSelectedPdf ? null : selectedPdf ?? this.selectedPdf,
+      selectedPdf: clearSelectedPdf
+          ? null
+          : selectedPdf ?? this.selectedPdf,
       error: clearError ? null : error ?? this.error,
     );
   }

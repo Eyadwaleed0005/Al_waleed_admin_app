@@ -59,11 +59,9 @@ class AddLessonScreen extends StatelessWidget {
                                 },
                               );
                             }
-
                             if (state.isPageReady) {
                               return AddLessonContent(state: state);
                             }
-
                             return const Center(child: AppLoadingIndicator());
                           },
                         ),

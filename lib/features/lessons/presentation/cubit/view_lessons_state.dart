@@ -20,8 +20,6 @@ final class ViewLessonsFailure extends ViewLessonsState {
   const ViewLessonsFailure({required this.error});
 
   final AppErrorModel error;
-
-  String get message => error.message;
 }
 
 final class ViewLessonsDataSuccess extends ViewLessonsState {
@@ -41,7 +39,9 @@ final class ViewLessonsDataSuccess extends ViewLessonsState {
 
   final LessonPublicationFilter selectedPublicationFilter;
 
-  bool get hasNoLessons => lessons.isEmpty;
+  bool get hasNoLessons {
+    return lessons.isEmpty;
+  }
 
   bool get hasActiveFilters {
     return searchQuery.trim().isNotEmpty ||
@@ -66,7 +66,8 @@ final class ViewLessonsDataSuccess extends ViewLessonsState {
               normalizedSubtitle.contains(normalizedSearchQuery);
 
           final matchesGrade =
-              normalizedGradeId.isEmpty || lesson.gradeId == normalizedGradeId;
+              normalizedGradeId.isEmpty ||
+              lesson.gradeId.trim() == normalizedGradeId;
 
           final matchesPublicationStatus = switch (selectedPublicationFilter) {
             LessonPublicationFilter.all => true,
@@ -83,20 +84,20 @@ final class ViewLessonsDataSuccess extends ViewLessonsState {
     return lessons.isNotEmpty && filteredLessons.isEmpty;
   }
 
-  String getGradeName(String gradeId) {
+  GradeEntity? findGradeById(String gradeId) {
     final normalizedGradeId = gradeId.trim();
 
     if (normalizedGradeId.isEmpty) {
-      return 'غير محدد';
+      return null;
     }
 
     for (final grade in grades) {
-      if (grade.gradeId == normalizedGradeId) {
-        return grade.name;
+      if (grade.gradeId.trim() == normalizedGradeId) {
+        return grade;
       }
     }
 
-    return 'صف غير معروف';
+    return null;
   }
 
   ViewLessonsDataSuccess copyWith({

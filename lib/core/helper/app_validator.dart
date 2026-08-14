@@ -1,6 +1,11 @@
 class AppValidator {
   AppValidator._();
 
+  static const int maximumLessonPdfSizeInMegabytes = 15;
+
+  static const int maximumLessonPdfSizeInBytes =
+      maximumLessonPdfSizeInMegabytes * 1024 * 1024;
+
   static String? studentName(String? value) {
     final name = value?.trim() ?? '';
 
@@ -102,10 +107,7 @@ class AppValidator {
 
     final uri = Uri.tryParse(url);
 
-    if (uri == null ||
-        !uri.hasScheme ||
-        !uri.hasAuthority ||
-        (uri.scheme != 'https' && uri.scheme != 'http')) {
+    if (!_isValidHttpUri(uri)) {
       return 'من فضلك اكتب رابطًا صحيحًا';
     }
 
@@ -224,6 +226,55 @@ class AppValidator {
     return null;
   }
 
+  /// التأكد من وجود ملف PDF داخل فورم إضافة الدرس.
+  static String? lessonPdf(Object? value) {
+    if (value == null) {
+      return 'من فضلك اختر ملف PDF للدرس';
+    }
+
+    return null;
+  }
+
+  /// التحقق الكامل من الملف بعد اختياره:
+  /// النوع والحجم والمسار.
+  static String? lessonPdfFile({
+    required String fileName,
+    required String? extension,
+    required int sizeInBytes,
+    required String? path,
+  }) {
+    final normalizedName = fileName.trim().toLowerCase();
+    final normalizedExtension = extension?.trim().toLowerCase();
+
+    final isPdf =
+        normalizedExtension == 'pdf' || normalizedName.endsWith('.pdf');
+
+    if (!isPdf) {
+      return 'يجب اختيار ملف PDF فقط';
+    }
+
+    if (sizeInBytes <= 0) {
+      return 'ملف PDF المحدد فارغ';
+    }
+
+    if (sizeInBytes > maximumLessonPdfSizeInBytes) {
+      return 'حجم الملف أكبر من الحد الأقصى '
+          '${maximumLessonPdfSizeInMegabytes}MB';
+    }
+
+    final normalizedPath = path?.trim() ?? '';
+
+    if (normalizedPath.isEmpty) {
+      return 'تعذر الوصول إلى مسار الملف المحدد';
+    }
+
+    return null;
+  }
+
+  static String get lessonPdfPickingFailureMessage {
+    return 'تعذر اختيار الملف، حاول مرة أخرى';
+  }
+
   static String? subscriptionStartDate(DateTime? startDate) {
     if (startDate == null) {
       return 'من فضلك اختر تاريخ بداية الاشتراك';
@@ -275,5 +326,15 @@ class AppValidator {
     }
 
     return null;
+  }
+
+  static bool _isValidHttpUri(Uri? uri) {
+    if (uri == null || !uri.hasScheme || !uri.hasAuthority) {
+      return false;
+    }
+
+    final scheme = uri.scheme.toLowerCase();
+
+    return scheme == 'http' || scheme == 'https';
   }
 }

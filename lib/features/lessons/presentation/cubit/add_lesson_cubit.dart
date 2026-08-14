@@ -23,9 +23,7 @@ class AddLessonCubit extends Cubit<AddLessonState> {
   StreamSubscription<Either<AppErrorModel, List<GradeEntity>>>?
   _gradesSubscription;
 
-  Future<void> initialize() {
-    return watchGrades();
-  }
+  Future<void> initialize() => watchGrades();
 
   Future<void> watchGrades() async {
     await _gradesSubscription?.cancel();
@@ -52,97 +50,50 @@ class AddLessonCubit extends Cubit<AddLessonState> {
   }
 
   void changeTitle(String value) {
-    if (state.isSubmitting) {
-      return;
-    }
-
-    emit(
-      state.copyWith(
-        title: value,
-        submissionStatus: AddLessonSubmissionStatus.idle,
-        clearError: true,
-      ),
-    );
+    _updateForm((currentState) => currentState.copyWith(title: value));
   }
 
   void changeSubtitle(String value) {
-    if (state.isSubmitting) {
-      return;
-    }
-
-    emit(
-      state.copyWith(
-        subtitle: value,
-        submissionStatus: AddLessonSubmissionStatus.idle,
-        clearError: true,
-      ),
-    );
+    _updateForm((currentState) => currentState.copyWith(subtitle: value));
   }
 
   void changeYoutubeUrl(String value) {
-    if (state.isSubmitting) {
-      return;
-    }
-
-    emit(
-      state.copyWith(
-        youtubeUrl: value,
-        submissionStatus: AddLessonSubmissionStatus.idle,
-        clearError: true,
-      ),
-    );
+    _updateForm((currentState) => currentState.copyWith(youtubeUrl: value));
   }
 
   void selectGrade(String gradeId) {
-    if (state.isSubmitting) {
-      return;
-    }
-
-    emit(
-      state.copyWith(
-        selectedGradeId: gradeId.trim(),
-        submissionStatus: AddLessonSubmissionStatus.idle,
-        clearError: true,
-      ),
+    _updateForm(
+      (currentState) => currentState.copyWith(selectedGradeId: gradeId.trim()),
     );
   }
 
   void changePublicationStatus(bool isPublished) {
-    if (state.isSubmitting) {
-      return;
-    }
-
-    emit(
-      state.copyWith(
-        isPublished: isPublished,
-        submissionStatus: AddLessonSubmissionStatus.idle,
-        clearError: true,
-      ),
+    _updateForm(
+      (currentState) => currentState.copyWith(isPublished: isPublished),
     );
   }
 
   void selectPdf(AddLessonPdfFile pdfFile) {
-    if (state.isSubmitting) {
-      return;
-    }
-
-    emit(
-      state.copyWith(
-        selectedPdf: pdfFile,
-        submissionStatus: AddLessonSubmissionStatus.idle,
-        clearError: true,
-      ),
-    );
+    _updateForm((currentState) => currentState.copyWith(selectedPdf: pdfFile));
   }
 
   void removePdf() {
-    if (state.isSubmitting) {
+    _updateForm(
+      (currentState) => currentState.copyWith(clearSelectedPdf: true),
+    );
+  }
+
+  void _updateForm(
+    AddLessonState Function(AddLessonState currentState) update,
+  ) {
+    if (isClosed || state.isSubmitting) {
       return;
     }
 
+    final updatedState = update(state);
+
     emit(
-      state.copyWith(
-        clearSelectedPdf: true,
+      updatedState.copyWith(
         submissionStatus: AddLessonSubmissionStatus.idle,
         clearError: true,
       ),
@@ -151,9 +102,14 @@ class AddLessonCubit extends Cubit<AddLessonState> {
 
   Future<void> createLesson() async {
     final currentState = state;
+
+    if (!currentState.canSubmit) {
+      return;
+    }
+
     final selectedPdf = currentState.selectedPdf;
 
-    if (!currentState.canSubmit || selectedPdf == null) {
+    if (selectedPdf == null) {
       return;
     }
 
@@ -188,7 +144,7 @@ class AddLessonCubit extends Cubit<AddLessonState> {
   }
 
   void consumeSubmissionResult() {
-    if (state.submissionStatus == AddLessonSubmissionStatus.idle) {
+    if (isClosed || state.submissionStatus == AddLessonSubmissionStatus.idle) {
       return;
     }
 
@@ -200,9 +156,7 @@ class AddLessonCubit extends Cubit<AddLessonState> {
     );
   }
 
-  Future<void> retry() {
-    return watchGrades();
-  }
+  Future<void> retry() => watchGrades();
 
   void _handleGradesResult(Either<AppErrorModel, List<GradeEntity>> result) {
     if (isClosed) {
@@ -213,11 +167,7 @@ class AddLessonCubit extends Cubit<AddLessonState> {
   }
 
   void _handleGradesFailure(AppErrorModel error) {
-    if (isClosed) {
-      return;
-    }
-
-    if (state.grades.isNotEmpty) {
+    if (isClosed || state.grades.isNotEmpty) {
       return;
     }
 
@@ -231,9 +181,9 @@ class AddLessonCubit extends Cubit<AddLessonState> {
 
     final availableGrades = List<GradeEntity>.unmodifiable(grades);
 
-    final selectedGradeExists = availableGrades.any((grade) {
-      return grade.gradeId == state.selectedGradeId;
-    });
+    final selectedGradeExists = availableGrades.any(
+      (grade) => grade.gradeId == state.selectedGradeId,
+    );
 
     emit(
       state.copyWith(
@@ -246,6 +196,10 @@ class AddLessonCubit extends Cubit<AddLessonState> {
   }
 
   void _emitSubmissionFailure(AppErrorModel error) {
+    if (isClosed) {
+      return;
+    }
+
     emit(
       state.copyWith(
         submissionStatus: AddLessonSubmissionStatus.failure,
@@ -255,6 +209,10 @@ class AddLessonCubit extends Cubit<AddLessonState> {
   }
 
   void _emitSubmissionSuccess() {
+    if (isClosed) {
+      return;
+    }
+
     emit(
       state.copyWith(
         submissionStatus: AddLessonSubmissionStatus.success,

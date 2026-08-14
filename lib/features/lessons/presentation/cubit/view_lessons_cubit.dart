@@ -35,7 +35,7 @@ class ViewLessonsCubit extends Cubit<ViewLessonsState> {
   bool _isInitializing = false;
 
   Future<void> initialize() async {
-    if (_isInitializing) {
+    if (_isInitializing || isClosed) {
       return;
     }
 
@@ -89,9 +89,23 @@ class ViewLessonsCubit extends Cubit<ViewLessonsState> {
     emit(currentState.copyWith(selectedPublicationFilter: filter));
   }
 
-  Future<void> retry() {
-    return initialize();
+  void clearFilters() {
+    final currentState = state;
+
+    if (currentState is! ViewLessonsDataSuccess) {
+      return;
+    }
+
+    emit(
+      currentState.copyWith(
+        searchQuery: '',
+        selectedGradeId: '',
+        selectedPublicationFilter: LessonPublicationFilter.all,
+      ),
+    );
   }
+
+  Future<void> retry() => initialize();
 
   void _watchGrades() {
     _gradesSubscription = _streamGradesUseCase(
@@ -108,13 +122,7 @@ class ViewLessonsCubit extends Cubit<ViewLessonsState> {
       return;
     }
 
-    result.fold(_emitFailure, (grades) {
-      _grades = List<GradeEntity>.unmodifiable(grades);
-
-      _hasLoadedGrades = true;
-
-      _emitDataSuccessIfReady();
-    });
+    result.fold(_onStreamFailure, _onGradesSuccess);
   }
 
   void _onLessonsResult(Either<AppErrorModel, List<LessonEntity>> result) {
@@ -122,13 +130,41 @@ class ViewLessonsCubit extends Cubit<ViewLessonsState> {
       return;
     }
 
-    result.fold(_emitFailure, (lessons) {
-      _lessons = List<LessonEntity>.unmodifiable(lessons);
+    result.fold(_onStreamFailure, _onLessonsSuccess);
+  }
 
-      _hasLoadedLessons = true;
+  void _onGradesSuccess(List<GradeEntity> grades) {
+    if (isClosed || _hasFailure) {
+      return;
+    }
 
-      _emitDataSuccessIfReady();
-    });
+    _grades = List<GradeEntity>.unmodifiable(grades);
+    _hasLoadedGrades = true;
+
+    _emitDataSuccessIfReady();
+  }
+
+  void _onLessonsSuccess(List<LessonEntity> lessons) {
+    if (isClosed || _hasFailure) {
+      return;
+    }
+
+    _lessons = List<LessonEntity>.unmodifiable(lessons);
+    _hasLoadedLessons = true;
+
+    _emitDataSuccessIfReady();
+  }
+
+  void _onStreamFailure(AppErrorModel error) {
+    if (isClosed) {
+      return;
+    }
+
+    if (state is ViewLessonsDataSuccess) {
+      return;
+    }
+
+    _emitFailure(error);
   }
 
   void _emitDataSuccessIfReady() {
@@ -152,7 +188,7 @@ class ViewLessonsCubit extends Cubit<ViewLessonsState> {
 
     final selectedGradeStillExists =
         selectedGradeId.isEmpty ||
-        _grades.any((grade) => grade.gradeId == selectedGradeId);
+        _grades.any((grade) => grade.gradeId.trim() == selectedGradeId);
 
     if (!selectedGradeStillExists) {
       selectedGradeId = '';

@@ -1,17 +1,15 @@
+import 'package:alwaleed_admain/core/helper/app_validator.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/add_lesson_pdf_picker_state.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class AddLessonPdfPickerCubit
-    extends Cubit<AddLessonPdfPickerState> {
-  AddLessonPdfPickerCubit()
-    : super(const AddLessonPdfPickerState());
-
-  static const int maximumFileSizeInBytes =
-      15 * 1024 * 1024;
+class AddLessonPdfPickerCubit extends Cubit<AddLessonPdfPickerState> {
+  AddLessonPdfPickerCubit() : super(const AddLessonPdfPickerState());
 
   Future<void> pickPdfFile() async {
-    if (state.isPicking) return;
+    if (state.isPicking) {
+      return;
+    }
 
     emit(
       state.copyWith(
@@ -26,32 +24,24 @@ class AddLessonPdfPickerCubit
         allowedExtensions: const ['pdf'],
       );
 
-      if (isClosed) return;
+      if (isClosed) {
+        return;
+      }
 
       if (selectedFile == null) {
-        _emitCurrentStatus();
+        _restoreCurrentStatus();
         return;
       }
 
-      if (!_isPdfFile(selectedFile)) {
-        _emitFailure('يجب اختيار ملف PDF فقط');
-        return;
-      }
+      final validationError = AppValidator.lessonPdfFile(
+        fileName: selectedFile.name,
+        extension: selectedFile.extension,
+        sizeInBytes: selectedFile.size,
+        path: selectedFile.path,
+      );
 
-      if (selectedFile.size >
-          maximumFileSizeInBytes) {
-        _emitFailure(
-          'حجم الملف أكبر من الحد الأقصى 15MB',
-        );
-        return;
-      }
-
-      final path = selectedFile.path?.trim();
-
-      if (path == null || path.isEmpty) {
-        _emitFailure(
-          'تعذر الوصول إلى مسار الملف المحدد',
-        );
+      if (validationError != null) {
+        _emitFailure(validationError);
         return;
       }
 
@@ -63,16 +53,18 @@ class AddLessonPdfPickerCubit
         ),
       );
     } catch (_) {
-      if (isClosed) return;
+      if (isClosed) {
+        return;
+      }
 
-      _emitFailure(
-        'تعذر اختيار الملف، حاول مرة أخرى',
-      );
+      _emitFailure(AppValidator.lessonPdfPickingFailureMessage);
     }
   }
 
   void removeSelectedFile() {
-    if (state.isPicking) return;
+    if (isClosed || state.isPicking) {
+      return;
+    }
 
     emit(
       state.copyWith(
@@ -84,38 +76,38 @@ class AddLessonPdfPickerCubit
   }
 
   void consumeFailure() {
-    if (!state.hasFailure) return;
+    if (isClosed || !state.hasFailure) {
+      return;
+    }
 
-    _emitCurrentStatus();
+    _restoreCurrentStatus();
   }
 
-  void _emitCurrentStatus() {
+  void _restoreCurrentStatus() {
+    if (isClosed) {
+      return;
+    }
+
     emit(
       state.copyWith(
-        status: state.selectedFile == null
-            ? AddLessonPdfPickerStatus.initial
-            : AddLessonPdfPickerStatus.selected,
+        status: state.hasSelectedFile
+            ? AddLessonPdfPickerStatus.selected
+            : AddLessonPdfPickerStatus.initial,
         clearError: true,
       ),
     );
   }
 
   void _emitFailure(String message) {
+    if (isClosed) {
+      return;
+    }
+
     emit(
       state.copyWith(
         status: AddLessonPdfPickerStatus.failure,
         errorMessage: message,
       ),
     );
-  }
-
-  bool _isPdfFile(PlatformFile file) {
-    final extension =
-        file.extension?.trim().toLowerCase();
-
-    return extension == 'pdf' ||
-        file.name.trim().toLowerCase().endsWith(
-          '.pdf',
-        );
   }
 }

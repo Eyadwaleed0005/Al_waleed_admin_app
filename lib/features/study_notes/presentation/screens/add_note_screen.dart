@@ -26,7 +26,7 @@ class AddNoteScreen extends StatelessWidget {
         child: Scaffold(
           body: ContentManagementBackground(
             child: SafeArea(
-              child: AppNetworkAwareContent(
+              child: AppNetworkAwareContent( 
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 24.w,

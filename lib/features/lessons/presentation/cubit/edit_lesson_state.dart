@@ -1,13 +1,9 @@
 import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admain/core/helper/app_validator.dart';
 import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
 import 'package:alwaleed_admain/features/lessons/domain/entities/lesson_entity.dart';
 
-enum EditLessonPageStatus {
-  initial,
-  loading,
-  ready,
-  failure,
-}
+enum EditLessonPageStatus { initial, loading, ready, failure }
 
 enum EditLessonActionStatus {
   idle,
@@ -70,7 +66,8 @@ class EditLessonState {
   }
 
   bool get isPageLoading {
-    return pageStatus == EditLessonPageStatus.loading;
+    return pageStatus == EditLessonPageStatus.initial ||
+        pageStatus == EditLessonPageStatus.loading;
   }
 
   bool get isPageReady {
@@ -109,6 +106,10 @@ class EditLessonState {
     return isUpdating || isDeleting;
   }
 
+  bool get isActionIdle {
+    return actionStatus == EditLessonActionStatus.idle;
+  }
+
   bool get hasReplacementPdf {
     return replacementPdf != null;
   }
@@ -124,47 +125,41 @@ class EditLessonState {
       return false;
     }
 
-    final storagePath =
-        currentLesson.pdfStoragePath?.trim() ?? '';
+    final storagePath = currentLesson.pdfStoragePath?.trim() ?? '';
 
-    final fileName =
-        currentLesson.pdfFileName?.trim() ?? '';
+    final fileName = currentLesson.pdfFileName?.trim() ?? '';
 
     return storagePath.isNotEmpty && fileName.isNotEmpty;
   }
 
   String get displayedPdfFileName {
-    return replacementPdf?.name ??
-        lesson?.pdfFileName ??
-        '';
+    return replacementPdf?.name ?? lesson?.pdfFileName ?? '';
   }
 
   int get displayedPdfFileSize {
-    return replacementPdf?.sizeInBytes ??
-        lesson?.pdfFileSize ??
-        0;
+    return replacementPdf?.sizeInBytes ?? lesson?.pdfFileSize ?? 0;
+  }
+
+  bool get hasValidTitle {
+    return AppValidator.lessonTitle(title) == null;
+  }
+
+  bool get hasValidSubtitle {
+    return AppValidator.lessonSubtitle(subtitle) == null;
   }
 
   bool get hasValidYoutubeUrl {
-    final uri = Uri.tryParse(youtubeUrl.trim());
+    return AppValidator.youtubeUrl(youtubeUrl) == null;
+  }
 
-    if (uri == null ||
-        !uri.hasScheme ||
-        !uri.hasAuthority) {
+  bool get hasValidSelectedGrade {
+    final gradeValidationError = AppValidator.grade(selectedGradeId);
+
+    if (gradeValidationError != null) {
       return false;
     }
 
-    final scheme = uri.scheme.toLowerCase();
-
-    if (scheme != 'http' && scheme != 'https') {
-      return false;
-    }
-
-    final host = uri.host.toLowerCase();
-
-    return host == 'youtu.be' ||
-        host == 'youtube.com' ||
-        host.endsWith('.youtube.com');
+    return grades.any((grade) => grade.gradeId == selectedGradeId.trim());
   }
 
   bool get hasChanges {
@@ -174,35 +169,30 @@ class EditLessonState {
       return false;
     }
 
+    final currentYoutubeUrl = currentLesson.youtubeUrl?.trim() ?? '';
+
     return title.trim() != currentLesson.title.trim() ||
         subtitle.trim() != currentLesson.subtitle.trim() ||
-        youtubeUrl.trim() !=
-            (currentLesson.youtubeUrl?.trim() ?? '') ||
-        selectedGradeId.trim() !=
-            currentLesson.gradeId.trim() ||
+        youtubeUrl.trim() != currentYoutubeUrl ||
+        selectedGradeId.trim() != currentLesson.gradeId.trim() ||
         isPublished != currentLesson.isPublished ||
         replacementPdf != null;
   }
 
   bool get isFormValid {
-    return title.trim().isNotEmpty &&
-        subtitle.trim().isNotEmpty &&
+    return hasValidTitle &&
+        hasValidSubtitle &&
         hasValidYoutubeUrl &&
-        selectedGradeId.trim().isNotEmpty &&
+        hasValidSelectedGrade &&
         hasCurrentPdf;
   }
 
   bool get canUpdate {
-    return isPageReady &&
-        isFormValid &&
-        hasChanges &&
-        !isActionInProgress;
+    return isPageReady && isActionIdle && isFormValid && hasChanges;
   }
 
   bool get canDelete {
-    return isPageReady &&
-        lesson != null &&
-        !isActionInProgress;
+    return isPageReady && isActionIdle && lesson != null;
   }
 
   EditLessonState copyWith({
@@ -230,18 +220,13 @@ class EditLessonState {
       title: title ?? this.title,
       subtitle: subtitle ?? this.subtitle,
       youtubeUrl: youtubeUrl ?? this.youtubeUrl,
-      selectedGradeId:
-          selectedGradeId ?? this.selectedGradeId,
+      selectedGradeId: selectedGradeId ?? this.selectedGradeId,
       isPublished: isPublished ?? this.isPublished,
       replacementPdf: clearReplacementPdf
           ? null
           : replacementPdf ?? this.replacementPdf,
-      pageError: clearPageError
-          ? null
-          : pageError ?? this.pageError,
-      actionError: clearActionError
-          ? null
-          : actionError ?? this.actionError,
+      pageError: clearPageError ? null : pageError ?? this.pageError,
+      actionError: clearActionError ? null : actionError ?? this.actionError,
     );
   }
 }

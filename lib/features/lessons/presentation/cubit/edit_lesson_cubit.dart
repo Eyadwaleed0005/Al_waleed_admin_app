@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admain/core/helper/app_validator.dart';
 import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
 import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
 import 'package:alwaleed_admain/features/lessons/domain/entities/lesson_entity.dart';
@@ -71,148 +72,115 @@ class EditLessonCubit extends Cubit<EditLessonState> {
     }
   }
 
-  Future<void> retry() {
-    return initialize();
-  }
+  Future<void> retry() => initialize();
 
   void changeTitle(String value) {
-    if (!state.isPageReady || state.isActionInProgress) {
-      return;
-    }
-
-    emit(
-      state.copyWith(
-        title: value,
-        actionStatus: EditLessonActionStatus.idle,
-        clearActionError: true,
-      ),
-    );
+    _updateForm((currentState) => currentState.copyWith(title: value));
   }
 
   void changeSubtitle(String value) {
-    if (!state.isPageReady || state.isActionInProgress) {
-      return;
-    }
-
-    emit(
-      state.copyWith(
-        subtitle: value,
-        actionStatus: EditLessonActionStatus.idle,
-        clearActionError: true,
-      ),
-    );
+    _updateForm((currentState) => currentState.copyWith(subtitle: value));
   }
 
   void changeYoutubeUrl(String value) {
-    if (!state.isPageReady || state.isActionInProgress) {
-      return;
-    }
-
-    emit(
-      state.copyWith(
-        youtubeUrl: value,
-        actionStatus: EditLessonActionStatus.idle,
-        clearActionError: true,
-      ),
-    );
+    _updateForm((currentState) => currentState.copyWith(youtubeUrl: value));
   }
 
   void selectGrade(String gradeId) {
-    if (!state.isPageReady || state.isActionInProgress) {
-      return;
-    }
-
-    emit(
-      state.copyWith(
-        selectedGradeId: gradeId.trim(),
-        actionStatus: EditLessonActionStatus.idle,
-        clearActionError: true,
-      ),
+    _updateForm(
+      (currentState) => currentState.copyWith(selectedGradeId: gradeId.trim()),
     );
   }
 
   void changePublicationStatus(bool isPublished) {
-    if (!state.isPageReady || state.isActionInProgress) {
-      return;
-    }
-
-    emit(
-      state.copyWith(
-        isPublished: isPublished,
-        actionStatus: EditLessonActionStatus.idle,
-        clearActionError: true,
-      ),
+    _updateForm(
+      (currentState) => currentState.copyWith(isPublished: isPublished),
     );
   }
 
   void selectReplacementPdf(EditLessonPdfFile file) {
-    if (!state.isPageReady || state.isActionInProgress) {
+    if (!_canEditForm) {
       return;
     }
 
-    final normalizedName = file.name.trim();
-    final normalizedPath = file.path.trim();
+    final validationError = AppValidator.lessonPdfFile(
+      fileName: file.name,
+      extension: null,
+      sizeInBytes: file.sizeInBytes,
+      path: file.path,
+    );
 
-    if (normalizedName.isEmpty ||
-        normalizedPath.isEmpty ||
-        file.sizeInBytes <= 0) {
+    if (validationError != null) {
       return;
     }
 
-    emit(
-      state.copyWith(
+    _updateForm(
+      (currentState) => currentState.copyWith(
         replacementPdf: EditLessonPdfFile(
-          name: normalizedName,
-          path: normalizedPath,
+          name: file.name.trim(),
+          path: file.path.trim(),
           sizeInBytes: file.sizeInBytes,
         ),
-        actionStatus: EditLessonActionStatus.idle,
-        clearActionError: true,
       ),
     );
   }
 
   void removeReplacementPdf() {
-    if (!state.isPageReady || state.isActionInProgress) {
+    _updateForm(
+      (currentState) => currentState.copyWith(clearReplacementPdf: true),
+    );
+  }
+
+  void _updateForm(
+    EditLessonState Function(EditLessonState currentState) update,
+  ) {
+    if (!_canEditForm) {
       return;
     }
 
+    final updatedState = update(state);
+
     emit(
-      state.copyWith(
-        clearReplacementPdf: true,
+      updatedState.copyWith(
         actionStatus: EditLessonActionStatus.idle,
         clearActionError: true,
       ),
     );
   }
 
+  bool get _canEditForm {
+    return !isClosed && state.isPageReady && !state.isActionInProgress;
+  }
+
   Future<void> updateLesson() async {
-    if (!state.canUpdate) {
+    final currentState = state;
+
+    if (!currentState.canUpdate) {
       return;
     }
 
-    final currentLesson = state.lesson;
+    final currentLesson = currentState.lesson;
 
     if (currentLesson == null) {
       return;
     }
 
-    final replacementPdf = state.replacementPdf;
+    final replacementPdf = currentState.replacementPdf;
 
     final updatedLesson = LessonEntity(
       lessonId: currentLesson.lessonId,
-      gradeId: state.selectedGradeId.trim(),
-      title: state.title.trim(),
-      subtitle: state.subtitle.trim(),
-      youtubeUrl: state.youtubeUrl.trim(),
+      gradeId: currentState.selectedGradeId.trim(),
+      title: currentState.title.trim(),
+      subtitle: currentState.subtitle.trim(),
+      youtubeUrl: currentState.youtubeUrl.trim(),
       pdfStoragePath: currentLesson.pdfStoragePath,
       pdfFileName: replacementPdf?.name ?? currentLesson.pdfFileName,
       pdfFileSize: replacementPdf?.sizeInBytes ?? currentLesson.pdfFileSize,
-      isPublished: state.isPublished,
+      isPublished: currentState.isPublished,
     );
 
     emit(
-      state.copyWith(
+      currentState.copyWith(
         actionStatus: EditLessonActionStatus.updating,
         clearActionError: true,
       ),
@@ -227,39 +195,24 @@ class EditLessonCubit extends Cubit<EditLessonState> {
       return;
     }
 
-    result.fold(
-      (error) {
-        emit(
-          state.copyWith(
-            actionStatus: EditLessonActionStatus.updateFailure,
-            actionError: error,
-          ),
-        );
-      },
-      (_) {
-        emit(
-          state.copyWith(
-            actionStatus: EditLessonActionStatus.updateSuccess,
-            clearActionError: true,
-          ),
-        );
-      },
-    );
+    result.fold(_emitUpdateFailure, (_) => _emitUpdateSuccess(updatedLesson));
   }
 
   Future<void> deleteLesson() async {
-    if (!state.canDelete) {
+    final currentState = state;
+
+    if (!currentState.canDelete) {
       return;
     }
 
-    final currentLesson = state.lesson;
+    final currentLesson = currentState.lesson;
 
     if (currentLesson == null) {
       return;
     }
 
     emit(
-      state.copyWith(
+      currentState.copyWith(
         actionStatus: EditLessonActionStatus.deleting,
         clearActionError: true,
       ),
@@ -271,35 +224,73 @@ class EditLessonCubit extends Cubit<EditLessonState> {
       return;
     }
 
-    result.fold(
-      (error) {
-        emit(
-          state.copyWith(
-            actionStatus: EditLessonActionStatus.deleteFailure,
-            actionError: error,
-          ),
-        );
-      },
-      (_) {
-        emit(
-          state.copyWith(
-            actionStatus: EditLessonActionStatus.deleteSuccess,
-            clearActionError: true,
-          ),
-        );
-      },
-    );
+    result.fold(_emitDeleteFailure, (_) => _emitDeleteSuccess());
   }
 
   void consumeActionResult() {
-    if (state.isActionInProgress ||
-        state.actionStatus == EditLessonActionStatus.idle) {
+    if (isClosed || state.isActionInProgress || state.isActionIdle) {
       return;
     }
 
     emit(
       state.copyWith(
         actionStatus: EditLessonActionStatus.idle,
+        clearActionError: true,
+      ),
+    );
+  }
+
+  void _emitUpdateFailure(AppErrorModel error) {
+    if (isClosed) {
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        actionStatus: EditLessonActionStatus.updateFailure,
+        actionError: error,
+      ),
+    );
+  }
+
+  void _emitUpdateSuccess(LessonEntity updatedLesson) {
+    if (isClosed) {
+      return;
+    }
+
+    _loadedLesson = updatedLesson;
+
+    emit(
+      state.copyWith(
+        actionStatus: EditLessonActionStatus.updateSuccess,
+        lesson: updatedLesson,
+        clearReplacementPdf: true,
+        clearActionError: true,
+      ),
+    );
+  }
+
+  void _emitDeleteFailure(AppErrorModel error) {
+    if (isClosed) {
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        actionStatus: EditLessonActionStatus.deleteFailure,
+        actionError: error,
+      ),
+    );
+  }
+
+  void _emitDeleteSuccess() {
+    if (isClosed) {
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        actionStatus: EditLessonActionStatus.deleteSuccess,
         clearActionError: true,
       ),
     );
@@ -316,13 +307,30 @@ class EditLessonCubit extends Cubit<EditLessonState> {
       return;
     }
 
-    result.fold(_emitPageFailure, (grades) {
-      _grades = List<GradeEntity>.unmodifiable(grades);
+    result.fold(_onGradesFailure, _onGradesSuccess);
+  }
 
-      _hasLoadedGrades = true;
+  void _onGradesFailure(AppErrorModel error) {
+    if (isClosed) {
+      return;
+    }
 
-      _emitReadyIfPossible();
-    });
+    if (_hasLoadedGrades || state.isPageReady) {
+      return;
+    }
+
+    _emitPageFailure(error);
+  }
+
+  void _onGradesSuccess(List<GradeEntity> grades) {
+    if (isClosed) {
+      return;
+    }
+
+    _grades = List<GradeEntity>.unmodifiable(grades);
+    _hasLoadedGrades = true;
+
+    _emitReadyIfPossible();
   }
 
   void _onLessonResult(Either<AppErrorModel, LessonEntity> result) {

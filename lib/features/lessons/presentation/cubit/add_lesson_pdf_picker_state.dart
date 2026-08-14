@@ -1,11 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 
-enum AddLessonPdfPickerStatus {
-  initial,
-  picking,
-  selected,
-  failure,
-}
+enum AddLessonPdfPickerStatus { initial, picking, selected, failure }
 
 class AddLessonPdfPickerState {
   const AddLessonPdfPickerState({
@@ -16,10 +11,19 @@ class AddLessonPdfPickerState {
 
   final AddLessonPdfPickerStatus status;
   final PlatformFile? selectedFile;
+
   final String? errorMessage;
+
+  bool get isInitial {
+    return status == AddLessonPdfPickerStatus.initial;
+  }
 
   bool get isPicking {
     return status == AddLessonPdfPickerStatus.picking;
+  }
+
+  bool get isSelected {
+    return status == AddLessonPdfPickerStatus.selected;
   }
 
   bool get hasSelectedFile {
@@ -28,7 +32,8 @@ class AddLessonPdfPickerState {
 
   bool get hasFailure {
     return status == AddLessonPdfPickerStatus.failure &&
-        errorMessage != null;
+        errorMessage != null &&
+        errorMessage!.trim().isNotEmpty;
   }
 
   AddLessonPdfPickerState copyWith({
@@ -43,9 +48,7 @@ class AddLessonPdfPickerState {
       selectedFile: clearSelectedFile
           ? null
           : selectedFile ?? this.selectedFile,
-      errorMessage: clearError
-          ? null
-          : errorMessage ?? this.errorMessage,
+      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
 }
