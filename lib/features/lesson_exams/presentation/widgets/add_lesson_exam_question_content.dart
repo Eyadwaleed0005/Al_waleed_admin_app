@@ -1,6 +1,5 @@
 import 'package:alwaleed_admain/features/lesson_exams/domain/lesson_exam_question_image_file.dart';
 import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/add_lesson_exam_question_form.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/lesson_exam_question_choices_fields.dart';
 import 'package:flutter/material.dart';
 
 typedef AddLessonExamQuestionSubmit =
@@ -15,21 +14,10 @@ class AddLessonExamQuestionContent extends StatefulWidget {
   const AddLessonExamQuestionContent({
     super.key,
     required this.onAddQuestionPressed,
-    this.onQuestionChanged,
-    this.onDegreeChanged,
-    this.onChoiceChanged,
-    this.onImageChanged,
     this.isAddingQuestion = false,
   });
 
   final AddLessonExamQuestionSubmit onAddQuestionPressed;
-
-  final ValueChanged<String>? onQuestionChanged;
-  final ValueChanged<String>? onDegreeChanged;
-
-  final LessonExamChoiceChanged? onChoiceChanged;
-
-  final ValueChanged<LessonExamQuestionImageFile?>? onImageChanged;
 
   final bool isAddingQuestion;
 
@@ -51,12 +39,6 @@ class _AddLessonExamQuestionContentState
 
   LessonExamQuestionImageFile? _selectedImage;
 
-  bool _isSubmitting = false;
-
-  bool get _isActionInProgress {
-    return _isSubmitting || widget.isAddingQuestion;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -69,31 +51,27 @@ class _AddLessonExamQuestionContentState
   }
 
   void _selectImage(LessonExamQuestionImageFile image) {
-    if (_isActionInProgress) {
+    if (widget.isAddingQuestion) {
       return;
     }
 
     setState(() {
       _selectedImage = image;
     });
-
-    widget.onImageChanged?.call(image);
   }
 
   void _removeImage() {
-    if (_isActionInProgress) {
+    if (widget.isAddingQuestion) {
       return;
     }
 
     setState(() {
       _selectedImage = null;
     });
-
-    widget.onImageChanged?.call(null);
   }
 
   Future<void> _addQuestion() async {
-    if (_isActionInProgress) {
+    if (widget.isAddingQuestion) {
       return;
     }
 
@@ -115,24 +93,12 @@ class _AddLessonExamQuestionContentState
         .map((controller) => controller.text.trim())
         .toList(growable: false);
 
-    setState(() {
-      _isSubmitting = true;
-    });
-
-    try {
-      await widget.onAddQuestionPressed(
-        questionText: _questionController.text.trim(),
-        degree: degree,
-        choices: choices,
-        image: _selectedImage,
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSubmitting = false;
-        });
-      }
-    }
+    await widget.onAddQuestionPressed(
+      questionText: _questionController.text.trim(),
+      degree: degree,
+      choices: choices,
+      image: _selectedImage,
+    );
   }
 
   @override
@@ -159,17 +125,7 @@ class _AddLessonExamQuestionContentState
           degreeController: _degreeController,
           choiceControllers: _choiceControllers,
           selectedImage: _selectedImage,
-          enabled: !_isActionInProgress,
-          isAddingQuestion: _isActionInProgress,
-          onQuestionChanged: (value) {
-            widget.onQuestionChanged?.call(value);
-          },
-          onDegreeChanged: (value) {
-            widget.onDegreeChanged?.call(value);
-          },
-          onChoiceChanged: (index, value) {
-            widget.onChoiceChanged?.call(index, value);
-          },
+          isAddingQuestion: widget.isAddingQuestion,
           onImageSelected: _selectImage,
           onImageRemoved: _removeImage,
           onAddQuestionPressed: _addQuestion,

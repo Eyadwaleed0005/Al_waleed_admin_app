@@ -42,8 +42,7 @@ class EditLessonExamQuestionScreen extends StatelessWidget {
           actionText: 'العودة إلى الاختبار',
           onActionPressed: () {
             Navigator.of(dialogContext).pop();
-
-            Navigator.of(screenContext).pop(true);
+            Navigator.of(screenContext).pop();
           },
         );
       },
@@ -90,9 +89,7 @@ class EditLessonExamQuestionScreen extends StatelessWidget {
                         title: 'تعديل السؤال',
                       ),
                     ),
-
                     verticalSpace(30),
-
                     Expanded(
                       child: AppAnimations.screenSection(
                         delay: 120,
@@ -103,12 +100,10 @@ class EditLessonExamQuestionScreen extends StatelessWidget {
                             >(
                               listener: _handleState,
                               builder: (context, state) {
-                                final isLoading =
-                                    state is EditLessonExamQuestionLoading;
-
                                 return EditLessonExamQuestionContent(
                                   question: question,
-                                  isUpdatingQuestion: isLoading,
+                                  isUpdatingQuestion:
+                                      state is EditLessonExamQuestionLoading,
                                   onUpdateQuestionPressed:
                                       ({
                                         required questionText,

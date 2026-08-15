@@ -99,11 +99,9 @@ class AddLessonExamQuestionScreen extends StatelessWidget {
                             >(
                               listener: _handleState,
                               builder: (context, state) {
-                                final isLoading =
-                                    state is AddLessonExamQuestionLoading;
-
                                 return AddLessonExamQuestionContent(
-                                  isAddingQuestion: isLoading,
+                                  isAddingQuestion:
+                                      state is AddLessonExamQuestionLoading,
                                   onAddQuestionPressed:
                                       ({
                                         required questionText,

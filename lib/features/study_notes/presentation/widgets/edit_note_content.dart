@@ -59,6 +59,18 @@ class _EditNoteContentState extends State<EditNoteContent> {
     }
   }
 
+  void _updateNote(EditNoteCubit cubit) {
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    final isFormValid = _formKey.currentState?.validate() ?? false;
+
+    if (!isFormValid) {
+      return;
+    }
+
+    cubit.updateNote();
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -81,107 +93,86 @@ class _EditNoteContentState extends State<EditNoteContent> {
 
     return Form(
       key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              physics: const ClampingScrollPhysics(),
-              padding: EdgeInsets.only(bottom: 12.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (lastUpdatedAt != null) ...[
-                    AppAnimations.screenSection(
-                      delay: 0,
-                      child: NoteLastUpdateCard(
-                        lastUpdatedAt: lastUpdatedAt,
-                        label: 'تم رفع الملف الحالي في',
-                      ),
-                    ),
-                    verticalSpace(24),
-                  ],
-                  AppAnimations.formFieldEntrance(
-                    order: 0,
-                    child: AddNoteTitleField(
-                      controller: _titleController,
-                      onChanged: cubit.changeTitle,
-                    ),
-                  ),
-                  verticalSpace(18),
-                  AppAnimations.formFieldEntrance(
-                    order: 1,
-                    child: AddNoteDescriptionField(
-                      controller: _descriptionController,
-                      onChanged: cubit.changeDescription,
-                    ),
-                  ),
-                  verticalSpace(20),
-                  AppAnimations.formFieldEntrance(
-                    order: 2,
-                    child: AddNoteOptionsSection(
-                      grades: state.grades,
-                      selectedGradeId: state.selectedGradeId,
-                      isPublished: state.isPublished,
-                      onGradeSelected: cubit.selectGrade,
-                      onPublicationChanged: cubit.changePublicationStatus,
-                    ),
-                  ),
-                  verticalSpace(20),
-                  AppAnimations.formFieldEntrance(
-                    order: 3,
-                    child: EditNotePdfPicker(
-                      existingFileName: note.pdfFileName,
-                      existingFileSize: note.pdfFileSize,
-                      replacementPdf: state.replacementPdf,
-                      onReplacementSelected: cubit.selectReplacementPdf,
-                      onReplacementRemoved: cubit.removeReplacementPdf,
-                    ),
-                  ),
-                ],
+      child: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        physics: const ClampingScrollPhysics(),
+        padding: EdgeInsets.only(bottom: 12.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (lastUpdatedAt != null) ...[
+              AppAnimations.screenSection(
+                delay: 0,
+                child: NoteLastUpdateCard(
+                  lastUpdatedAt: lastUpdatedAt,
+                  label: 'تم رفع الملف الحالي في',
+                ),
+              ),
+              verticalSpace(24),
+            ],
+            AppAnimations.formFieldEntrance(
+              order: 0,
+              child: AddNoteTitleField(
+                controller: _titleController,
+                onChanged: cubit.changeTitle,
               ),
             ),
-          ),
-          verticalSpace(16),
-          SafeArea(
-            top: false,
-            minimum: EdgeInsets.only(bottom: 4.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppAnimations.screenSection(
-                  delay: 360,
-                  child: CustomButton(
-                    text: 'حفظ التعديلات',
-                    isLoading: state.isUpdating,
-                    isEnabled: state.canUpdate,
-                    onPressed: () {
-                      FocusManager.instance.primaryFocus?.unfocus();
-                      final isFormValid =
-                          _formKey.currentState?.validate() ?? false;
-                      if (!isFormValid) {
-                        return;
-                      }
-                      cubit.updateNote();
-                    },
-                  ),
-                ),
-                verticalSpace(12),
-                AppAnimations.screenSection(
-                  delay: 420,
-                  child: CustomDeleteButton(
-                    text: 'حذف المذكرة',
-                    icon: Icons.delete_outline_rounded,
-                    isLoading: state.isDeleting,
-                    isEnabled: state.canDelete,
-                    onPressed: widget.onDeletePressed,
-                  ),
-                ),
-              ],
+            verticalSpace(18),
+            AppAnimations.formFieldEntrance(
+              order: 1,
+              child: AddNoteDescriptionField(
+                controller: _descriptionController,
+                onChanged: cubit.changeDescription,
+              ),
             ),
-          ),
-        ],
+            verticalSpace(20),
+            AppAnimations.formFieldEntrance(
+              order: 2,
+              child: AddNoteOptionsSection(
+                grades: state.grades,
+                selectedGradeId: state.selectedGradeId,
+                isPublished: state.isPublished,
+                onGradeSelected: cubit.selectGrade,
+                onPublicationChanged: cubit.changePublicationStatus,
+              ),
+            ),
+            verticalSpace(20),
+            AppAnimations.formFieldEntrance(
+              order: 3,
+              child: EditNotePdfPicker(
+                existingFileName: note.pdfFileName,
+                existingFileSize: note.pdfFileSize,
+                replacementPdf: state.replacementPdf,
+                onReplacementSelected: cubit.selectReplacementPdf,
+                onReplacementRemoved: cubit.removeReplacementPdf,
+              ),
+            ),
+            verticalSpace(24),
+            AppAnimations.screenSection(
+              delay: 360,
+              child: CustomButton(
+                text: 'حفظ التعديلات',
+                isLoading: state.isUpdating,
+                isEnabled: state.canUpdate,
+                onPressed: () {
+                  _updateNote(cubit);
+                },
+              ),
+            ),
+            verticalSpace(12),
+            AppAnimations.screenSection(
+              delay: 420,
+              child: CustomDeleteButton(
+                text: 'حذف المذكرة',
+                icon: Icons.delete_outline_rounded,
+                isLoading: state.isDeleting,
+                isEnabled: state.canDelete,
+                onPressed: widget.onDeletePressed,
+              ),
+            ),
+            verticalSpace(8),
+          ],
+        ),
       ),
     );
   }

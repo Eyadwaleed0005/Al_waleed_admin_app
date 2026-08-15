@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:alwaleed_admain/app/dependency_injection/service_locator.dart';
 import 'package:alwaleed_admain/app/routes/app_route_observer.dart';
 import 'package:alwaleed_admain/app/routes/app_routes.dart';
@@ -8,11 +9,13 @@ import 'package:alwaleed_admain/core/widgets/app_network_status_listener.dart';
 import 'package:alwaleed_admain/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   setupServiceLocator();
   await ScreenUtil.ensureScreenSize();
@@ -22,6 +25,7 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     final routeObserver = getIt<AppRouteObserver>();

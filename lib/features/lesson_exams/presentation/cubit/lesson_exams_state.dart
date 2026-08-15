@@ -42,10 +42,10 @@ class LessonExamsState {
   }
 
   final LessonExamsPageStatus pageStatus;
-
   final LessonExamEntity exam;
 
   final Map<String, int> selectedCorrectChoiceIndexes;
+
   final Map<String, int> persistedCorrectChoiceIndexes;
 
   final LessonExamsActionStatus actionStatus;

@@ -46,16 +46,9 @@ class LessonExamsScreen extends StatelessWidget {
 
     FocusManager.instance.primaryFocus?.unfocus();
 
-    final isUpdated = await Navigator.of(context).pushNamed<bool>(
-      RouteNames.editLessonExamQuestionScreen,
-      arguments: question,
-    );
-
-    if (!context.mounted || isUpdated != true) {
-      return;
-    }
-
-    context.read<LessonExamsCubit>().retry();
+    await Navigator.of(
+      context,
+    ).pushNamed(RouteNames.editLessonExamQuestionScreen, arguments: question);
   }
 
   Future<void> _confirmDeleteQuestion({
@@ -100,23 +93,24 @@ class LessonExamsScreen extends StatelessWidget {
   void _handleActionState(BuildContext context, LessonExamsState state) {
     if (state.hasActionSuccess) {
       _showSuccessDialog(context, actionType: state.actionType);
-
       return;
     }
 
-    if (state.hasActionFailure) {
-      final error = state.actionError;
-
-      if (error == null) {
-        return;
-      }
-
-      _showFailureDialog(
-        context,
-        actionType: state.actionType,
-        message: error.message,
-      );
+    if (!state.hasActionFailure) {
+      return;
     }
+
+    final error = state.actionError;
+
+    if (error == null) {
+      return;
+    }
+
+    _showFailureDialog(
+      context,
+      actionType: state.actionType,
+      message: error.message,
+    );
   }
 
   Future<void> _showSuccessDialog(
@@ -214,26 +208,21 @@ class LessonExamsScreen extends StatelessWidget {
     if (state.isPageReady) {
       return LessonExamsContent(
         state: state,
-
         onChoiceSelected: (question, choiceIndex) {
           context.read<LessonExamsCubit>().selectCorrectChoice(
             questionId: question.questionId,
             choiceIndex: choiceIndex,
           );
         },
-
         onEditQuestion: (question) {
           _openEditQuestionScreen(context: context, question: question);
         },
-
         onDeleteQuestion: (question) {
           _confirmDeleteQuestion(context: context, question: question);
         },
-
         onSaveExamPressed: () {
           context.read<LessonExamsCubit>().saveAnswers();
         },
-
         onAddQuestionPressed: () {
           _openAddQuestionScreen(context);
         },
@@ -262,9 +251,7 @@ class LessonExamsScreen extends StatelessWidget {
                         title: 'اختبارات الدرس',
                       ),
                     ),
-
                     verticalSpace(30),
-
                     Expanded(
                       child: AppAnimations.screenSection(
                         delay: 120,
