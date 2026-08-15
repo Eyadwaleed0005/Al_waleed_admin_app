@@ -226,7 +226,24 @@ class AppValidator {
     return null;
   }
 
-  /// التأكد من وجود ملف PDF داخل فورم إضافة الدرس.
+  static String? lessonExamQuestionText(String? value) {
+    final questionText = value?.trim() ?? '';
+
+    if (questionText.isEmpty) {
+      return 'من فضلك اكتب نص السؤال';
+    }
+
+    if (questionText.length < 5) {
+      return 'نص السؤال يجب ألا يقل عن 5 أحرف';
+    }
+
+    if (questionText.length > 500) {
+      return 'نص السؤال يجب ألا يزيد عن 500 حرف';
+    }
+
+    return null;
+  }
+
   static String? lessonPdf(Object? value) {
     if (value == null) {
       return 'من فضلك اختر ملف PDF للدرس';
@@ -235,8 +252,6 @@ class AppValidator {
     return null;
   }
 
-  /// التحقق الكامل من الملف بعد اختياره:
-  /// النوع والحجم والمسار.
   static String? lessonPdfFile({
     required String fileName,
     required String? extension,
@@ -244,6 +259,7 @@ class AppValidator {
     required String? path,
   }) {
     final normalizedName = fileName.trim().toLowerCase();
+
     final normalizedExtension = extension?.trim().toLowerCase();
 
     final isPdf =
@@ -336,5 +352,43 @@ class AppValidator {
     final scheme = uri.scheme.toLowerCase();
 
     return scheme == 'http' || scheme == 'https';
+  }
+
+  static String? lessonExamQuestionDegree(String? value) {
+    final degreeText = value?.trim() ?? '';
+
+    if (degreeText.isEmpty) {
+      return 'من فضلك اكتب درجة السؤال';
+    }
+
+    if (!RegExp(r'^\d+$').hasMatch(degreeText)) {
+      return 'درجة السؤال يجب أن تحتوي على أرقام فقط';
+    }
+
+    final degree = int.tryParse(degreeText);
+
+    if (degree == null) {
+      return 'من فضلك اكتب درجة صحيحة';
+    }
+
+    if (degree <= 0) {
+      return 'درجة السؤال يجب أن تكون أكبر من صفر';
+    }
+
+    return null;
+  }
+
+  static String? lessonExamQuestionChoice(String? value) {
+    final choice = value?.trim() ?? '';
+
+    if (choice.isEmpty) {
+      return 'من فضلك اكتب نص الاختيار';
+    }
+
+    if (choice.length > 200) {
+      return 'نص الاختيار يجب ألا يزيد عن 200 حرف';
+    }
+
+    return null;
   }
 }

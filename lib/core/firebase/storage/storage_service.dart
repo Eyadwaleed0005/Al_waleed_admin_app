@@ -18,4 +18,8 @@ abstract class StorageService {
   Future<void> deleteFile({
     required String storagePath,
   });
+  
+  Future<String> getDownloadUrl({
+  required String storagePath,
+});
 }

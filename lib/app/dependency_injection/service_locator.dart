@@ -18,6 +18,15 @@ import 'package:alwaleed_admain/features/grades/data/data_sources/grades_remote_
 import 'package:alwaleed_admain/features/grades/data/repositories/grades_repository_impl.dart';
 import 'package:alwaleed_admain/features/grades/domain/repositories/grades_repository.dart';
 import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
+import 'package:alwaleed_admain/features/lesson_exams/data/data_sources/firebase_lesson_exams_remote_data_source.dart';
+import 'package:alwaleed_admain/features/lesson_exams/data/data_sources/lesson_exams_remote_data_source.dart';
+import 'package:alwaleed_admain/features/lesson_exams/data/repositories/lesson_exam_repository_impl.dart';
+import 'package:alwaleed_admain/features/lesson_exams/domain/repositories/lesson_exam_repository.dart';
+import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/create_lesson_exam_question_use_case.dart';
+import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/delete_lesson_exam_question_use_case.dart';
+import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/save_lesson_exam_answers_use_case.dart';
+import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/stream_lesson_exam_use_case.dart';
+import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/update_lesson_exam_question_use_case.dart';
 import 'package:alwaleed_admain/features/lessons/data/data_sources/firebase_lessons_remote_data_source.dart';
 import 'package:alwaleed_admain/features/lessons/data/data_sources/lessons_remote_data_source.dart';
 import 'package:alwaleed_admain/features/lessons/data/repositories/lessons_repository_impl.dart';
@@ -109,27 +118,38 @@ void setupServiceLocator() {
 
   // Students remote data sources
 
-  getIt.registerLazySingleton<StudentsRemoteDataSource>(
+  getIt.registerLazySingleton<
+    StudentsRemoteDataSource
+  >(
     () => FirebaseStudentsRemoteDataSource(
-      firestoreService: getIt<FirestoreService>(),
+      firestoreService:
+          getIt<FirestoreService>(),
     ),
   );
 
-  getIt.registerLazySingleton<StudentAuthRemoteDataSource>(
+  getIt.registerLazySingleton<
+    StudentAuthRemoteDataSource
+  >(
     () => FirebaseStudentAuthRemoteDataSource(
-      firebaseFunctions: getIt<FirebaseFunctions>(),
+      firebaseFunctions:
+          getIt<FirebaseFunctions>(),
     ),
   );
 
   // Students repositories
 
-  getIt.registerLazySingleton<StudentsRepository>(
+  getIt.registerLazySingleton<
+    StudentsRepository
+  >(
     () => StudentsRepositoryImpl(
-      remoteDataSource: getIt<StudentsRemoteDataSource>(),
+      remoteDataSource:
+          getIt<StudentsRemoteDataSource>(),
     ),
   );
 
-  getIt.registerLazySingleton<StudentAuthRepository>(
+  getIt.registerLazySingleton<
+    StudentAuthRepository
+  >(
     () => StudentAuthRepositoryImpl(
       remoteDataSource:
           getIt<StudentAuthRemoteDataSource>(),
@@ -138,71 +158,98 @@ void setupServiceLocator() {
 
   // Students use cases
 
-  getIt.registerLazySingleton<CreateStudentUseCase>(
+  getIt.registerLazySingleton<
+    CreateStudentUseCase
+  >(
     () => CreateStudentUseCase(
       studentAuthRepository:
           getIt<StudentAuthRepository>(),
-      studentsRepository: getIt<StudentsRepository>(),
+      studentsRepository:
+          getIt<StudentsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<GetStudentsUseCase>(
+  getIt.registerLazySingleton<
+    GetStudentsUseCase
+  >(
     () => GetStudentsUseCase(
-      studentsRepository: getIt<StudentsRepository>(),
+      studentsRepository:
+          getIt<StudentsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<GetStudentByIdUseCase>(
+  getIt.registerLazySingleton<
+    GetStudentByIdUseCase
+  >(
     () => GetStudentByIdUseCase(
-      studentsRepository: getIt<StudentsRepository>(),
+      studentsRepository:
+          getIt<StudentsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<StreamStudentsUseCase>(
+  getIt.registerLazySingleton<
+    StreamStudentsUseCase
+  >(
     () => StreamStudentsUseCase(
-      studentsRepository: getIt<StudentsRepository>(),
+      studentsRepository:
+          getIt<StudentsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<UpdateStudentProfileUseCase>(
+  getIt.registerLazySingleton<
+    UpdateStudentProfileUseCase
+  >(
     () => UpdateStudentProfileUseCase(
-      studentsRepository: getIt<StudentsRepository>(),
+      studentsRepository:
+          getIt<StudentsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<UpdateStudentEmailUseCase>(
+  getIt.registerLazySingleton<
+    UpdateStudentEmailUseCase
+  >(
     () => UpdateStudentEmailUseCase(
       studentAuthRepository:
           getIt<StudentAuthRepository>(),
-      studentsRepository: getIt<StudentsRepository>(),
+      studentsRepository:
+          getIt<StudentsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<UpdateStudentPasswordUseCase>(
+  getIt.registerLazySingleton<
+    UpdateStudentPasswordUseCase
+  >(
     () => UpdateStudentPasswordUseCase(
       studentAuthRepository:
           getIt<StudentAuthRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<UpdateStudentStatusUseCase>(
+  getIt.registerLazySingleton<
+    UpdateStudentStatusUseCase
+  >(
     () => UpdateStudentStatusUseCase(
       studentAuthRepository:
           getIt<StudentAuthRepository>(),
-      studentsRepository: getIt<StudentsRepository>(),
+      studentsRepository:
+          getIt<StudentsRepository>(),
     ),
   );
 
   getIt.registerLazySingleton<
-      UpdateStudentSubscriptionUseCase>(
+    UpdateStudentSubscriptionUseCase
+  >(
     () => UpdateStudentSubscriptionUseCase(
       studentAuthRepository:
           getIt<StudentAuthRepository>(),
-      studentsRepository: getIt<StudentsRepository>(),
+      studentsRepository:
+          getIt<StudentsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<DeleteStudentUseCase>(
+  getIt.registerLazySingleton<
+    DeleteStudentUseCase
+  >(
     () => DeleteStudentUseCase(
       studentAuthRepository:
           getIt<StudentAuthRepository>(),
@@ -211,16 +258,21 @@ void setupServiceLocator() {
 
   // Live sessions remote data source
 
-  getIt.registerLazySingleton<LiveSessionsRemoteDataSource>(
+  getIt.registerLazySingleton<
+    LiveSessionsRemoteDataSource
+  >(
     () => FirebaseLiveSessionsRemoteDataSource(
-      firestoreService: getIt<FirestoreService>(),
+      firestoreService:
+          getIt<FirestoreService>(),
       networkInfo: getIt<NetworkInfo>(),
     ),
   );
 
   // Live sessions repository
 
-  getIt.registerLazySingleton<LiveSessionsRepository>(
+  getIt.registerLazySingleton<
+    LiveSessionsRepository
+  >(
     () => LiveSessionsRepositoryImpl(
       remoteDataSource:
           getIt<LiveSessionsRemoteDataSource>(),
@@ -229,65 +281,91 @@ void setupServiceLocator() {
 
   // Live sessions use cases
 
-  getIt.registerLazySingleton<GetLiveSessionUseCase>(
+  getIt.registerLazySingleton<
+    GetLiveSessionUseCase
+  >(
     () => GetLiveSessionUseCase(
-      repository: getIt<LiveSessionsRepository>(),
+      repository:
+          getIt<LiveSessionsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<SaveLiveSessionUseCase>(
+  getIt.registerLazySingleton<
+    SaveLiveSessionUseCase
+  >(
     () => SaveLiveSessionUseCase(
-      repository: getIt<LiveSessionsRepository>(),
+      repository:
+          getIt<LiveSessionsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<DeleteLiveSessionUseCase>(
+  getIt.registerLazySingleton<
+    DeleteLiveSessionUseCase
+  >(
     () => DeleteLiveSessionUseCase(
-      repository: getIt<LiveSessionsRepository>(),
+      repository:
+          getIt<LiveSessionsRepository>(),
     ),
   );
 
   // Grades remote data source
 
-  getIt.registerLazySingleton<GradesRemoteDataSource>(
+  getIt.registerLazySingleton<
+    GradesRemoteDataSource
+  >(
     () => FirebaseGradesRemoteDataSource(
-      firestoreService: getIt<FirestoreService>(),
+      firestoreService:
+          getIt<FirestoreService>(),
     ),
   );
 
   // Grades repository
 
-  getIt.registerLazySingleton<GradesRepository>(
+  getIt.registerLazySingleton<
+    GradesRepository
+  >(
     () => GradesRepositoryImpl(
-      remoteDataSource: getIt<GradesRemoteDataSource>(),
+      remoteDataSource:
+          getIt<GradesRemoteDataSource>(),
     ),
   );
 
   // Grades use cases
 
-  getIt.registerLazySingleton<StreamGradesUseCase>(
+  getIt.registerLazySingleton<
+    StreamGradesUseCase
+  >(
     () => StreamGradesUseCase(
-      gradesRepository: getIt<GradesRepository>(),
+      gradesRepository:
+          getIt<GradesRepository>(),
     ),
   );
 
   // Dashboard remote data source
 
-  getIt.registerLazySingleton<DashboardRemoteDataSource>(
+  getIt.registerLazySingleton<
+    DashboardRemoteDataSource
+  >(
     () => FirebaseDashboardRemoteDataSource(
-      firebaseFirestore: getIt<FirebaseFirestore>(),
+      firebaseFirestore:
+          getIt<FirebaseFirestore>(),
     ),
   );
 
   // Dashboard local data source
 
-  getIt.registerLazySingleton<DashboardLocalDataSource>(
-    () => const SharedPreferencesDashboardLocalDataSource(),
+  getIt.registerLazySingleton<
+    DashboardLocalDataSource
+  >(
+    () =>
+        const SharedPreferencesDashboardLocalDataSource(),
   );
 
   // Dashboard repository
 
-  getIt.registerLazySingleton<DashboardRepository>(
+  getIt.registerLazySingleton<
+    DashboardRepository
+  >(
     () => DashboardRepositoryImpl(
       remoteDataSource:
           getIt<DashboardRemoteDataSource>(),
@@ -299,7 +377,8 @@ void setupServiceLocator() {
   // Dashboard use cases
 
   getIt.registerLazySingleton<
-      GetDashboardStudentsSummaryUseCase>(
+    GetDashboardStudentsSummaryUseCase
+  >(
     () => GetDashboardStudentsSummaryUseCase(
       dashboardRepository:
           getIt<DashboardRepository>(),
@@ -316,16 +395,22 @@ void setupServiceLocator() {
 
   // Study notes remote data source
 
-  getIt.registerLazySingleton<StudyNotesRemoteDataSource>(
+  getIt.registerLazySingleton<
+    StudyNotesRemoteDataSource
+  >(
     () => FirebaseStudyNotesRemoteDataSource(
-      firestoreService: getIt<FirestoreService>(),
-      storageService: getIt<StorageService>(),
+      firestoreService:
+          getIt<FirestoreService>(),
+      storageService:
+          getIt<StorageService>(),
     ),
   );
 
   // Study notes repository
 
-  getIt.registerLazySingleton<StudyNotesRepository>(
+  getIt.registerLazySingleton<
+    StudyNotesRepository
+  >(
     () => StudyNotesRepositoryImpl(
       remoteDataSource:
           getIt<StudyNotesRemoteDataSource>(),
@@ -334,54 +419,78 @@ void setupServiceLocator() {
 
   // Study notes use cases
 
-  getIt.registerLazySingleton<GetStudyNotesUseCase>(
+  getIt.registerLazySingleton<
+    GetStudyNotesUseCase
+  >(
     () => GetStudyNotesUseCase(
-      repository: getIt<StudyNotesRepository>(),
+      repository:
+          getIt<StudyNotesRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<GetStudyNoteByIdUseCase>(
+  getIt.registerLazySingleton<
+    GetStudyNoteByIdUseCase
+  >(
     () => GetStudyNoteByIdUseCase(
-      repository: getIt<StudyNotesRepository>(),
+      repository:
+          getIt<StudyNotesRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<StreamStudyNotesUseCase>(
+  getIt.registerLazySingleton<
+    StreamStudyNotesUseCase
+  >(
     () => StreamStudyNotesUseCase(
-      repository: getIt<StudyNotesRepository>(),
+      repository:
+          getIt<StudyNotesRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<CreateStudyNoteUseCase>(
+  getIt.registerLazySingleton<
+    CreateStudyNoteUseCase
+  >(
     () => CreateStudyNoteUseCase(
-      repository: getIt<StudyNotesRepository>(),
+      repository:
+          getIt<StudyNotesRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<UpdateStudyNoteUseCase>(
+  getIt.registerLazySingleton<
+    UpdateStudyNoteUseCase
+  >(
     () => UpdateStudyNoteUseCase(
-      repository: getIt<StudyNotesRepository>(),
+      repository:
+          getIt<StudyNotesRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<DeleteStudyNoteUseCase>(
+  getIt.registerLazySingleton<
+    DeleteStudyNoteUseCase
+  >(
     () => DeleteStudyNoteUseCase(
-      repository: getIt<StudyNotesRepository>(),
+      repository:
+          getIt<StudyNotesRepository>(),
     ),
   );
 
   // Lessons remote data source
 
-  getIt.registerLazySingleton<LessonsRemoteDataSource>(
+  getIt.registerLazySingleton<
+    LessonsRemoteDataSource
+  >(
     () => FirebaseLessonsRemoteDataSource(
-      firestoreService: getIt<FirestoreService>(),
-      storageService: getIt<StorageService>(),
+      firestoreService:
+          getIt<FirestoreService>(),
+      storageService:
+          getIt<StorageService>(),
     ),
   );
 
   // Lessons repository
 
-  getIt.registerLazySingleton<LessonsRepository>(
+  getIt.registerLazySingleton<
+    LessonsRepository
+  >(
     () => LessonsRepositoryImpl(
       remoteDataSource:
           getIt<LessonsRemoteDataSource>(),
@@ -390,39 +499,124 @@ void setupServiceLocator() {
 
   // Lessons use cases
 
-  getIt.registerLazySingleton<GetLessonsUseCase>(
+  getIt.registerLazySingleton<
+    GetLessonsUseCase
+  >(
     () => GetLessonsUseCase(
-      repository: getIt<LessonsRepository>(),
+      repository:
+          getIt<LessonsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<GetLessonByIdUseCase>(
+  getIt.registerLazySingleton<
+    GetLessonByIdUseCase
+  >(
     () => GetLessonByIdUseCase(
-      repository: getIt<LessonsRepository>(),
+      repository:
+          getIt<LessonsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<StreamLessonsUseCase>(
+  getIt.registerLazySingleton<
+    StreamLessonsUseCase
+  >(
     () => StreamLessonsUseCase(
-      repository: getIt<LessonsRepository>(),
+      repository:
+          getIt<LessonsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<CreateLessonUseCase>(
+  getIt.registerLazySingleton<
+    CreateLessonUseCase
+  >(
     () => CreateLessonUseCase(
-      repository: getIt<LessonsRepository>(),
+      repository:
+          getIt<LessonsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<UpdateLessonUseCase>(
+  getIt.registerLazySingleton<
+    UpdateLessonUseCase
+  >(
     () => UpdateLessonUseCase(
-      repository: getIt<LessonsRepository>(),
+      repository:
+          getIt<LessonsRepository>(),
     ),
   );
 
-  getIt.registerLazySingleton<DeleteLessonUseCase>(
+  getIt.registerLazySingleton<
+    DeleteLessonUseCase
+  >(
     () => DeleteLessonUseCase(
-      repository: getIt<LessonsRepository>(),
+      repository:
+          getIt<LessonsRepository>(),
+    ),
+  );
+
+  // Lesson exams remote data source
+
+  getIt.registerLazySingleton<
+    LessonExamsRemoteDataSource
+  >(
+    () =>
+        FirebaseLessonExamsRemoteDataSource(
+      firestoreService:
+          getIt<FirestoreService>(),
+      storageService:
+          getIt<StorageService>(),
+    ),
+  );
+
+  // Lesson exams repository
+
+  getIt.registerLazySingleton<
+    LessonExamRepository
+  >(
+    () => LessonExamRepositoryImpl(
+      remoteDataSource:
+          getIt<LessonExamsRemoteDataSource>(),
+    ),
+  );
+
+  // Lesson exams use cases
+
+  getIt.registerLazySingleton<
+    StreamLessonExamUseCase
+  >(
+    () => StreamLessonExamUseCase(
+      getIt<LessonExamRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<
+    CreateLessonExamQuestionUseCase
+  >(
+    () => CreateLessonExamQuestionUseCase(
+      getIt<LessonExamRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<
+    UpdateLessonExamQuestionUseCase
+  >(
+    () => UpdateLessonExamQuestionUseCase(
+      getIt<LessonExamRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<
+    DeleteLessonExamQuestionUseCase
+  >(
+    () => DeleteLessonExamQuestionUseCase(
+      getIt<LessonExamRepository>(),
+    ),
+  );
+
+  getIt.registerLazySingleton<
+    SaveLessonExamAnswersUseCase
+  >(
+    () => SaveLessonExamAnswersUseCase(
+      getIt<LessonExamRepository>(),
     ),
   );
 
