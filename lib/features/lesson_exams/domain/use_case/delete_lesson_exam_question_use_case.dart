@@ -3,7 +3,9 @@ import 'package:alwaleed_admain/features/lesson_exams/domain/repositories/lesson
 import 'package:dartz/dartz.dart';
 
 class DeleteLessonExamQuestionUseCase {
-  const DeleteLessonExamQuestionUseCase(this._repository);
+  const DeleteLessonExamQuestionUseCase(
+    this._repository,
+  );
 
   final LessonExamRepository _repository;
 

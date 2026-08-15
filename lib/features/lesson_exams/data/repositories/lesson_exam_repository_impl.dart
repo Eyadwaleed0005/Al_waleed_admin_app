@@ -19,27 +19,29 @@ class LessonExamRepositoryImpl implements LessonExamRepository {
   Stream<Either<AppErrorModel, LessonExamEntity>> streamLessonExam({
     required String lessonId,
   }) async* {
-    final normalizedLessonId = lessonId.trim();
-
     try {
-      await for (final questionModels in _remoteDataSource.streamQuestions(
-        lessonId: normalizedLessonId,
+      await for (final questionModels
+          in _remoteDataSource.streamQuestions(
+        lessonId: lessonId,
       )) {
         final questions = questionModels
-            .map((questionModel) {
-              return questionModel.toEntity();
-            })
+            .map((model) => model.toEntity())
             .toList(growable: false);
 
         yield right(
           LessonExamEntity(
-            lessonId: normalizedLessonId,
-            questions: List<LessonExamQuestionEntity>.unmodifiable(questions),
+            lessonId: lessonId,
+            questions:
+                List<LessonExamQuestionEntity>.unmodifiable(
+              questions,
+            ),
           ),
         );
       }
     } catch (error) {
-      yield left(FirebaseErrorHandler.handle(error));
+      yield left(
+        FirebaseErrorHandler.handle(error),
+      );
     }
   }
 
@@ -49,15 +51,17 @@ class LessonExamRepositoryImpl implements LessonExamRepository {
     required String questionText,
     required int degree,
     required List<String> choices,
-    required LessonExamQuestionImageFile? image,
+    LessonExamQuestionImageFile? image,
   }) async {
     try {
       final questionModel = LessonExamQuestionModel(
         questionId: '',
-        lessonId: lessonId.trim(),
-        questionText: questionText.trim(),
+        lessonId: lessonId,
+        questionText: questionText,
         degree: degree,
-        choices: _normalizeChoices(choices),
+        choices: List<String>.unmodifiable(
+          choices,
+        ),
         correctChoiceIndex: null,
       );
 
@@ -68,7 +72,9 @@ class LessonExamRepositoryImpl implements LessonExamRepository {
 
       return right(unit);
     } catch (error) {
-      return left(FirebaseErrorHandler.handle(error));
+      return left(
+        FirebaseErrorHandler.handle(error),
+      );
     }
   }
 
@@ -79,16 +85,18 @@ class LessonExamRepositoryImpl implements LessonExamRepository {
     required String questionText,
     required int degree,
     required List<String> choices,
-    required LessonExamQuestionImageFile? newImage,
-    required bool removeCurrentImage,
+    LessonExamQuestionImageFile? newImage,
+    bool removeCurrentImage = false,
   }) async {
     try {
       final questionModel = LessonExamQuestionModel(
-        questionId: questionId.trim(),
-        lessonId: lessonId.trim(),
-        questionText: questionText.trim(),
+        questionId: questionId,
+        lessonId: lessonId,
+        questionText: questionText,
         degree: degree,
-        choices: _normalizeChoices(choices),
+        choices: List<String>.unmodifiable(
+          choices,
+        ),
         correctChoiceIndex: null,
       );
 
@@ -100,7 +108,9 @@ class LessonExamRepositoryImpl implements LessonExamRepository {
 
       return right(unit);
     } catch (error) {
-      return left(FirebaseErrorHandler.handle(error));
+      return left(
+        FirebaseErrorHandler.handle(error),
+      );
     }
   }
 
@@ -111,13 +121,15 @@ class LessonExamRepositoryImpl implements LessonExamRepository {
   }) async {
     try {
       await _remoteDataSource.deleteQuestion(
-        lessonId: lessonId.trim(),
-        questionId: questionId.trim(),
+        lessonId: lessonId,
+        questionId: questionId,
       );
 
       return right(unit);
     } catch (error) {
-      return left(FirebaseErrorHandler.handle(error));
+      return left(
+        FirebaseErrorHandler.handle(error),
+      );
     }
   }
 
@@ -127,24 +139,19 @@ class LessonExamRepositoryImpl implements LessonExamRepository {
     required Map<String, int> correctChoiceIndexes,
   }) async {
     try {
-      final normalizedAnswers = Map<String, int>.unmodifiable(
-        correctChoiceIndexes.map((questionId, choiceIndex) {
-          return MapEntry(questionId.trim(), choiceIndex);
-        }),
-      );
-
       await _remoteDataSource.saveCorrectAnswers(
-        lessonId: lessonId.trim(),
-        correctChoiceIndexes: normalizedAnswers,
+        lessonId: lessonId,
+        correctChoiceIndexes:
+            Map<String, int>.unmodifiable(
+          correctChoiceIndexes,
+        ),
       );
 
       return right(unit);
     } catch (error) {
-      return left(FirebaseErrorHandler.handle(error));
+      return left(
+        FirebaseErrorHandler.handle(error),
+      );
     }
-  }
-
-  List<String> _normalizeChoices(List<String> choices) {
-    return List<String>.unmodifiable(choices.map((choice) => choice.trim()));
   }
 }

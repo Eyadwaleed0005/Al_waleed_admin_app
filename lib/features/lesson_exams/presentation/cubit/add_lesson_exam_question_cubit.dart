@@ -49,12 +49,4 @@ class AddLessonExamQuestionCubit extends Cubit<AddLessonExamQuestionState> {
       },
     );
   }
-
-  void reset() {
-    if (isClosed || isSubmitting) {
-      return;
-    }
-
-    emit(const AddLessonExamQuestionInitial());
-  }
 }

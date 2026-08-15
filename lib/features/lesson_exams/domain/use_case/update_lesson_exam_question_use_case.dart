@@ -4,7 +4,9 @@ import 'package:alwaleed_admain/features/lesson_exams/domain/repositories/lesson
 import 'package:dartz/dartz.dart';
 
 class UpdateLessonExamQuestionUseCase {
-  const UpdateLessonExamQuestionUseCase(this._repository);
+  const UpdateLessonExamQuestionUseCase(
+    this._repository,
+  );
 
   final LessonExamRepository _repository;
 

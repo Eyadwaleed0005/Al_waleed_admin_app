@@ -25,42 +25,14 @@ class FirebaseLessonExamsRemoteDataSource
   final StorageService _storageService;
 
   @override
-  Future<List<LessonExamQuestionModel>> getQuestions({
-    required String lessonId,
-  }) {
-    return FirebaseErrorHandler.execute(() async {
-      final normalizedLessonId = lessonId.trim();
-
-      final snapshot = await _firestoreService.getCollection(
-        collectionPath: FirestoreCollections.lessonQuestions,
-        queryBuilder: _getQuestionsQuery(lessonId: normalizedLessonId),
-      );
-
-      return _mapQuestions(snapshot);
-    });
-  }
-
-  @override
-  Future<LessonExamQuestionModel> getQuestionById({
-    required String lessonId,
-    required String questionId,
-  }) {
-    return FirebaseErrorHandler.execute(() {
-      return _getRequiredQuestion(lessonId: lessonId, questionId: questionId);
-    });
-  }
-
-  @override
   Stream<List<LessonExamQuestionModel>> streamQuestions({
     required String lessonId,
   }) {
     return FirebaseErrorHandler.executeStream(() {
-      final normalizedLessonId = lessonId.trim();
-
       return _firestoreService
           .streamCollection(
             collectionPath: FirestoreCollections.lessonQuestions,
-            queryBuilder: _getQuestionsQuery(lessonId: normalizedLessonId),
+            queryBuilder: _getQuestionsQuery(lessonId: lessonId),
           )
           .map(_mapQuestions);
     });
@@ -69,26 +41,22 @@ class FirebaseLessonExamsRemoteDataSource
   @override
   Future<void> createQuestion({
     required LessonExamQuestionModel question,
-    required LessonExamQuestionImageFile? image,
+    LessonExamQuestionImageFile? image,
   }) {
     return FirebaseErrorHandler.execute(() async {
-      final normalizedLessonId = question.lessonId.trim();
-
       _UploadedQuestionImage? uploadedImage;
 
       try {
         if (image != null) {
           uploadedImage = await _uploadQuestionImage(
-            lessonId: normalizedLessonId,
+            lessonId: question.lessonId,
             image: image,
           );
         }
 
-        final data = Map<String, dynamic>.from(question.toMap());
+        final data = Map<String, dynamic>.from(question.toCreateMap());
 
         data
-          ..[FirestoreFields.lessonId] = normalizedLessonId
-          ..[FirestoreFields.correctOption] = null
           ..[FirestoreFields.questionImageUrl] = uploadedImage?.downloadUrl
           ..[FirestoreFields.questionImageStoragePath] =
               uploadedImage?.storagePath
@@ -100,11 +68,7 @@ class FirebaseLessonExamsRemoteDataSource
           data: data,
         );
       } catch (error, stackTrace) {
-        final uploadedStoragePath = uploadedImage?.storagePath ?? '';
-
-        if (uploadedStoragePath.isNotEmpty) {
-          await _rollbackStorageFile(storagePath: uploadedStoragePath);
-        }
+        await _tryDeleteStorageFile(storagePath: uploadedImage?.storagePath);
 
         Error.throwWithStackTrace(error, stackTrace);
       }
@@ -114,16 +78,13 @@ class FirebaseLessonExamsRemoteDataSource
   @override
   Future<void> updateQuestion({
     required LessonExamQuestionModel question,
-    required LessonExamQuestionImageFile? newImage,
+    LessonExamQuestionImageFile? newImage,
     bool removeCurrentImage = false,
   }) {
     return FirebaseErrorHandler.execute(() async {
-      final lessonId = question.lessonId.trim();
-      final questionId = question.questionId.trim();
-
       final currentQuestion = await _getRequiredQuestion(
-        lessonId: lessonId,
-        questionId: questionId,
+        lessonId: question.lessonId,
+        questionId: question.questionId,
       );
 
       _UploadedQuestionImage? uploadedImage;
@@ -131,22 +92,14 @@ class FirebaseLessonExamsRemoteDataSource
       try {
         if (newImage != null) {
           uploadedImage = await _uploadQuestionImage(
-            lessonId: lessonId,
+            lessonId: question.lessonId,
             image: newImage,
           );
         }
 
-        final data = Map<String, dynamic>.from(question.toMap());
+        final data = Map<String, dynamic>.from(question.toUpdateMap());
 
-        data
-          ..remove(FirestoreFields.lessonId)
-          ..remove(FirestoreFields.createdAt)
-          ..remove(FirestoreFields.questionImageUrl)
-          ..remove(FirestoreFields.questionImageStoragePath);
-
-        data
-          ..[FirestoreFields.correctOption] = null
-          ..[FirestoreFields.updatedAt] = FieldValue.serverTimestamp();
+        data[FirestoreFields.updatedAt] = FieldValue.serverTimestamp();
 
         if (uploadedImage != null) {
           data
@@ -161,27 +114,27 @@ class FirebaseLessonExamsRemoteDataSource
 
         await _firestoreService.patchData(
           collectionPath: FirestoreCollections.lessonQuestions,
-          documentId: questionId,
+          documentId: question.questionId,
           data: data,
         );
       } catch (error, stackTrace) {
-        final uploadedStoragePath = uploadedImage?.storagePath ?? '';
-
-        if (uploadedStoragePath.isNotEmpty) {
-          await _rollbackStorageFile(storagePath: uploadedStoragePath);
-        }
+        await _tryDeleteStorageFile(storagePath: uploadedImage?.storagePath);
 
         Error.throwWithStackTrace(error, stackTrace);
       }
 
-      final oldStoragePath = currentQuestion.imageStoragePath?.trim() ?? '';
+      final oldStoragePath = currentQuestion.imageStoragePath;
 
       final imageWasChanged = uploadedImage != null || removeCurrentImage;
 
-      if (imageWasChanged &&
+      final shouldDeleteOldImage =
+          imageWasChanged &&
+          oldStoragePath != null &&
           oldStoragePath.isNotEmpty &&
-          oldStoragePath != uploadedImage?.storagePath) {
-        await _deleteStorageFile(storagePath: oldStoragePath);
+          oldStoragePath != uploadedImage?.storagePath;
+
+      if (shouldDeleteOldImage) {
+        await _tryDeleteStorageFile(storagePath: oldStoragePath);
       }
     }, timeout: null);
   }
@@ -192,23 +145,18 @@ class FirebaseLessonExamsRemoteDataSource
     required String questionId,
   }) {
     return FirebaseErrorHandler.execute(() async {
-      final normalizedLessonId = lessonId.trim();
-      final normalizedQuestionId = questionId.trim();
-
       final currentQuestion = await _getRequiredQuestion(
-        lessonId: normalizedLessonId,
-        questionId: normalizedQuestionId,
+        lessonId: lessonId,
+        questionId: questionId,
       );
-
-      final storagePath = currentQuestion.imageStoragePath?.trim() ?? '';
-
-      if (storagePath.isNotEmpty) {
-        await _deleteStorageFile(storagePath: storagePath);
-      }
 
       await _firestoreService.deleteData(
         collectionPath: FirestoreCollections.lessonQuestions,
-        documentId: normalizedQuestionId,
+        documentId: questionId,
+      );
+
+      await _tryDeleteStorageFile(
+        storagePath: currentQuestion.imageStoragePath,
       );
     }, timeout: null);
   }
@@ -219,16 +167,14 @@ class FirebaseLessonExamsRemoteDataSource
     required Map<String, int> correctChoiceIndexes,
   }) {
     return FirebaseErrorHandler.execute(() async {
-      final normalizedLessonId = lessonId.trim();
-
-      final questions = await getQuestions(lessonId: normalizedLessonId);
+      final questions = await _getQuestions(lessonId: lessonId);
 
       final questionIds = questions
           .map((question) => question.questionId)
           .toSet();
 
       for (final entry in correctChoiceIndexes.entries) {
-        final questionId = entry.key.trim();
+        final questionId = entry.key;
         final correctChoiceIndex = entry.value;
 
         if (!questionIds.contains(questionId)) {
@@ -242,14 +188,11 @@ class FirebaseLessonExamsRemoteDataSource
 
       await Future.wait(
         correctChoiceIndexes.entries.map((entry) {
-          final questionId = entry.key.trim();
-          final correctChoiceIndex = entry.value;
-
           return _firestoreService.patchData(
             collectionPath: FirestoreCollections.lessonQuestions,
-            documentId: questionId,
+            documentId: entry.key,
             data: {
-              FirestoreFields.correctOption: correctChoiceIndex,
+              FirestoreFields.correctOption: entry.value,
               FirestoreFields.updatedAt: FieldValue.serverTimestamp(),
             },
           );
@@ -258,16 +201,24 @@ class FirebaseLessonExamsRemoteDataSource
     }, timeout: null);
   }
 
+  Future<List<LessonExamQuestionModel>> _getQuestions({
+    required String lessonId,
+  }) async {
+    final snapshot = await _firestoreService.getCollection(
+      collectionPath: FirestoreCollections.lessonQuestions,
+      queryBuilder: _getQuestionsQuery(lessonId: lessonId),
+    );
+
+    return _mapQuestions(snapshot);
+  }
+
   Future<LessonExamQuestionModel> _getRequiredQuestion({
     required String lessonId,
     required String questionId,
   }) async {
-    final normalizedLessonId = lessonId.trim();
-    final normalizedQuestionId = questionId.trim();
-
     final snapshot = await _firestoreService.getDocument(
       collectionPath: FirestoreCollections.lessonQuestions,
-      documentId: normalizedQuestionId,
+      documentId: questionId,
     );
 
     final data = snapshot.data();
@@ -276,12 +227,9 @@ class FirebaseLessonExamsRemoteDataSource
       FirebaseErrorHandler.throwFirestoreCode('not-found');
     }
 
-    final question = LessonExamQuestionModel.fromMap(
-      questionId: snapshot.id,
-      map: data,
-    );
+    final question = LessonExamQuestionModel.fromFirestore(document: snapshot);
 
-    if (question.lessonId != normalizedLessonId) {
+    if (question.lessonId != lessonId) {
       FirebaseErrorHandler.throwFirestoreCode('not-found');
     }
 
@@ -297,39 +245,44 @@ class FirebaseLessonExamsRemoteDataSource
   List<LessonExamQuestionModel> _mapQuestions(
     QuerySnapshot<Map<String, dynamic>> snapshot,
   ) {
-    final questions = snapshot.docs.map((document) {
-      return LessonExamQuestionModel.fromMap(
-        questionId: document.id,
-        map: document.data(),
-      );
-    }).toList();
+    final questions = snapshot.docs
+        .map(
+          (document) =>
+              LessonExamQuestionModel.fromFirestore(document: document),
+        )
+        .toList();
 
-    questions.sort((first, second) {
-      final firstCreatedAt = first.createdAt;
-      final secondCreatedAt = second.createdAt;
-
-      if (firstCreatedAt == null && secondCreatedAt == null) {
-        return first.questionId.compareTo(second.questionId);
-      }
-
-      if (firstCreatedAt == null) {
-        return 1;
-      }
-
-      if (secondCreatedAt == null) {
-        return -1;
-      }
-
-      final dateComparison = firstCreatedAt.compareTo(secondCreatedAt);
-
-      if (dateComparison != 0) {
-        return dateComparison;
-      }
-
-      return first.questionId.compareTo(second.questionId);
-    });
+    questions.sort(_compareQuestions);
 
     return List<LessonExamQuestionModel>.unmodifiable(questions);
+  }
+
+  int _compareQuestions(
+    LessonExamQuestionModel first,
+    LessonExamQuestionModel second,
+  ) {
+    final firstCreatedAt = first.createdAt;
+    final secondCreatedAt = second.createdAt;
+
+    if (firstCreatedAt == null && secondCreatedAt == null) {
+      return first.questionId.compareTo(second.questionId);
+    }
+
+    if (firstCreatedAt == null) {
+      return 1;
+    }
+
+    if (secondCreatedAt == null) {
+      return -1;
+    }
+
+    final dateComparison = firstCreatedAt.compareTo(secondCreatedAt);
+
+    if (dateComparison != 0) {
+      return dateComparison;
+    }
+
+    return first.questionId.compareTo(second.questionId);
   }
 
   Future<_UploadedQuestionImage> _uploadQuestionImage({
@@ -343,7 +296,7 @@ class FirebaseLessonExamsRemoteDataSource
     final storagePath = _buildImageStoragePath(lessonId: lessonId);
 
     File? temporaryFile;
-    String uploadedStoragePath = '';
+    String? uploadedStoragePath;
 
     try {
       temporaryFile = await _createTemporaryImageFile(image: image);
@@ -354,11 +307,11 @@ class FirebaseLessonExamsRemoteDataSource
         contentType: StorageContentTypes.jpeg,
         customMetadata: {
           StorageMetadataFields.lessonId: lessonId,
-          StorageMetadataFields.originalFileName: image.name.trim(),
+          StorageMetadataFields.originalFileName: image.name,
         },
       );
 
-      uploadedStoragePath = uploadedMetadata.fullPath.trim();
+      uploadedStoragePath = uploadedMetadata.fullPath;
 
       final downloadUrl = await _storageService.getDownloadUrl(
         storagePath: uploadedStoragePath,
@@ -369,9 +322,7 @@ class FirebaseLessonExamsRemoteDataSource
         storagePath: uploadedStoragePath,
       );
     } catch (error, stackTrace) {
-      if (uploadedStoragePath.isNotEmpty) {
-        await _rollbackStorageFile(storagePath: uploadedStoragePath);
-      }
+      await _tryDeleteStorageFile(storagePath: uploadedStoragePath);
 
       Error.throwWithStackTrace(error, stackTrace);
     } finally {
@@ -388,7 +339,8 @@ class FirebaseLessonExamsRemoteDataSource
 
     final temporaryFile = File(
       '${Directory.systemTemp.path}'
-      '${separator}lesson_question_$fileVersion.jpg',
+      '${separator}lesson_question_'
+      '$fileVersion.jpg',
     );
 
     await temporaryFile.writeAsBytes(image.bytes, flush: true);
@@ -404,12 +356,8 @@ class FirebaseLessonExamsRemoteDataSource
         '$fileVersion.jpg';
   }
 
-  Future<void> _deleteStorageFile({required String storagePath}) {
-    return _storageService.deleteFile(storagePath: storagePath.trim());
-  }
-
-  Future<void> _rollbackStorageFile({required String storagePath}) async {
-    final normalizedStoragePath = storagePath.trim();
+  Future<void> _tryDeleteStorageFile({required String? storagePath}) async {
+    final normalizedStoragePath = storagePath?.trim() ?? '';
 
     if (normalizedStoragePath.isEmpty) {
       return;
