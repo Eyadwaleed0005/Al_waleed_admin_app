@@ -4,8 +4,7 @@ import 'package:alwaleed_admain/features/lesson_exams/domain/lesson_exam_questio
 import 'package:dartz/dartz.dart';
 
 abstract class LessonExamRepository {
-  Stream<Either<AppErrorModel, LessonExamEntity>>
-  streamLessonExam({
+  Stream<Either<AppErrorModel, LessonExamEntity>> streamLessonExam({
     required String lessonId,
   });
 
@@ -14,7 +13,7 @@ abstract class LessonExamRepository {
     required String questionText,
     required int degree,
     required List<String> choices,
-    required LessonExamQuestionImageFile? image,
+    LessonExamQuestionImageFile? image,
   });
 
   Future<Either<AppErrorModel, Unit>> updateQuestion({
@@ -23,8 +22,8 @@ abstract class LessonExamRepository {
     required String questionText,
     required int degree,
     required List<String> choices,
-    required LessonExamQuestionImageFile? newImage,
-    required bool removeCurrentImage,
+    LessonExamQuestionImageFile? newImage,
+    bool removeCurrentImage = false,
   });
 
   Future<Either<AppErrorModel, Unit>> deleteQuestion({

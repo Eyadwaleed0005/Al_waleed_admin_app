@@ -33,12 +33,12 @@ class LessonExamQuestionModel extends LessonExamQuestionEntity {
       lessonId: _readString(map[FirestoreFields.lessonId]),
       questionText: _readString(map[FirestoreFields.questionText]),
       degree: _readInt(map[FirestoreFields.questionScore]),
-      choices: [
+      choices: List<String>.unmodifiable([
         _readString(map[FirestoreFields.option1]),
         _readString(map[FirestoreFields.option2]),
         _readString(map[FirestoreFields.option3]),
         _readString(map[FirestoreFields.option4]),
-      ],
+      ]),
       correctChoiceIndex: _readNullableInt(map[FirestoreFields.correctOption]),
       imageUrl: _readNullableString(map[FirestoreFields.questionImageUrl]),
       imageStoragePath: _readNullableString(
@@ -55,7 +55,7 @@ class LessonExamQuestionModel extends LessonExamQuestionEntity {
       lessonId: entity.lessonId,
       questionText: entity.questionText,
       degree: entity.degree,
-      choices: List<String>.from(entity.choices),
+      choices: List<String>.unmodifiable(entity.choices),
       correctChoiceIndex: entity.correctChoiceIndex,
       imageUrl: entity.imageUrl,
       imageStoragePath: entity.imageStoragePath,
@@ -64,7 +64,7 @@ class LessonExamQuestionModel extends LessonExamQuestionEntity {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toCreateMap() {
     return {
       FirestoreFields.lessonId: lessonId,
       FirestoreFields.questionText: questionText,
@@ -73,13 +73,18 @@ class LessonExamQuestionModel extends LessonExamQuestionEntity {
       FirestoreFields.option2: _choiceAt(1),
       FirestoreFields.option3: _choiceAt(2),
       FirestoreFields.option4: _choiceAt(3),
-      FirestoreFields.correctOption: correctChoiceIndex,
-      FirestoreFields.questionImageUrl: imageUrl,
-      FirestoreFields.questionImageStoragePath: imageStoragePath,
-      if (createdAt != null)
-        FirestoreFields.createdAt: Timestamp.fromDate(createdAt!),
-      if (updatedAt != null)
-        FirestoreFields.updatedAt: Timestamp.fromDate(updatedAt!),
+      FirestoreFields.correctOption: null,
+    };
+  }
+
+  Map<String, dynamic> toUpdateMap() {
+    return {
+      FirestoreFields.questionText: questionText,
+      FirestoreFields.questionScore: degree,
+      FirestoreFields.option1: _choiceAt(0),
+      FirestoreFields.option2: _choiceAt(1),
+      FirestoreFields.option3: _choiceAt(2),
+      FirestoreFields.option4: _choiceAt(3),
     };
   }
 
@@ -103,7 +108,7 @@ class LessonExamQuestionModel extends LessonExamQuestionEntity {
       return '';
     }
 
-    return choices[index].trim();
+    return choices[index];
   }
 
   static String _readString(Object? value) {

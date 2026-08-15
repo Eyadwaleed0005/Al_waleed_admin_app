@@ -11,6 +11,8 @@ class StreamLessonExamUseCase {
   Stream<Either<AppErrorModel, LessonExamEntity>> call({
     required String lessonId,
   }) {
-    return _repository.streamLessonExam(lessonId: lessonId.trim());
+    return _repository.streamLessonExam(
+      lessonId: lessonId.trim(),
+    );
   }
 }

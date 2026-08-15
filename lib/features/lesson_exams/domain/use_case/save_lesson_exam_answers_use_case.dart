@@ -12,9 +12,14 @@ class SaveLessonExamAnswersUseCase {
     required Map<String, int> correctChoiceIndexes,
   }) {
     final normalizedAnswers = Map<String, int>.unmodifiable(
-      correctChoiceIndexes.map((questionId, choiceIndex) {
-        return MapEntry(questionId.trim(), choiceIndex);
-      }),
+      correctChoiceIndexes.map(
+        (questionId, choiceIndex) {
+          return MapEntry(
+            questionId.trim(),
+            choiceIndex,
+          );
+        },
+      ),
     );
 
     return _repository.saveCorrectAnswers(
