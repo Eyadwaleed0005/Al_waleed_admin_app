@@ -19,6 +19,41 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class EditLessonScreen extends StatelessWidget {
   const EditLessonScreen({super.key});
 
+  Future<void> _showDeleteConfirmation({
+    required BuildContext context,
+    required EditLessonState state,
+  }) async {
+    if (state.isDeleting || !state.canDelete) {
+      return;
+    }
+
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    final lessonTitle = state.lesson?.title.trim() ?? '';
+
+    final message = lessonTitle.isNotEmpty
+        ? 'هل أنت متأكد من حذف درس "$lessonTitle"؟ '
+              'سيتم حذف الدرس وملف PDF الخاص به نهائيًا، '
+              'ولا يمكن التراجع عن هذه العملية.'
+        : 'هل أنت متأكد من حذف هذا الدرس؟ '
+              'سيتم حذف الدرس وملف PDF الخاص به نهائيًا، '
+              'ولا يمكن التراجع عن هذه العملية.';
+
+    final confirmed = await showCustomDeleteConfirmationBottomSheet(
+      context,
+      title: 'حذف الدرس',
+      message: message,
+      confirmText: 'حذف الدرس',
+      cancelText: 'إلغاء',
+    );
+
+    if (!context.mounted || !confirmed) {
+      return;
+    }
+
+    context.read<EditLessonCubit>().deleteLesson();
+  }
+
   @override
   Widget build(BuildContext context) {
     return EditLessonFeedbackListener(
@@ -70,65 +105,11 @@ class EditLessonScreen extends StatelessWidget {
                             if (state.isPageReady) {
                               return EditLessonContent(
                                 state: state,
-
-                                onCreateExamPressed: (lessonId) {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-
-                                  /*
-                                  هنضيف الـNavigation هنا بعد إنشاء
-                                  شاشة إضافة اختبار الدرس والـRoute:
-
-                                  Navigator.pushNamed(
-                                    context,
-                                    AppRoutes.addLessonExam,
-                                    arguments: lessonId,
+                                onDeletePressed: () {
+                                  _showDeleteConfirmation(
+                                    context: context,
+                                    state: state,
                                   );
-                                  */
-                                },
-
-                                onEditExamPressed: (lessonId) {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-
-                                  /*
-                                  هنضيف الـNavigation هنا بعد إنشاء
-                                  شاشة تعديل اختبار الدرس والـRoute:
-
-                                  Navigator.pushNamed(
-                                    context,
-                                    AppRoutes.editLessonExam,
-                                    arguments: lessonId,
-                                  );
-                                  */
-                                },
-
-                                onDeletePressed: () async {
-                                  if (state.isDeleting || !state.canDelete) {
-                                    return;
-                                  }
-
-                                  FocusManager.instance.primaryFocus?.unfocus();
-
-                                  final lessonTitle =
-                                      state.lesson?.title.trim() ?? '';
-
-                                  final confirmed =
-                                      await showCustomDeleteConfirmationBottomSheet(
-                                        context,
-                                        title: 'حذف الدرس',
-                                        message: lessonTitle.isNotEmpty
-                                            ? 'هل أنت متأكد من حذف درس "$lessonTitle"؟ سيتم حذف الدرس وملف PDF الخاص به نهائيًا، ولا يمكن التراجع عن هذه العملية.'
-                                            : 'هل أنت متأكد من حذف هذا الدرس؟ سيتم حذف الدرس وملف PDF الخاص به نهائيًا، ولا يمكن التراجع عن هذه العملية.',
-                                        confirmText: 'حذف الدرس',
-                                        cancelText: 'إلغاء',
-                                      );
-
-                                  if (!context.mounted || !confirmed) {
-                                    return;
-                                  }
-
-                                  context
-                                      .read<EditLessonCubit>()
-                                      .deleteLesson();
                                 },
                               );
                             }

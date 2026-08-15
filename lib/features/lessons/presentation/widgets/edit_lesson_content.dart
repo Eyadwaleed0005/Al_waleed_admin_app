@@ -1,7 +1,10 @@
+import 'package:alwaleed_admain/app/routes/route_names.dart';
 import 'package:alwaleed_admain/core/helper/spacer.dart';
 import 'package:alwaleed_admain/core/style/app_animations.dart';
 import 'package:alwaleed_admain/core/widgets/custom_button.dart';
 import 'package:alwaleed_admain/core/widgets/custom_delete_button.dart';
+import 'package:alwaleed_admain/features/lesson_exams/presentation/cubit/lesson_exams_cubit.dart';
+import 'package:alwaleed_admain/features/lesson_exams/presentation/cubit/lesson_exams_state.dart';
 import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/lesson_exam_card.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/edit_lesson_cubit.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/edit_lesson_state.dart';
@@ -17,14 +20,10 @@ class EditLessonContent extends StatefulWidget {
     super.key,
     required this.state,
     required this.onDeletePressed,
-    required this.onCreateExamPressed,
-    required this.onEditExamPressed,
   });
 
   final EditLessonState state;
   final VoidCallback onDeletePressed;
-  final ValueChanged<String> onCreateExamPressed;
-  final ValueChanged<String> onEditExamPressed;
 
   @override
   State<EditLessonContent> createState() {
@@ -36,7 +35,9 @@ class _EditLessonContentState extends State<EditLessonContent> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _titleController;
+
   late final TextEditingController _subtitleController;
+
   late final TextEditingController _youtubeUrlController;
 
   @override
@@ -57,13 +58,30 @@ class _EditLessonContentState extends State<EditLessonContent> {
     super.didUpdateWidget(oldWidget);
 
     final oldLessonId = oldWidget.state.lesson?.lessonId;
+
     final newLessonId = widget.state.lesson?.lessonId;
 
     if (oldLessonId != newLessonId) {
       _titleController.text = widget.state.title;
+
       _subtitleController.text = widget.state.subtitle;
+
       _youtubeUrlController.text = widget.state.youtubeUrl;
     }
+  }
+
+  void _openLessonExam({required String lessonId}) {
+    final normalizedLessonId = lessonId.trim();
+
+    if (normalizedLessonId.isEmpty) {
+      return;
+    }
+
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    Navigator.of(
+      context,
+    ).pushNamed(RouteNames.lessonExamsScreen, arguments: normalizedLessonId);
   }
 
   @override
@@ -85,6 +103,7 @@ class _EditLessonContentState extends State<EditLessonContent> {
     }
 
     final cubit = context.read<EditLessonCubit>();
+
     final fieldsEnabled = !state.isActionInProgress;
 
     return Form(
@@ -161,18 +180,37 @@ class _EditLessonContentState extends State<EditLessonContent> {
 
                   AppAnimations.formFieldEntrance(
                     order: 5,
-                    child: LessonExamCard(
-                      hasExam: false,
-                      isEnabled: fieldsEnabled,
-                      onCreateExam: () {
-                        FocusManager.instance.primaryFocus?.unfocus();
-
-                        widget.onCreateExamPressed(lesson.lessonId);
+                    child: BlocBuilder<LessonExamsCubit, LessonExamsState>(
+                      buildWhen: (previous, current) {
+                        return previous.pageStatus != current.pageStatus ||
+                            previous.questionsCount != current.questionsCount ||
+                            previous.isActionInProgress !=
+                                current.isActionInProgress;
                       },
-                      onEditExam: () {
-                        FocusManager.instance.primaryFocus?.unfocus();
+                      builder: (context, examState) {
+                        final isLoading =
+                            examState.isInitial || examState.isPageLoading;
 
-                        widget.onEditExamPressed(lesson.lessonId);
+                        final hasError = examState.hasPageFailure;
+
+                        final canUseExamCard =
+                            fieldsEnabled && !examState.isActionInProgress;
+
+                        return LessonExamCard(
+                          hasExam: examState.hasQuestions,
+                          isLoading: isLoading,
+                          hasError: hasError,
+                          isEnabled: canUseExamCard,
+                          onCreateExam: () {
+                            _openLessonExam(lessonId: lesson.lessonId);
+                          },
+                          onEditExam: () {
+                            _openLessonExam(lessonId: lesson.lessonId);
+                          },
+                          onRetry: () {
+                            context.read<LessonExamsCubit>().retry();
+                          },
+                        );
                       },
                     ),
                   ),

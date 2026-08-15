@@ -32,7 +32,6 @@ abstract final class FirestoreFields {
   // Lessons
 
   static const String youtubeUrl = 'youtubeUrl';
-
   static const String pdfUrl = 'pdfUrl';
 
   // Study notes PDF
@@ -44,11 +43,16 @@ abstract final class FirestoreFields {
   // Questions
 
   static const String questionText = 'questionText';
+
   static const String questionImageUrl = 'questionImageUrl';
+
+  static const String questionImageStoragePath = 'questionImageStoragePath';
+
   static const String option1 = 'option1';
   static const String option2 = 'option2';
   static const String option3 = 'option3';
   static const String option4 = 'option4';
+
   static const String correctOption = 'correctOption';
   static const String questionScore = 'questionScore';
 

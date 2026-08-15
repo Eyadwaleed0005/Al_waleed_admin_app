@@ -379,4 +379,26 @@ class FirebaseStorageService implements StorageService {
   bool get _canLog {
     return enableLogging && kDebugMode;
   }
+
+  @override
+Future<String> getDownloadUrl({
+  required String storagePath,
+}) {
+  final normalizedStoragePath = _normalizeStoragePath(
+    storagePath,
+  );
+
+  return _execute(
+    operation: 'GET DOWNLOAD URL',
+    path: normalizedStoragePath,
+    action: () async {
+      await _requireInternetConnection();
+
+      return _firebaseStorage
+          .ref()
+          .child(normalizedStoragePath)
+          .getDownloadURL();
+    },
+  );
+}
 }

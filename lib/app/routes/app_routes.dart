@@ -1,28 +1,52 @@
 import 'package:alwaleed_admain/core/connection/cubit/network_status_cubit.dart';
+
 import 'package:alwaleed_admain/features/app_startup/presentation/cubit/app_startup_cubit.dart';
 import 'package:alwaleed_admain/features/app_startup/presentation/screens/splash_screen.dart';
+
 import 'package:alwaleed_admain/features/dashboard/domin/use_cases/get_dashboard_students_summary_use_case.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/cubit/home_dashboard_cubit.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
+
 import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
+
+import 'package:alwaleed_admain/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
+import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/create_lesson_exam_question_use_case.dart';
+import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/delete_lesson_exam_question_use_case.dart';
+import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/save_lesson_exam_answers_use_case.dart';
+import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/stream_lesson_exam_use_case.dart';
+import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/update_lesson_exam_question_use_case.dart';
+
+import 'package:alwaleed_admain/features/lesson_exams/presentation/cubit/add_lesson_exam_question_cubit.dart';
+import 'package:alwaleed_admain/features/lesson_exams/presentation/cubit/edit_lesson_exam_question_cubit.dart';
+import 'package:alwaleed_admain/features/lesson_exams/presentation/cubit/lesson_exams_cubit.dart';
+
+import 'package:alwaleed_admain/features/lesson_exams/presentation/screens/add_lesson_exam_question_screen.dart';
+import 'package:alwaleed_admain/features/lesson_exams/presentation/screens/edit_lesson_exam_question_screen.dart';
+import 'package:alwaleed_admain/features/lesson_exams/presentation/screens/lesson_exams_screen.dart';
+
 import 'package:alwaleed_admain/features/lessons/domain/use_case/create_lesson_use_case.dart';
 import 'package:alwaleed_admain/features/lessons/domain/use_case/delete_lesson_use_case.dart';
 import 'package:alwaleed_admain/features/lessons/domain/use_case/get_lesson_by_id_use_case.dart';
 import 'package:alwaleed_admain/features/lessons/domain/use_case/stream_lessons_use_case.dart';
 import 'package:alwaleed_admain/features/lessons/domain/use_case/update_lesson_use_case.dart';
+
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/add_lesson_cubit.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/add_lesson_pdf_picker_cubit.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/edit_lesson_cubit.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/view_lessons_cubit.dart';
+
 import 'package:alwaleed_admain/features/lessons/presentation/screens/add_lesson_screen.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/screens/edit_lesson_screen.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/screens/view_lessons_screen.dart';
+
 import 'package:alwaleed_admain/features/live_session/domain/use_case/delete_live_session_use_case.dart';
 import 'package:alwaleed_admain/features/live_session/domain/use_case/get_live_session_use_case.dart';
 import 'package:alwaleed_admain/features/live_session/domain/use_case/save_live_session_use_case.dart';
 import 'package:alwaleed_admain/features/live_session/presentation/cubit/live_session_cubit.dart';
 import 'package:alwaleed_admain/features/live_session/presentation/screens/live_session_screen.dart';
+
 import 'package:alwaleed_admain/features/main_navigation/presentation/screens/main_navigation_screen.dart';
+
 import 'package:alwaleed_admain/features/students/domain/use_cases/create_student_use_case.dart';
 import 'package:alwaleed_admain/features/students/domain/use_cases/delete_student_use_case.dart';
 import 'package:alwaleed_admain/features/students/domain/use_cases/get_student_by_id_use_case.dart';
@@ -31,24 +55,30 @@ import 'package:alwaleed_admain/features/students/domain/use_cases/update_studen
 import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_password_use_case.dart';
 import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_profile_use_case.dart';
 import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_subscription_use_case.dart';
+
 import 'package:alwaleed_admain/features/students/presentation/cubit/add_student_cubit.dart';
 import 'package:alwaleed_admain/features/students/presentation/cubit/student_management_cubit.dart';
 import 'package:alwaleed_admain/features/students/presentation/cubit/update_student_cubit.dart';
+
 import 'package:alwaleed_admain/features/students/presentation/screens/add_student_screen.dart';
 import 'package:alwaleed_admain/features/students/presentation/screens/student_management_screen.dart';
 import 'package:alwaleed_admain/features/students/presentation/screens/update_student_screen.dart';
+
 import 'package:alwaleed_admain/features/study_notes/domain/use_case/create_study_note_use_case.dart';
 import 'package:alwaleed_admain/features/study_notes/domain/use_case/delete_study_note_use_case.dart';
 import 'package:alwaleed_admain/features/study_notes/domain/use_case/get_study_note_by_id_use_case.dart';
 import 'package:alwaleed_admain/features/study_notes/domain/use_case/stream_study_notes_use_case.dart';
 import 'package:alwaleed_admain/features/study_notes/domain/use_case/update_study_note_use_case.dart';
+
 import 'package:alwaleed_admain/features/study_notes/presentation/cubit/add_note_cubit.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/cubit/edit_note_cubit.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/cubit/view_notes_cubit.dart';
+
 import 'package:alwaleed_admain/features/study_notes/presentation/screens/add_note_screen.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/screens/content_management_screen.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/screens/edit_note_screen.dart';
 import 'package:alwaleed_admain/features/study_notes/presentation/screens/view_notes_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -81,6 +111,59 @@ class AppRoutes {
           },
         );
 
+      case RouteNames.lessonExamsScreen:
+        final lessonId = settings.arguments;
+
+        if (lessonId is! String || lessonId.trim().isEmpty) {
+          return null;
+        }
+
+        final normalizedLessonId = lessonId.trim();
+
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (_) {
+            return _provideLessonExamsCubit(
+              lessonId: normalizedLessonId,
+              child: LessonExamsScreen(lessonId: normalizedLessonId),
+            );
+          },
+        );
+
+      case RouteNames.addLessonExamQuestionScreen:
+        final lessonId = settings.arguments;
+
+        if (lessonId is! String || lessonId.trim().isEmpty) {
+          return null;
+        }
+
+        final normalizedLessonId = lessonId.trim();
+
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (_) {
+            return _provideAddLessonExamQuestionCubit(
+              child: AddLessonExamQuestionScreen(lessonId: normalizedLessonId),
+            );
+          },
+        );
+
+      case RouteNames.editLessonExamQuestionScreen:
+        final question = settings.arguments;
+
+        if (question is! LessonExamQuestionEntity) {
+          return null;
+        }
+
+        return MaterialPageRoute<bool?>(
+          settings: settings,
+          builder: (_) {
+            return _provideEditLessonExamQuestionCubit(
+              child: EditLessonExamQuestionScreen(question: question),
+            );
+          },
+        );
+
       case RouteNames.viewNotesScreen:
         return MaterialPageRoute<dynamic>(
           settings: settings,
@@ -108,7 +191,7 @@ class AppRoutes {
           settings: settings,
           builder: (_) {
             return _provideEditNoteCubit(
-              noteId: noteId,
+              noteId: noteId.trim(),
               child: const EditNoteScreen(),
             );
           },
@@ -137,11 +220,13 @@ class AppRoutes {
           return null;
         }
 
+        final normalizedLessonId = lessonId.trim();
+
         return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
-            return _provideEditLessonCubit(
-              lessonId: lessonId,
+            return _provideEditLessonCubits(
+              lessonId: normalizedLessonId,
               child: const EditLessonScreen(),
             );
           },
@@ -204,7 +289,7 @@ class AppRoutes {
             return BlocProvider<UpdateStudentCubit>(
               create: (_) {
                 return UpdateStudentCubit(
-                  studentId: studentId,
+                  studentId: studentId.trim(),
                   getStudentByIdUseCase: _getIt<GetStudentByIdUseCase>(),
                   streamGradesUseCase: _getIt<StreamGradesUseCase>(),
                   updateStudentProfileUseCase:
@@ -306,6 +391,29 @@ class AppRoutes {
     )..initialize();
   }
 
+  static LessonExamsCubit _createLessonExamsCubit({required String lessonId}) {
+    return LessonExamsCubit(
+      lessonId: lessonId,
+      streamLessonExamUseCase: _getIt<StreamLessonExamUseCase>(),
+      deleteLessonExamQuestionUseCase:
+          _getIt<DeleteLessonExamQuestionUseCase>(),
+      saveLessonExamAnswersUseCase: _getIt<SaveLessonExamAnswersUseCase>(),
+    )..initialize();
+  }
+
+  static AddLessonExamQuestionCubit _createAddLessonExamQuestionCubit() {
+    return AddLessonExamQuestionCubit(
+      createLessonExamQuestionUseCase:
+          _getIt<CreateLessonExamQuestionUseCase>(),
+    );
+  }
+
+  static EditLessonExamQuestionCubit _createEditLessonExamQuestionCubit() {
+    return EditLessonExamQuestionCubit(
+      _getIt<UpdateLessonExamQuestionUseCase>(),
+    );
+  }
+
   static LiveSessionCubit _createLiveSessionCubit() {
     return LiveSessionCubit(
       streamGradesUseCase: _getIt<StreamGradesUseCase>(),
@@ -392,14 +500,49 @@ class AppRoutes {
     );
   }
 
-  static Widget _provideEditLessonCubit({
+  static Widget _provideEditLessonCubits({
     required String lessonId,
     required Widget child,
   }) {
-    return BlocProvider<EditLessonCubit>(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<EditLessonCubit>(
+          create: (_) {
+            return _createEditLessonCubit(lessonId: lessonId);
+          },
+        ),
+        BlocProvider<LessonExamsCubit>(
+          create: (_) {
+            return _createLessonExamsCubit(lessonId: lessonId);
+          },
+        ),
+      ],
+      child: child,
+    );
+  }
+
+  static Widget _provideLessonExamsCubit({
+    required String lessonId,
+    required Widget child,
+  }) {
+    return BlocProvider<LessonExamsCubit>(
       create: (_) {
-        return _createEditLessonCubit(lessonId: lessonId);
+        return _createLessonExamsCubit(lessonId: lessonId);
       },
+      child: child,
+    );
+  }
+
+  static Widget _provideAddLessonExamQuestionCubit({required Widget child}) {
+    return BlocProvider<AddLessonExamQuestionCubit>(
+      create: (_) => _createAddLessonExamQuestionCubit(),
+      child: child,
+    );
+  }
+
+  static Widget _provideEditLessonExamQuestionCubit({required Widget child}) {
+    return BlocProvider<EditLessonExamQuestionCubit>(
+      create: (_) => _createEditLessonExamQuestionCubit(),
       child: child,
     );
   }
