@@ -21,9 +21,7 @@ class EditLessonExamQuestionContent extends StatefulWidget {
   });
 
   final LessonExamQuestionEntity question;
-
   final EditLessonExamQuestionSubmit onUpdateQuestionPressed;
-
   final bool isUpdatingQuestion;
 
   @override
@@ -37,27 +35,15 @@ class _EditLessonExamQuestionContentState
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _questionController;
-
   late final TextEditingController _degreeController;
-
   late final List<TextEditingController> _choiceControllers;
 
   LessonExamQuestionImageFile? _selectedImage;
-
   bool _removeCurrentImage = false;
 
-  bool _isSubmitting = false;
-
-  bool get _isActionInProgress {
-    return _isSubmitting || widget.isUpdatingQuestion;
-  }
-
   bool get _hasChanges {
-    final currentQuestionText = _questionController.text.trim();
-
-    final originalQuestionText = widget.question.questionText.trim();
-
-    if (currentQuestionText != originalQuestionText) {
+    if (_questionController.text.trim() !=
+        widget.question.questionText.trim()) {
       return true;
     }
 
@@ -67,20 +53,14 @@ class _EditLessonExamQuestionContentState
       return true;
     }
 
-    final currentChoices = _choiceControllers
-        .map((controller) => controller.text.trim())
-        .toList(growable: false);
+    for (var index = 0; index < _choiceControllers.length; index++) {
+      final currentChoice = _choiceControllers[index].text.trim();
 
-    final originalChoices = List<String>.generate(4, (index) {
-      if (index < widget.question.choices.length) {
-        return widget.question.choices[index].trim();
-      }
+      final originalChoice = index < widget.question.choices.length
+          ? widget.question.choices[index].trim()
+          : '';
 
-      return '';
-    }, growable: false);
-
-    for (var index = 0; index < 4; index++) {
-      if (currentChoices[index] != originalChoices[index]) {
+      if (currentChoice != originalChoice) {
         return true;
       }
     }
@@ -89,11 +69,7 @@ class _EditLessonExamQuestionContentState
       return true;
     }
 
-    if (_removeCurrentImage) {
-      return true;
-    }
-
-    return false;
+    return _removeCurrentImage;
   }
 
   @override
@@ -115,10 +91,17 @@ class _EditLessonExamQuestionContentState
 
       return TextEditingController(text: choice);
     });
+
+    _questionController.addListener(_onFormValueChanged);
+    _degreeController.addListener(_onFormValueChanged);
+
+    for (final controller in _choiceControllers) {
+      controller.addListener(_onFormValueChanged);
+    }
   }
 
   void _onFormValueChanged() {
-    if (!mounted || _isActionInProgress) {
+    if (!mounted || widget.isUpdatingQuestion) {
       return;
     }
 
@@ -126,7 +109,7 @@ class _EditLessonExamQuestionContentState
   }
 
   void _selectImage(LessonExamQuestionImageFile image) {
-    if (_isActionInProgress) {
+    if (widget.isUpdatingQuestion) {
       return;
     }
 
@@ -137,7 +120,7 @@ class _EditLessonExamQuestionContentState
   }
 
   void _removeImage() {
-    if (_isActionInProgress) {
+    if (widget.isUpdatingQuestion) {
       return;
     }
 
@@ -157,11 +140,7 @@ class _EditLessonExamQuestionContentState
   }
 
   Future<void> _updateQuestion() async {
-    if (_isActionInProgress) {
-      return;
-    }
-
-    if (!_hasChanges) {
+    if (widget.isUpdatingQuestion || !_hasChanges) {
       return;
     }
 
@@ -183,25 +162,13 @@ class _EditLessonExamQuestionContentState
         .map((controller) => controller.text.trim())
         .toList(growable: false);
 
-    setState(() {
-      _isSubmitting = true;
-    });
-
-    try {
-      await widget.onUpdateQuestionPressed(
-        questionText: _questionController.text.trim(),
-        degree: degree,
-        choices: choices,
-        newImage: _selectedImage,
-        removeCurrentImage: _removeCurrentImage,
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSubmitting = false;
-        });
-      }
-    }
+    await widget.onUpdateQuestionPressed(
+      questionText: _questionController.text.trim(),
+      degree: degree,
+      choices: choices,
+      newImage: _selectedImage,
+      removeCurrentImage: _removeCurrentImage,
+    );
   }
 
   @override
@@ -231,17 +198,7 @@ class _EditLessonExamQuestionContentState
           currentImageUrl: widget.question.imageUrl,
           isCurrentImageRemoved: _removeCurrentImage,
           hasChanges: _hasChanges,
-          enabled: !_isActionInProgress,
-          isUpdatingQuestion: _isActionInProgress,
-          onQuestionChanged: (_) {
-            _onFormValueChanged();
-          },
-          onDegreeChanged: (_) {
-            _onFormValueChanged();
-          },
-          onChoiceChanged: (_, __) {
-            _onFormValueChanged();
-          },
+          isUpdatingQuestion: widget.isUpdatingQuestion,
           onImageSelected: _selectImage,
           onImageRemoved: _removeImage,
           onUpdateQuestionPressed: _updateQuestion,

@@ -18,55 +18,34 @@ class EditLessonExamQuestionForm extends StatelessWidget {
     required this.selectedImage,
     required this.currentImageUrl,
     required this.isCurrentImageRemoved,
+    required this.hasChanges,
     required this.onImageSelected,
     required this.onImageRemoved,
     required this.onUpdateQuestionPressed,
-    required this.hasChanges,
-    this.onQuestionChanged,
-    this.onDegreeChanged,
-    this.onChoiceChanged,
     this.isUpdatingQuestion = false,
-    this.enabled = true,
   });
 
   final TextEditingController questionController;
-
   final TextEditingController degreeController;
 
   final List<TextEditingController> choiceControllers;
 
   final LessonExamQuestionImageFile? selectedImage;
-
   final String? currentImageUrl;
 
   final bool isCurrentImageRemoved;
-
-  final ValueChanged<LessonExamQuestionImageFile> onImageSelected;
-
-  final VoidCallback onImageRemoved;
-
-  final VoidCallback onUpdateQuestionPressed;
-
-  final ValueChanged<String>? onQuestionChanged;
-
-  final ValueChanged<String>? onDegreeChanged;
-
-  final LessonExamChoiceChanged? onChoiceChanged;
-
   final bool hasChanges;
-
   final bool isUpdatingQuestion;
 
-  final bool enabled;
+  final ValueChanged<LessonExamQuestionImageFile> onImageSelected;
+  final VoidCallback onImageRemoved;
+  final VoidCallback onUpdateQuestionPressed;
 
   @override
   Widget build(BuildContext context) {
-    final fieldsEnabled = enabled && !isUpdatingQuestion;
+    final fieldsEnabled = !isUpdatingQuestion;
 
-    final canSave =
-        enabled &&
-        hasChanges &&
-        !isUpdatingQuestion;
+    final canSave = hasChanges && !isUpdatingQuestion;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -84,12 +63,9 @@ class EditLessonExamQuestionForm extends StatelessWidget {
             maxLength: 500,
             enabled: fieldsEnabled,
             validator: AppValidator.lessonExamQuestionText,
-            onChanged: onQuestionChanged,
           ),
         ),
-
         verticalSpace(20),
-
         AppAnimations.formFieldEntrance(
           order: 1,
           child: LessonExamQuestionImagePicker(
@@ -101,9 +77,7 @@ class EditLessonExamQuestionForm extends StatelessWidget {
             onImageRemoved: onImageRemoved,
           ),
         ),
-
         verticalSpace(20),
-
         AppAnimations.formFieldEntrance(
           order: 2,
           child: CustomTextFormField(
@@ -112,28 +86,20 @@ class EditLessonExamQuestionForm extends StatelessWidget {
             hintText: 'اكتب درجة السؤال',
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.next,
-            inputFormatters: [
-              FilteringTextInputFormatter.digitsOnly,
-            ],
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             enabled: fieldsEnabled,
             validator: AppValidator.lessonExamQuestionDegree,
-            onChanged: onDegreeChanged,
           ),
         ),
-
         verticalSpace(20),
-
         AppAnimations.formFieldEntrance(
           order: 3,
           child: LessonExamQuestionChoicesFields(
             choiceControllers: choiceControllers,
-            onChoiceChanged: onChoiceChanged,
             enabled: fieldsEnabled,
           ),
         ),
-
         verticalSpace(24),
-
         AppAnimations.screenSection(
           delay: 420,
           child: CustomButton(
@@ -143,7 +109,6 @@ class EditLessonExamQuestionForm extends StatelessWidget {
             onPressed: onUpdateQuestionPressed,
           ),
         ),
-
         verticalSpace(8),
       ],
     );

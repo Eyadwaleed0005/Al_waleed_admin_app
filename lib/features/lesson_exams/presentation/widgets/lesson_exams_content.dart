@@ -31,34 +31,36 @@ class LessonExamsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        LessonExamTotalDegreesCard(totalDegrees: state.totalDegrees),
-
-        verticalSpace(20),
-
-        Expanded(
-          child: LessonExamQuestionsList(
-            state: state,
+    return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      physics: const ClampingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          LessonExamTotalDegreesCard(totalDegrees: state.totalDegrees),
+          verticalSpace(20),
+          LessonExamQuestionsList(
+            questions: state.exam.questions,
+            selectedCorrectChoiceIndexes: state.selectedCorrectChoiceIndexes,
+            isActionInProgress: state.isActionInProgress,
+            deletingQuestionId: state.deletingQuestionId,
             onChoiceSelected: onChoiceSelected,
             onDeleteQuestion: onDeleteQuestion,
             onEditQuestion: onEditQuestion,
           ),
-        ),
-
-        verticalSpace(16),
-
-        LessonExamsActions(
-          primaryButtonText: 'حفظ التعديلات',
-          secondaryButtonText: 'إضافة سؤال',
-          isPrimaryLoading: state.isSavingAnswers,
-          isPrimaryEnabled: state.canSaveAnswers,
-          isSecondaryEnabled: !state.isActionInProgress,
-          onPrimaryPressed: onSaveExamPressed,
-          onSecondaryPressed: onAddQuestionPressed,
-        ),
-      ],
+          verticalSpace(24),
+          LessonExamsActions(
+            primaryButtonText: 'حفظ التعديلات',
+            secondaryButtonText: 'إضافة سؤال',
+            isPrimaryLoading: state.isSavingAnswers,
+            isPrimaryEnabled: state.canSaveAnswers,
+            isSecondaryEnabled: !state.isActionInProgress,
+            onPrimaryPressed: onSaveExamPressed,
+            onSecondaryPressed: onAddQuestionPressed,
+          ),
+          verticalSpace(20),
+        ],
+      ),
     );
   }
 }

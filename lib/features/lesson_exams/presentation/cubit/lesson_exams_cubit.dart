@@ -25,41 +25,22 @@ class LessonExamsCubit extends Cubit<LessonExamsState> {
   final String _lessonId;
 
   final StreamLessonExamUseCase _streamLessonExamUseCase;
-
   final DeleteLessonExamQuestionUseCase _deleteLessonExamQuestionUseCase;
-
   final SaveLessonExamAnswersUseCase _saveLessonExamAnswersUseCase;
 
   StreamSubscription<Either<AppErrorModel, LessonExamEntity>>?
   _examSubscription;
 
-  void initialize() {
-    watchExam();
+  Future<void> initialize() async {
+    await _startWatchingExam();
   }
 
-  void watchExam() {
-    _examSubscription?.cancel();
-
-    emit(
-      state.copyWith(
-        pageStatus: LessonExamsPageStatus.loading,
-        clearPageError: true,
-      ),
-    );
-
-    _examSubscription = _streamLessonExamUseCase(lessonId: _lessonId).listen((
-      result,
-    ) {
-      result.fold(_handleStreamFailure, _handleStreamSuccess);
-    });
-  }
-
-  void retry() {
+  Future<void> retry() async {
     if (state.isPageLoading) {
       return;
     }
 
-    watchExam();
+    await _startWatchingExam();
   }
 
   void selectCorrectChoice({
@@ -196,35 +177,7 @@ class LessonExamsCubit extends Cubit<LessonExamsState> {
         );
       },
       (_) {
-        final updatedQuestions = state.exam.questions
-            .where((currentQuestion) {
-              return currentQuestion.questionId != normalizedQuestionId;
-            })
-            .toList(growable: false);
-
-        final updatedSelections = Map<String, int>.from(
-          state.selectedCorrectChoiceIndexes,
-        )..remove(normalizedQuestionId);
-
-        final updatedPersistedAnswers = Map<String, int>.from(
-          state.persistedCorrectChoiceIndexes,
-        )..remove(normalizedQuestionId);
-
-        emit(
-          state.copyWith(
-            exam: state.exam.copyWith(
-              questions: List<LessonExamQuestionEntity>.unmodifiable(
-                updatedQuestions,
-              ),
-            ),
-            selectedCorrectChoiceIndexes: updatedSelections,
-            persistedCorrectChoiceIndexes: updatedPersistedAnswers,
-            actionStatus: LessonExamsActionStatus.success,
-            actionType: LessonExamsActionType.deleteQuestion,
-            clearActionError: true,
-            clearDeletingQuestionId: true,
-          ),
-        );
+        _handleDeleteQuestionSuccess(normalizedQuestionId);
       },
     );
   }
@@ -242,6 +195,28 @@ class LessonExamsCubit extends Cubit<LessonExamsState> {
         clearDeletingQuestionId: true,
       ),
     );
+  }
+
+  Future<void> _startWatchingExam() async {
+    await _examSubscription?.cancel();
+    _examSubscription = null;
+
+    if (isClosed) {
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        pageStatus: LessonExamsPageStatus.loading,
+        clearPageError: true,
+      ),
+    );
+
+    _examSubscription = _streamLessonExamUseCase(lessonId: _lessonId).listen((
+      result,
+    ) {
+      result.fold(_handleStreamFailure, _handleStreamSuccess);
+    });
   }
 
   void _handleStreamFailure(AppErrorModel error) {
@@ -301,6 +276,36 @@ class LessonExamsCubit extends Cubit<LessonExamsState> {
         selectedCorrectChoiceIndexes: updatedSelections,
         persistedCorrectChoiceIndexes: persistedAnswers,
         clearPageError: true,
+      ),
+    );
+  }
+
+  void _handleDeleteQuestionSuccess(String questionId) {
+    final updatedQuestions = state.exam.questions
+        .where((question) => question.questionId != questionId)
+        .toList(growable: false);
+
+    final updatedSelections = Map<String, int>.from(
+      state.selectedCorrectChoiceIndexes,
+    )..remove(questionId);
+
+    final updatedPersistedAnswers = Map<String, int>.from(
+      state.persistedCorrectChoiceIndexes,
+    )..remove(questionId);
+
+    emit(
+      state.copyWith(
+        exam: state.exam.copyWith(
+          questions: List<LessonExamQuestionEntity>.unmodifiable(
+            updatedQuestions,
+          ),
+        ),
+        selectedCorrectChoiceIndexes: updatedSelections,
+        persistedCorrectChoiceIndexes: updatedPersistedAnswers,
+        actionStatus: LessonExamsActionStatus.success,
+        actionType: LessonExamsActionType.deleteQuestion,
+        clearActionError: true,
+        clearDeletingQuestionId: true,
       ),
     );
   }

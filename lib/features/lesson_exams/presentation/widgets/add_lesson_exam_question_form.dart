@@ -19,14 +19,11 @@ class AddLessonExamQuestionForm extends StatelessWidget {
     required this.onImageSelected,
     required this.onImageRemoved,
     required this.onAddQuestionPressed,
-    this.onQuestionChanged,
-    this.onDegreeChanged,
-    this.onChoiceChanged,
     this.isAddingQuestion = false,
-    this.enabled = true,
   });
 
   final TextEditingController questionController;
+
   final TextEditingController degreeController;
 
   final List<TextEditingController> choiceControllers;
@@ -36,19 +33,14 @@ class AddLessonExamQuestionForm extends StatelessWidget {
   final ValueChanged<LessonExamQuestionImageFile> onImageSelected;
 
   final VoidCallback onImageRemoved;
+
   final VoidCallback onAddQuestionPressed;
 
-  final ValueChanged<String>? onQuestionChanged;
-  final ValueChanged<String>? onDegreeChanged;
-
-  final LessonExamChoiceChanged? onChoiceChanged;
-
   final bool isAddingQuestion;
-  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
-    final fieldsEnabled = enabled && !isAddingQuestion;
+    final fieldsEnabled = !isAddingQuestion;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -66,12 +58,9 @@ class AddLessonExamQuestionForm extends StatelessWidget {
             maxLength: 500,
             enabled: fieldsEnabled,
             validator: AppValidator.lessonExamQuestionText,
-            onChanged: onQuestionChanged,
           ),
         ),
-
         verticalSpace(20),
-
         AppAnimations.formFieldEntrance(
           order: 1,
           child: LessonExamQuestionImagePicker(
@@ -81,9 +70,7 @@ class AddLessonExamQuestionForm extends StatelessWidget {
             onImageRemoved: onImageRemoved,
           ),
         ),
-
         verticalSpace(20),
-
         AppAnimations.formFieldEntrance(
           order: 2,
           child: CustomTextFormField(
@@ -95,33 +82,26 @@ class AddLessonExamQuestionForm extends StatelessWidget {
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             enabled: fieldsEnabled,
             validator: AppValidator.lessonExamQuestionDegree,
-            onChanged: onDegreeChanged,
           ),
         ),
-
         verticalSpace(20),
-
         AppAnimations.formFieldEntrance(
           order: 3,
           child: LessonExamQuestionChoicesFields(
             choiceControllers: choiceControllers,
-            onChoiceChanged: onChoiceChanged,
             enabled: fieldsEnabled,
           ),
         ),
-
         verticalSpace(24),
-
         AppAnimations.screenSection(
           delay: 420,
           child: CustomButton(
             text: 'إضافة السؤال',
             isLoading: isAddingQuestion,
-            isEnabled: enabled,
+            isEnabled: fieldsEnabled,
             onPressed: onAddQuestionPressed,
           ),
         ),
-
         verticalSpace(8),
       ],
     );

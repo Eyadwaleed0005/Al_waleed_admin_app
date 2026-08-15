@@ -6,13 +6,10 @@ import 'package:alwaleed_admain/core/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-typedef LessonExamChoiceChanged = void Function(int index, String value);
-
 class LessonExamQuestionChoicesFields extends StatelessWidget {
   const LessonExamQuestionChoicesFields({
     super.key,
     required this.choiceControllers,
-    this.onChoiceChanged,
     this.enabled = true,
   }) : assert(
          choiceControllers.length == 4,
@@ -20,8 +17,6 @@ class LessonExamQuestionChoicesFields extends StatelessWidget {
        );
 
   final List<TextEditingController> choiceControllers;
-
-  final LessonExamChoiceChanged? onChoiceChanged;
 
   final bool enabled;
 
@@ -58,9 +53,7 @@ class LessonExamQuestionChoicesFields extends StatelessWidget {
             textDirection: TextDirection.rtl,
             style: AppTextStyle.font15TextPrimaryMediumTajawal(),
           ),
-
           verticalSpace(16),
-
           ...List.generate(choiceControllers.length, (index) {
             return Padding(
               padding: EdgeInsets.only(
@@ -77,9 +70,6 @@ class LessonExamQuestionChoicesFields extends StatelessWidget {
                 maxLength: 200,
                 enabled: enabled,
                 validator: AppValidator.lessonExamQuestionChoice,
-                onChanged: (value) {
-                  onChoiceChanged?.call(index, value);
-                },
               ),
             );
           }),

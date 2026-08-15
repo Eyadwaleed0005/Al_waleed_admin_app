@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:alwaleed_admain/core/connection/cubit/network_status_cubit.dart';
 
 import 'package:alwaleed_admain/features/app_startup/presentation/cubit/app_startup_cubit.dart';
@@ -155,7 +157,7 @@ class AppRoutes {
           return null;
         }
 
-        return MaterialPageRoute<bool?>(
+        return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
             return _provideEditLessonExamQuestionCubit(
@@ -392,13 +394,17 @@ class AppRoutes {
   }
 
   static LessonExamsCubit _createLessonExamsCubit({required String lessonId}) {
-    return LessonExamsCubit(
+    final cubit = LessonExamsCubit(
       lessonId: lessonId,
       streamLessonExamUseCase: _getIt<StreamLessonExamUseCase>(),
       deleteLessonExamQuestionUseCase:
           _getIt<DeleteLessonExamQuestionUseCase>(),
       saveLessonExamAnswersUseCase: _getIt<SaveLessonExamAnswersUseCase>(),
-    )..initialize();
+    );
+
+    unawaited(cubit.initialize());
+
+    return cubit;
   }
 
   static AddLessonExamQuestionCubit _createAddLessonExamQuestionCubit() {
