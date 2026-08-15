@@ -42,7 +42,9 @@ class EditLessonScreen extends StatelessWidget {
                           title: 'تعديل الدرس',
                         ),
                       ),
+
                       verticalSpace(30),
+
                       Expanded(
                         child: BlocBuilder<EditLessonCubit, EditLessonState>(
                           builder: (context, state) {
@@ -68,11 +70,44 @@ class EditLessonScreen extends StatelessWidget {
                             if (state.isPageReady) {
                               return EditLessonContent(
                                 state: state,
+
+                                onCreateExamPressed: (lessonId) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+
+                                  /*
+                                  هنضيف الـNavigation هنا بعد إنشاء
+                                  شاشة إضافة اختبار الدرس والـRoute:
+
+                                  Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.addLessonExam,
+                                    arguments: lessonId,
+                                  );
+                                  */
+                                },
+
+                                onEditExamPressed: (lessonId) {
+                                  FocusManager.instance.primaryFocus?.unfocus();
+
+                                  /*
+                                  هنضيف الـNavigation هنا بعد إنشاء
+                                  شاشة تعديل اختبار الدرس والـRoute:
+
+                                  Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.editLessonExam,
+                                    arguments: lessonId,
+                                  );
+                                  */
+                                },
+
                                 onDeletePressed: () async {
                                   if (state.isDeleting || !state.canDelete) {
                                     return;
                                   }
+
                                   FocusManager.instance.primaryFocus?.unfocus();
+
                                   final lessonTitle =
                                       state.lesson?.title.trim() ?? '';
 
@@ -97,6 +132,7 @@ class EditLessonScreen extends StatelessWidget {
                                 },
                               );
                             }
+
                             return const EditLessonLoadingSkeleton();
                           },
                         ),

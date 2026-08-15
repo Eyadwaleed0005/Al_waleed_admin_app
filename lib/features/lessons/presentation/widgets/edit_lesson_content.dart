@@ -2,6 +2,7 @@ import 'package:alwaleed_admain/core/helper/spacer.dart';
 import 'package:alwaleed_admain/core/style/app_animations.dart';
 import 'package:alwaleed_admain/core/widgets/custom_button.dart';
 import 'package:alwaleed_admain/core/widgets/custom_delete_button.dart';
+import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/lesson_exam_card.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/edit_lesson_cubit.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/cubit/edit_lesson_state.dart';
 import 'package:alwaleed_admain/features/lessons/presentation/widgets/add_lesson_fields.dart';
@@ -16,10 +17,14 @@ class EditLessonContent extends StatefulWidget {
     super.key,
     required this.state,
     required this.onDeletePressed,
+    required this.onCreateExamPressed,
+    required this.onEditExamPressed,
   });
 
   final EditLessonState state;
   final VoidCallback onDeletePressed;
+  final ValueChanged<String> onCreateExamPressed;
+  final ValueChanged<String> onEditExamPressed;
 
   @override
   State<EditLessonContent> createState() {
@@ -149,6 +154,26 @@ class _EditLessonContentState extends State<EditLessonContent> {
                       replacementPdf: state.replacementPdf,
                       onReplacementSelected: cubit.selectReplacementPdf,
                       onReplacementRemoved: cubit.removeReplacementPdf,
+                    ),
+                  ),
+
+                  verticalSpace(20),
+
+                  AppAnimations.formFieldEntrance(
+                    order: 5,
+                    child: LessonExamCard(
+                      hasExam: false,
+                      isEnabled: fieldsEnabled,
+                      onCreateExam: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+
+                        widget.onCreateExamPressed(lesson.lessonId);
+                      },
+                      onEditExam: () {
+                        FocusManager.instance.primaryFocus?.unfocus();
+
+                        widget.onEditExamPressed(lesson.lessonId);
+                      },
                     ),
                   ),
                 ],
