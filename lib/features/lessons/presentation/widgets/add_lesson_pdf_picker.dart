@@ -23,19 +23,13 @@ class AddLessonPdfPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<
-      AddLessonPdfPickerCubit,
-      AddLessonPdfPickerState
-    >(
+    return BlocConsumer<AddLessonPdfPickerCubit, AddLessonPdfPickerState>(
       listenWhen: (previous, current) {
-        return previous.selectedFile !=
-                current.selectedFile ||
-            previous.errorMessage !=
-                current.errorMessage;
+        return previous.selectedFile != current.selectedFile ||
+            previous.errorMessage != current.errorMessage;
       },
       listener: (context, state) {
-        final cubit =
-            context.read<AddLessonPdfPickerCubit>();
+        final cubit = context.read<AddLessonPdfPickerCubit>();
 
         if (state.hasFailure) {
           showAppToast(
@@ -57,8 +51,7 @@ class AddLessonPdfPicker extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        final cubit =
-            context.read<AddLessonPdfPickerCubit>();
+        final cubit = context.read<AddLessonPdfPickerCubit>();
 
         if (state.isPicking) {
           return const _PdfPickerLoading();
@@ -67,16 +60,12 @@ class AddLessonPdfPicker extends StatelessWidget {
         final selectedFile = state.selectedFile;
 
         if (selectedFile == null) {
-          return _EmptyPdfPicker(
-            onTap: cubit.pickPdfFile,
-          );
+          return _EmptyPdfPicker(onTap: cubit.pickPdfFile);
         }
 
         return _SelectedPdfPicker(
           file: selectedFile,
-          fileSize: _formatFileSize(
-            selectedFile.size,
-          ),
+          fileSize: _formatFileSize(selectedFile.size),
           onTap: cubit.pickPdfFile,
           onRemove: cubit.removeSelectedFile,
         );
@@ -86,8 +75,7 @@ class AddLessonPdfPicker extends StatelessWidget {
 
   String _formatFileSize(int sizeInBytes) {
     final sizeInKilobytes = sizeInBytes / 1024;
-    final sizeInMegabytes =
-        sizeInKilobytes / 1024;
+    final sizeInMegabytes = sizeInKilobytes / 1024;
 
     if (sizeInMegabytes >= 1) {
       return '${sizeInMegabytes.toStringAsFixed(1)} MB';
@@ -98,9 +86,7 @@ class AddLessonPdfPicker extends StatelessWidget {
 }
 
 class _EmptyPdfPicker extends StatelessWidget {
-  const _EmptyPdfPicker({
-    required this.onTap,
-  });
+  const _EmptyPdfPicker({required this.onTap});
 
   final VoidCallback onTap;
 
@@ -114,9 +100,7 @@ class _EmptyPdfPicker extends StatelessWidget {
           borderRadius: BorderRadius.circular(22.r),
           boxShadow: [
             BoxShadow(
-              color: ColorPalette.black.withValues(
-                alpha: 0.05,
-              ),
+              color: ColorPalette.black.withValues(alpha: 0.05),
               blurRadius: 8.r,
               offset: Offset(0, 3.h),
             ),
@@ -135,25 +119,21 @@ class _EmptyPdfPicker extends StatelessWidget {
             height: 116.h,
             child: Material(
               color: ColorPalette.surface,
-              borderRadius:
-                  BorderRadius.circular(22.r),
+              borderRadius: BorderRadius.circular(22.r),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: onTap,
                 child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       'اختر ملف PDF الخاص بالدرس',
-                      style: AppTextStyle
-                          .font14TextPrimaryRegularTajawal(),
+                      style: AppTextStyle.font14TextPrimaryRegularTajawal(),
                     ),
                     verticalSpace(12),
                     Text(
                       'الحد الأقصى 15MB',
-                      style: AppTextStyle
-                          .font12TextMutedRegularTajawal(),
+                      style: AppTextStyle.font12TextMutedRegularTajawal(),
                     ),
                   ],
                 ),
@@ -187,10 +167,7 @@ class _SelectedPdfPicker extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorPalette.primarySoftBackground,
         borderRadius: BorderRadius.circular(22.r),
-        border: Border.all(
-          color: ColorPalette.border,
-          width: 1.2.w,
-        ),
+        border: Border.all(color: ColorPalette.border, width: 1.2.w),
       ),
       child: Material(
         color: Colors.transparent,
@@ -202,35 +179,25 @@ class _SelectedPdfPicker extends StatelessWidget {
               child: InkWell(
                 onTap: onTap,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    48.w,
-                    18.h,
-                    48.w,
-                    18.h,
-                  ),
+                  padding: EdgeInsets.fromLTRB(48.w, 18.h, 48.w, 18.h),
                   child: Column(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         file.name,
                         maxLines: 1,
-                        overflow:
-                            TextOverflow.ellipsis,
-                        style: AppTextStyle
-                            .font14TextPrimaryRegularTajawal(),
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyle.font14TextPrimaryRegularTajawal(),
                       ),
                       verticalSpace(12),
                       Text(
                         'الملف الحالي · اضغط للاستبدال',
-                        style: AppTextStyle
-                            .font12TextMutedRegularTajawal(),
+                        style: AppTextStyle.font12TextMutedRegularTajawal(),
                       ),
                       verticalSpace(4),
                       Text(
                         fileSize,
-                        style: AppTextStyle
-                            .font12TextSecondaryRegularTajawal(),
+                        style: AppTextStyle.font12TextSecondaryRegularTajawal(),
                       ),
                     ],
                   ),
@@ -268,9 +235,7 @@ class _PdfPickerLoading extends StatelessWidget {
       decoration: BoxDecoration(
         color: ColorPalette.surface,
         borderRadius: BorderRadius.circular(22.r),
-        border: Border.all(
-          color: ColorPalette.border,
-        ),
+        border: Border.all(color: ColorPalette.border),
       ),
       alignment: Alignment.center,
       child: AppLoadingIndicator(

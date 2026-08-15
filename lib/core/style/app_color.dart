@@ -41,4 +41,7 @@ class ColorPalette {
   static const Color error = Color(0xFFC0392B);
   static const Color info = Color(0xFF28729F);
   static const Color infoSoftBg = Color(0xFFE3EFF6);
+
+  // ===== Shadow Colors =====
+static const Color primaryShadow = Color(0x14023A22);
 }
