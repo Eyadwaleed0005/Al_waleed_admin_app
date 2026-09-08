@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:firebase_storage/firebase_storage.dart';
 
 typedef StorageProgressCallback = void Function(double progress);
@@ -11,6 +13,14 @@ abstract class StorageService {
     StorageProgressCallback? onProgress,
   });
 
+  Future<FullMetadata> uploadData({
+    required Uint8List data,
+    required String storagePath,
+    required String contentType,
+    Map<String, String>? customMetadata,
+    StorageProgressCallback? onProgress,
+  });
+
   Future<FullMetadata> getFileMetadata({
     required String storagePath,
   });
@@ -18,8 +28,8 @@ abstract class StorageService {
   Future<void> deleteFile({
     required String storagePath,
   });
-  
+
   Future<String> getDownloadUrl({
-  required String storagePath,
-});
+    required String storagePath,
+  });
 }

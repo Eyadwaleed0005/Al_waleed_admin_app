@@ -11,29 +11,43 @@ class RouteNames {
 
   static const String addStudentScreen = '/addStudentScreen';
 
-  static const String updateStudentScreen = '/update-student';
+  static const String updateStudentScreen = '/updateStudentScreen';
 
   static const String liveSession = '/liveSession';
 
-  static const String contentManagementScreen = '/content-management';
+  static const String contentManagementScreen = '/contentManagementScreen';
 
-  static const String viewNotesScreen = '/view-notes';
+  static const String viewNotesScreen = '/viewNotesScreen';
 
-  static const String addNoteScreen = '/add-note';
+  static const String addNoteScreen = '/addNoteScreen';
 
-  static const String editNoteScreen = '/edit-note';
+  static const String editNoteScreen = '/editNoteScreen';
 
-  static const String viewLessonsScreen = '/view-lessons-screen';
+  static const String viewLessonsScreen = '/viewLessonsScreen';
 
-  static const String addLessonScreen = '/add-lesson-screen';
+  static const String addLessonScreen = '/addLessonScreen';
 
-  static const String editLessonScreen = '/edit-lesson';
+  static const String editLessonScreen = '/editLessonScreen';
 
-  static const String lessonExamsScreen = '/lesson-exams-screen';
+  static const String lessonExamsScreen = '/lessonExamsScreen';
 
   static const String addLessonExamQuestionScreen =
-      '/add-lesson-exam-question-screen';
+      '/addLessonExamQuestionScreen';
 
   static const String editLessonExamQuestionScreen =
-      '/edit-lesson-exam-question-screen';
+      '/editLessonExamQuestionScreen';
+
+  static const String viewExamsScreen = '/viewExamsScreen';
+
+  static const String examResultsScreen = '/examResultsScreen';
+
+  static const String addExamScreen = '/addExamScreen';
+
+  static const String addExamQuestionsScreen = '/addExamQuestionsScreen';
+
+  static const String examQuestionsScreen = '/examQuestionsScreen';
+
+  static const String editExamQuestionScreen = '/editExamQuestionScreen';
+
+  static const String editExamScreen = '/editExamScreen';
 }

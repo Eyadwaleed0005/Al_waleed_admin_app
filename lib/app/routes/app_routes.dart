@@ -9,6 +9,22 @@ import 'package:alwaleed_admain/features/dashboard/domin/use_cases/get_dashboard
 import 'package:alwaleed_admain/features/dashboard/presentation/cubit/home_dashboard_cubit.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
 
+import 'package:alwaleed_admain/features/exams/domain/entities/exam_draft_entity.dart';
+import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
+import 'package:alwaleed_admain/features/exams/domain/entities/exam_question_draft_entity.dart';
+import 'package:alwaleed_admain/features/exams/domain/use_case/stream_exams_use_case.dart';
+
+import 'package:alwaleed_admain/features/exams/presentation/cubit/add_exam_cubit.dart';
+import 'package:alwaleed_admain/features/exams/presentation/cubit/view_exams_cubit.dart';
+
+import 'package:alwaleed_admain/features/exams/presentation/screens/add_exam_questions_screen.dart';
+import 'package:alwaleed_admain/features/exams/presentation/screens/add_exam_screen.dart';
+import 'package:alwaleed_admain/features/exams/presentation/screens/edit_exam_question_screen.dart';
+import 'package:alwaleed_admain/features/exams/presentation/screens/edit_exam_screen.dart';
+import 'package:alwaleed_admain/features/exams/presentation/screens/exam_questions_screen.dart';
+import 'package:alwaleed_admain/features/exams/presentation/screens/exam_results_screen.dart';
+import 'package:alwaleed_admain/features/exams/presentation/screens/view_exams_screen.dart';
+
 import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
 
 import 'package:alwaleed_admain/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
@@ -113,47 +129,82 @@ class AppRoutes {
           },
         );
 
-      case RouteNames.lessonExamsScreen:
-        final lessonId = settings.arguments;
+      // Exams
 
-        if (lessonId is! String || lessonId.trim().isEmpty) {
+      case RouteNames.viewExamsScreen:
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (_) {
+            return _provideViewExamsCubit(child: const ViewExamsScreen());
+          },
+        );
+
+      case RouteNames.addExamScreen:
+        return MaterialPageRoute<dynamic>(
+          settings: settings,
+          builder: (_) {
+            return _provideAddExamCubit(child: const AddExamScreen());
+          },
+        );
+
+      case RouteNames.editExamScreen:
+        return _generateEditExamRoute(settings: settings);
+
+      case RouteNames.examQuestionsScreen:
+        return _generateExamQuestionsRoute(settings: settings);
+
+      case RouteNames.addExamQuestionsScreen:
+        return _generateAddExamQuestionRoute(settings: settings);
+
+      case RouteNames.editExamQuestionScreen:
+        return _generateEditExamQuestionRoute(settings: settings);
+
+      case RouteNames.examResultsScreen:
+        return _generateExamResultsRoute(settings: settings);
+
+      // Lesson exams
+
+      case RouteNames.lessonExamsScreen:
+        final Object? argument = settings.arguments;
+
+        if (argument is! String || argument.trim().isEmpty) {
           return null;
         }
 
-        final normalizedLessonId = lessonId.trim();
+        final String lessonId = argument.trim();
 
         return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
             return _provideLessonExamsCubit(
-              lessonId: normalizedLessonId,
-              child: LessonExamsScreen(lessonId: normalizedLessonId),
+              lessonId: lessonId,
+              child: LessonExamsScreen(lessonId: lessonId),
             );
           },
         );
 
       case RouteNames.addLessonExamQuestionScreen:
-        final lessonId = settings.arguments;
+        final Object? argument = settings.arguments;
 
-        if (lessonId is! String || lessonId.trim().isEmpty) {
+        if (argument is! String || argument.trim().isEmpty) {
           return null;
         }
 
-        final normalizedLessonId = lessonId.trim();
+        final String lessonId = argument.trim();
 
         return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
             return _provideAddLessonExamQuestionCubit(
-              child: AddLessonExamQuestionScreen(lessonId: normalizedLessonId),
+              child: AddLessonExamQuestionScreen(lessonId: lessonId),
             );
           },
         );
 
       case RouteNames.editLessonExamQuestionScreen:
-        final question = settings.arguments;
+        final Object? argument = settings.arguments;
 
-        if (question is! LessonExamQuestionEntity) {
+        if (argument is! LessonExamQuestionEntity) {
           return null;
         }
 
@@ -161,10 +212,12 @@ class AppRoutes {
           settings: settings,
           builder: (_) {
             return _provideEditLessonExamQuestionCubit(
-              child: EditLessonExamQuestionScreen(question: question),
+              child: EditLessonExamQuestionScreen(question: argument),
             );
           },
         );
+
+      // Study notes
 
       case RouteNames.viewNotesScreen:
         return MaterialPageRoute<dynamic>(
@@ -183,9 +236,9 @@ class AppRoutes {
         );
 
       case RouteNames.editNoteScreen:
-        final noteId = settings.arguments;
+        final Object? argument = settings.arguments;
 
-        if (noteId is! String || noteId.trim().isEmpty) {
+        if (argument is! String || argument.trim().isEmpty) {
           return null;
         }
 
@@ -193,11 +246,13 @@ class AppRoutes {
           settings: settings,
           builder: (_) {
             return _provideEditNoteCubit(
-              noteId: noteId.trim(),
+              noteId: argument.trim(),
               child: const EditNoteScreen(),
             );
           },
         );
+
+      // Lessons
 
       case RouteNames.viewLessonsScreen:
         return MaterialPageRoute<dynamic>(
@@ -216,23 +271,25 @@ class AppRoutes {
         );
 
       case RouteNames.editLessonScreen:
-        final lessonId = settings.arguments;
+        final Object? argument = settings.arguments;
 
-        if (lessonId is! String || lessonId.trim().isEmpty) {
+        if (argument is! String || argument.trim().isEmpty) {
           return null;
         }
 
-        final normalizedLessonId = lessonId.trim();
+        final String lessonId = argument.trim();
 
         return MaterialPageRoute<dynamic>(
           settings: settings,
           builder: (_) {
             return _provideEditLessonCubits(
-              lessonId: normalizedLessonId,
+              lessonId: lessonId,
               child: const EditLessonScreen(),
             );
           },
         );
+
+      // Dashboard and navigation
 
       case RouteNames.homeScreen:
         return MaterialPageRoute<dynamic>(
@@ -251,6 +308,8 @@ class AppRoutes {
             );
           },
         );
+
+      // Students
 
       case RouteNames.studentManagementScreen:
         return MaterialPageRoute<dynamic>(
@@ -279,11 +338,13 @@ class AppRoutes {
         );
 
       case RouteNames.updateStudentScreen:
-        final studentId = settings.arguments;
+        final Object? argument = settings.arguments;
 
-        if (studentId is! String || studentId.trim().isEmpty) {
+        if (argument is! String || argument.trim().isEmpty) {
           return null;
         }
+
+        final String studentId = argument.trim();
 
         return MaterialPageRoute<dynamic>(
           settings: settings,
@@ -291,7 +352,7 @@ class AppRoutes {
             return BlocProvider<UpdateStudentCubit>(
               create: (_) {
                 return UpdateStudentCubit(
-                  studentId: studentId.trim(),
+                  studentId: studentId,
                   getStudentByIdUseCase: _getIt<GetStudentByIdUseCase>(),
                   streamGradesUseCase: _getIt<StreamGradesUseCase>(),
                   updateStudentProfileUseCase:
@@ -310,6 +371,8 @@ class AppRoutes {
           },
         );
 
+      // Live session
+
       case RouteNames.liveSession:
         return MaterialPageRoute<dynamic>(
           settings: settings,
@@ -326,8 +389,122 @@ class AppRoutes {
     }
   }
 
+  // Exam routes
+
+  static Route<dynamic>? _generateEditExamRoute({
+    required RouteSettings settings,
+  }) {
+    final Object? argument = settings.arguments;
+
+    if (argument is! ExamEntity) {
+      return null;
+    }
+
+    return MaterialPageRoute<dynamic>(
+      settings: settings,
+      builder: (_) {
+        return EditExamScreen(exam: argument);
+      },
+    );
+  }
+
+  static Route<dynamic>? _generateExamQuestionsRoute({
+    required RouteSettings settings,
+  }) {
+    final Object? argument = settings.arguments;
+
+    if (argument is ExamDraftEntity) {
+      return MaterialPageRoute<dynamic>(
+        settings: settings,
+        builder: (_) {
+          return ExamQuestionsScreen(examDraft: argument);
+        },
+      );
+    }
+
+    if (argument is String && argument.trim().isNotEmpty) {
+      final String examId = argument.trim();
+
+      return MaterialPageRoute<dynamic>(
+        settings: settings,
+        builder: (_) {
+          return ExamQuestionsScreen(examId: examId);
+        },
+      );
+    }
+
+    return null;
+  }
+
+  static Route<dynamic>? _generateAddExamQuestionRoute({
+    required RouteSettings settings,
+  }) {
+    final Object? argument = settings.arguments;
+
+    if (argument is! ExamDraftEntity) {
+      return null;
+    }
+
+    return MaterialPageRoute<ExamQuestionDraftEntity>(
+      settings: settings,
+      builder: (_) {
+        return AddExamQuestionsScreen(examDraft: argument);
+      },
+    );
+  }
+
+  static Route<dynamic>? _generateEditExamQuestionRoute({
+    required RouteSettings settings,
+  }) {
+    final Object? argument = settings.arguments;
+
+    if (argument is! ExamQuestionDraftEntity) {
+      return null;
+    }
+
+    return MaterialPageRoute<ExamQuestionDraftEntity>(
+      settings: settings,
+      builder: (_) {
+        return EditExamQuestionScreen(questionDraft: argument);
+      },
+    );
+  }
+
+  static Route<dynamic>? _generateExamResultsRoute({
+    required RouteSettings settings,
+  }) {
+    final Object? argument = settings.arguments;
+
+    if (argument is! String || argument.trim().isEmpty) {
+      return null;
+    }
+
+    final String examId = argument.trim();
+
+    return MaterialPageRoute<dynamic>(
+      settings: settings,
+      builder: (_) {
+        return ExamResultsScreen(examId: examId);
+      },
+    );
+  }
+
   static T _getIt<T extends Object>() {
     return getIt.get<T>();
+  }
+
+  // Cubit factories
+
+  static ViewExamsCubit _createViewExamsCubit() {
+    return ViewExamsCubit(
+      streamExamsUseCase: _getIt<StreamExamsUseCase>(),
+      streamGradesUseCase: _getIt<StreamGradesUseCase>(),
+    )..loadData();
+  }
+
+  static AddExamCubit _createAddExamCubit() {
+    return AddExamCubit(streamGradesUseCase: _getIt<StreamGradesUseCase>())
+      ..loadGrades();
   }
 
   static HomeDashboardCubit _createHomeDashboardCubit() {
@@ -394,7 +571,7 @@ class AppRoutes {
   }
 
   static LessonExamsCubit _createLessonExamsCubit({required String lessonId}) {
-    final cubit = LessonExamsCubit(
+    final LessonExamsCubit cubit = LessonExamsCubit(
       lessonId: lessonId,
       streamLessonExamUseCase: _getIt<StreamLessonExamUseCase>(),
       deleteLessonExamQuestionUseCase:
@@ -428,6 +605,22 @@ class AppRoutes {
       deleteLiveSessionUseCase: _getIt<DeleteLiveSessionUseCase>(),
       networkStatusCubit: _getIt<NetworkStatusCubit>(),
     )..initialize();
+  }
+
+  // Providers
+
+  static Widget _provideViewExamsCubit({required Widget child}) {
+    return BlocProvider<ViewExamsCubit>(
+      create: (_) => _createViewExamsCubit(),
+      child: child,
+    );
+  }
+
+  static Widget _provideAddExamCubit({required Widget child}) {
+    return BlocProvider<AddExamCubit>(
+      create: (_) => _createAddExamCubit(),
+      child: child,
+    );
   }
 
   static Widget _provideMainNavigationCubits({required Widget child}) {

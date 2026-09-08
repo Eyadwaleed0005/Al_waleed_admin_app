@@ -2,6 +2,7 @@ import 'package:alwaleed_admain/app/routes/route_nav_bottom.dart';
 import 'package:alwaleed_admain/core/style/app_animations.dart';
 import 'package:alwaleed_admain/core/style/app_color.dart';
 import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
+import 'package:alwaleed_admain/features/exams/presentation/screens/view_exams_screen.dart';
 import 'package:alwaleed_admain/features/live_session/presentation/screens/live_session_screen.dart';
 import 'package:alwaleed_admain/features/main_navigation/presentation/cubit/bottom_navigation_cubit.dart';
 import 'package:alwaleed_admain/features/main_navigation/presentation/widgets/custom_bottom_nav_bar.dart';
@@ -30,7 +31,7 @@ class MainNavigationView extends StatelessWidget {
     final screens = RouteNavBottom.screens(
       homeScreen: const HomeScreen(),
       students: const StudentManagementScreen(),
-      examsScreen: const TemporaryScreen(title: 'إدارة الامتحانات'),
+      examsScreen: const ViewExamsScreen(),
       studyNotesScreen: const ContentManagementScreen(),
       liveSessionScreen: const LiveSessionScreen(),
     );
@@ -68,16 +69,4 @@ class MainNavigationView extends StatelessWidget {
   }
 }
 
-class TemporaryScreen extends StatelessWidget {
-  const TemporaryScreen({super.key, required this.title});
 
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorPalette.background,
-      body: SafeArea(child: Center(child: Text(title))),
-    );
-  }
-}

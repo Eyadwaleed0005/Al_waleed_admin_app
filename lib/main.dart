@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:alwaleed_admain/app/dependency_injection/service_locator.dart';
 import 'package:alwaleed_admain/app/routes/app_route_observer.dart';
 import 'package:alwaleed_admain/app/routes/app_routes.dart';
@@ -40,7 +39,7 @@ class MyApp extends StatelessWidget {
             title: 'الوليد',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(fontFamily: 'Tajawal'),
-            initialRoute: RouteNames.splashScreen,
+            initialRoute: RouteNames.viewExamsScreen,
             onGenerateRoute: AppRoutes.generateRoute,
             navigatorObservers: [routeObserver],
             builder: (context, child) {

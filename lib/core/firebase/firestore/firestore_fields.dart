@@ -57,14 +57,13 @@ abstract final class FirestoreFields {
   static const String questionScore = 'questionScore';
 
   // Exams
-
   static const String examName = 'examName';
   static const String questionCount = 'questionCount';
   static const String durationMinutes = 'durationMinutes';
   static const String totalScore = 'totalScore';
-  static const String startAt = 'startAt';
-  static const String endAt = 'endAt';
   static const String examStatus = 'examStatus';
+  static const String firstAttemptAt = 'firstAttemptAt';
+  static const String closedAt = 'closedAt';
 
   // Exam results
 
