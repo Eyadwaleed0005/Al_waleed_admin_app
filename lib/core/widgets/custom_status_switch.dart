@@ -17,6 +17,7 @@ class CustomStatusSwitch extends StatelessWidget {
     this.inactiveTooltip,
     this.activeIcon = Icons.sentiment_satisfied_alt_rounded,
     this.inactiveIcon = Icons.sentiment_dissatisfied_rounded,
+    this.showTextOnLeft = false,
   });
 
   final bool value;
@@ -34,6 +35,8 @@ class CustomStatusSwitch extends StatelessWidget {
   final IconData activeIcon;
   final IconData inactiveIcon;
 
+  final bool showTextOnLeft;
+
   bool get _isEnabled => onChanged != null;
 
   void _toggle() {
@@ -42,13 +45,14 @@ class CustomStatusSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayedText = value ? activeText : inactiveText;
+    final String displayedText =
+        value ? activeText : inactiveText;
 
-    final semanticLabel = value
+    final String semanticLabel = value
         ? activeSemanticLabel ?? activeText
         : inactiveSemanticLabel ?? inactiveText;
 
-    final tooltipMessage = value
+    final String tooltipMessage = value
         ? activeTooltip ?? semanticLabel
         : inactiveTooltip ?? semanticLabel;
 
@@ -74,12 +78,16 @@ class CustomStatusSwitch extends StatelessWidget {
                     : ColorPalette.surface,
                 borderRadius: BorderRadius.circular(18.r),
                 border: Border.all(
-                  color: value ? ColorPalette.accent : ColorPalette.border,
+                  color: value
+                      ? ColorPalette.accent
+                      : ColorPalette.border,
                   width: 1.w,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: ColorPalette.black.withValues(alpha: 0.06),
+                    color: ColorPalette.black.withValues(
+                      alpha: 0.06,
+                    ),
                     blurRadius: 8.r,
                     offset: Offset(0, 3.h),
                   ),
@@ -92,29 +100,49 @@ class CustomStatusSwitch extends StatelessWidget {
                 child: InkWell(
                   onTap: _isEnabled ? _toggle : null,
                   borderRadius: BorderRadius.circular(18.r),
-                  splashColor: ColorPalette.primarySoftBackground,
-                  highlightColor: ColorPalette.primarySoftBackground,
+                  splashColor:
+                      ColorPalette.primarySoftBackground,
+                  highlightColor:
+                      ColorPalette.primarySoftBackground,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                    ),
                     child: Row(
-                      textDirection: TextDirection.rtl,
+                      textDirection: showTextOnLeft
+                          ? TextDirection.ltr
+                          : TextDirection.rtl,
                       children: [
                         Expanded(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 200),
-                            child: Text(
-                              displayedText,
-                              key: ValueKey<String>(displayedText),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.right,
-                              style:
-                                  AppTextStyle.font15TextPrimaryMediumTajawal()
-                                      .copyWith(
-                                        color: value
-                                            ? ColorPalette.primary
-                                            : ColorPalette.black,
-                                      ),
+                          child: Align(
+                            alignment: showTextOnLeft
+                                ? Alignment.centerLeft
+                                : Alignment.centerRight,
+                            child: AnimatedSwitcher(
+                              duration: const Duration(
+                                milliseconds: 200,
+                              ),
+                              child: Text(
+                                displayedText,
+                                key: ValueKey<String>(
+                                  displayedText,
+                                ),
+                                maxLines: 1,
+                                overflow:
+                                    TextOverflow.ellipsis,
+                                textAlign: showTextOnLeft
+                                    ? TextAlign.left
+                                    : TextAlign.right,
+                                textDirection:
+                                    TextDirection.rtl,
+                                style: AppTextStyle
+                                    .font15TextPrimaryMediumTajawal()
+                                    .copyWith(
+                                      color: value
+                                          ? ColorPalette.primary
+                                          : ColorPalette.black,
+                                    ),
+                              ),
                             ),
                           ),
                         ),
@@ -157,28 +185,38 @@ class _StatusSwitchIndicator extends StatelessWidget {
       height: 34.h,
       padding: EdgeInsets.all(3.r),
       decoration: BoxDecoration(
-        color: value ? ColorPalette.primary : ColorPalette.disabled,
+        color: value
+            ? ColorPalette.primary
+            : ColorPalette.disabled,
         borderRadius: BorderRadius.circular(24.r),
         border: Border.all(
-          color: value ? ColorPalette.accent : ColorPalette.border,
+          color: value
+              ? ColorPalette.accent
+              : ColorPalette.border,
           width: 1.w,
         ),
       ),
       child: AnimatedAlign(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutBack,
-        alignment: value ? Alignment.centerRight : Alignment.centerLeft,
+        alignment: value
+            ? Alignment.centerRight
+            : Alignment.centerLeft,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 250),
           width: 26.w,
           height: 26.w,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: value ? ColorPalette.highlight : ColorPalette.surface,
+            color: value
+                ? ColorPalette.highlight
+                : ColorPalette.surface,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: ColorPalette.black.withValues(alpha: 0.12),
+                color: ColorPalette.black.withValues(
+                  alpha: 0.12,
+                ),
                 blurRadius: 3.r,
                 offset: Offset(0, 1.h),
               ),
@@ -190,7 +228,9 @@ class _StatusSwitchIndicator extends StatelessWidget {
               value ? activeIcon : inactiveIcon,
               key: ValueKey<bool>(value),
               size: 19.sp,
-              color: value ? ColorPalette.primary : ColorPalette.textSecondary,
+              color: value
+                  ? ColorPalette.primary
+                  : ColorPalette.textSecondary,
             ),
           ),
         ),
