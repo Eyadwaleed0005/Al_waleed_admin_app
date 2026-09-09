@@ -1,5 +1,7 @@
 import 'package:alwaleed_admain/features/exams/data/models/exam_model.dart';
 import 'package:alwaleed_admain/features/exams/data/models/exam_question_model.dart';
+import 'package:alwaleed_admain/features/exams/data/models/exam_result_model.dart';
+import 'package:alwaleed_admain/features/exams/domain/entities/exam_attempt_status.dart';
 import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
 import 'package:alwaleed_admain/features/exams/domain/exam_question_image_file.dart';
 
@@ -16,6 +18,16 @@ abstract class ExamsRemoteDataSource {
 
   Future<ExamModel> getExamById({
     required String examId,
+  });
+
+  Future<List<ExamResultModel>> getExamResults({
+    required String examId,
+    ExamAttemptStatus? status,
+  });
+
+  Stream<List<ExamResultModel>> streamExamResults({
+    required String examId,
+    ExamAttemptStatus? status,
   });
 
   Future<String> createExam({

@@ -12,6 +12,7 @@ class ExamEntity {
     required this.totalScore,
     required this.status,
     required this.questions,
+    this.participantsCount = 0,
     this.firstAttemptAt,
     this.closedAt,
     this.createdAt,
@@ -25,6 +26,7 @@ class ExamEntity {
   final int durationMinutes;
   final int questionCount;
   final int totalScore;
+  final int participantsCount;
 
   final ExamStatus status;
 
@@ -35,47 +37,78 @@ class ExamEntity {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  bool get hasQuestions => questionCount > 0 || questions.isNotEmpty;
+  bool get hasQuestions {
+    return questionCount > 0 || questions.isNotEmpty;
+  }
 
-  bool get isUnpublished => status == ExamStatus.unpublished;
+  bool get hasParticipants {
+    return participantsCount > 0;
+  }
 
-  bool get isPublished => status == ExamStatus.published;
+  bool get isUnpublished {
+    return status == ExamStatus.unpublished;
+  }
 
-  bool get isEnded => status == ExamStatus.ended;
+  bool get isPublished {
+    return status == ExamStatus.published;
+  }
 
-  bool get hasStartedAttempts => firstAttemptAt != null;
+  bool get isEnded {
+    return status == ExamStatus.ended;
+  }
+
+  bool get hasStartedAttempts {
+    return firstAttemptAt != null || participantsCount > 0;
+  }
+
+  bool get canEditSettings {
+    return !isEnded && !hasStartedAttempts;
+  }
 
   bool get canEditQuestions {
     return !isEnded && !hasStartedAttempts;
   }
 
   bool get canEditDuration {
-    return !isEnded && !hasStartedAttempts;
+    return canEditSettings;
   }
 
   bool get canEditGrade {
-    return !isEnded && !hasStartedAttempts;
+    return canEditSettings;
   }
 
   bool get canEditName {
-    return !isEnded;
+    return canEditSettings;
+  }
+
+  bool get canChangePublicationStatus {
+    return !isEnded && !hasStartedAttempts;
+  }
+
+  bool get canDelete {
+    return !isEnded && !hasStartedAttempts;
+  }
+
+  bool get canViewResults {
+    return isEnded;
   }
 
   bool get hasQuestionsWithoutCorrectAnswer {
-    return questions.any((question) {
+    return questions.any((ExamQuestionEntity question) {
       return !question.hasCorrectChoice;
     });
   }
 
   bool get allQuestionsHaveCorrectAnswers {
     return questions.isNotEmpty &&
-        questions.every((question) {
+        questions.every((ExamQuestionEntity question) {
           return question.hasCorrectChoice;
         });
   }
 
   bool get canPublish {
     return isUnpublished &&
+        !hasStartedAttempts &&
         questions.isNotEmpty &&
         allQuestionsHaveCorrectAnswers;
   }
@@ -91,6 +124,7 @@ class ExamEntity {
     int? durationMinutes,
     int? questionCount,
     int? totalScore,
+    int? participantsCount,
     ExamStatus? status,
     List<ExamQuestionEntity>? questions,
     DateTime? firstAttemptAt,
@@ -107,6 +141,7 @@ class ExamEntity {
       durationMinutes: durationMinutes ?? this.durationMinutes,
       questionCount: questionCount ?? this.questionCount,
       totalScore: totalScore ?? this.totalScore,
+      participantsCount: participantsCount ?? this.participantsCount,
       status: status ?? this.status,
       questions: questions ?? this.questions,
       firstAttemptAt: clearFirstAttemptAt
@@ -126,8 +161,9 @@ class ExamEntity {
       durationMinutes: 0,
       questionCount: 0,
       totalScore: 0,
+      participantsCount: 0,
       status: ExamStatus.unpublished,
-      questions: const [],
+      questions: const <ExamQuestionEntity>[],
     );
   }
 }

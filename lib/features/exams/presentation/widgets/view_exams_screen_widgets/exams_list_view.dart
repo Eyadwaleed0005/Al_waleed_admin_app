@@ -19,23 +19,30 @@ class ExamsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      physics: const BouncingScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(
+        parent: BouncingScrollPhysics(),
+      ),
       padding: EdgeInsets.zero,
       itemCount: exams.length,
-      separatorBuilder: (_, __) => verticalSpace(14),
-      itemBuilder: (context, index) {
+      separatorBuilder: (_, __) {
+        return verticalSpace(14);
+      },
+      itemBuilder: (BuildContext context, int index) {
         final ExamCardViewData exam = exams[index];
 
         return ExamCard(
           exam: exam,
-          onExamPressed:
-              exam.status == ExamStatus.ended || onExamPressed == null
+          onExamPressed: onExamPressed == null
               ? null
-              : () => onExamPressed!(exam),
+              : () {
+                  onExamPressed!(exam);
+                },
           onViewResultsPressed:
-              exam.status != ExamStatus.ended || onViewResultsPressed == null
-              ? null
-              : () => onViewResultsPressed!(exam),
+              exam.status == ExamStatus.ended && onViewResultsPressed != null
+              ? () {
+                  onViewResultsPressed!(exam);
+                }
+              : null,
         );
       },
     );

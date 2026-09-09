@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:alwaleed_admain/core/connection/cubit/network_status_cubit.dart';
+import 'package:alwaleed_admain/core/connection/cubit/network_status_state.dart';
 import 'package:alwaleed_admain/core/style/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,21 +26,24 @@ class AppRefreshIndicator extends StatelessWidget {
       color: ColorPalette.primary,
       backgroundColor: ColorPalette.surface,
       strokeWidth: 3.w,
-      displacement: 50.h,
-      edgeOffset: 4.h,
+      edgeOffset: 0,
+      displacement: 36.h,
       elevation: 2,
       triggerMode: RefreshIndicatorTriggerMode.onEdge,
       semanticsLabel: 'تحديث البيانات',
+      notificationPredicate: (ScrollNotification notification) {
+        return notification.depth == 0;
+      },
       child: child,
     );
   }
 
   Future<void> _handleRefresh(BuildContext context) async {
-    await context.read<NetworkStatusCubit>().checkConnection(
-      forceShowOfflineBanner: true,
-    );
+    final NetworkStatusCubit networkCubit = context.read<NetworkStatusCubit>();
 
-    if (!context.mounted) {
+    if (networkCubit.state is NetworkStatusDisconnected) {
+      unawaited(networkCubit.checkConnection(forceShowOfflineBanner: true));
+
       return;
     }
 

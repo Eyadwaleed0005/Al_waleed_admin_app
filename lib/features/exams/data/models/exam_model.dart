@@ -1,3 +1,4 @@
+import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
 import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -10,6 +11,7 @@ class ExamModel extends ExamEntity {
     required super.questionCount,
     required super.totalScore,
     required super.status,
+    super.participantsCount = 0,
     super.questions = const [],
     super.firstAttemptAt,
     super.closedAt,
@@ -20,12 +22,9 @@ class ExamModel extends ExamEntity {
   factory ExamModel.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> document,
   ) {
-    final Map<String, dynamic> data = document.data() ?? {};
+    final Map<String, dynamic> data = document.data() ?? <String, dynamic>{};
 
-    return ExamModel.fromMap(
-      examId: document.id,
-      data: data,
-    );
+    return ExamModel.fromMap(examId: document.id, data: data);
   }
 
   factory ExamModel.fromMap({
@@ -34,37 +33,39 @@ class ExamModel extends ExamEntity {
   }) {
     return ExamModel(
       examId: examId,
-      gradeId: _readString(data['gradeId']),
-      examName: _readString(data['examName']),
-      durationMinutes: _readInt(data['durationMinutes']),
-      questionCount: _readInt(data['questionCount']),
-      totalScore: _readInt(data['totalScore']),
-      status: statusFromJson(data['examStatus']),
-      firstAttemptAt: _readDateTime(data['firstAttemptAt']),
-      closedAt: _readDateTime(data['closedAt']),
-      createdAt: _readDateTime(data['createdAt']),
-      updatedAt: _readDateTime(data['updatedAt']),
+      gradeId: _readString(data[FirestoreFields.gradeId]),
+      examName: _readString(data[FirestoreFields.examName]),
+      durationMinutes: _readInt(data[FirestoreFields.durationMinutes]),
+      questionCount: _readInt(data[FirestoreFields.questionCount]),
+      totalScore: _readInt(data[FirestoreFields.totalScore]),
+      participantsCount: _readInt(data[FirestoreFields.participantsCount]),
+      status: statusFromJson(data[FirestoreFields.examStatus]),
+      firstAttemptAt: _readDateTime(data[FirestoreFields.firstAttemptAt]),
+      closedAt: _readDateTime(data[FirestoreFields.closedAt]),
+      createdAt: _readDateTime(data[FirestoreFields.createdAt]),
+      updatedAt: _readDateTime(data[FirestoreFields.updatedAt]),
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'gradeId': gradeId,
-      'examName': examName,
-      'durationMinutes': durationMinutes,
-      'questionCount': questionCount,
-      'totalScore': totalScore,
-      'examStatus': statusToJson(status),
-      'firstAttemptAt': firstAttemptAt == null
+    return <String, dynamic>{
+      FirestoreFields.gradeId: gradeId,
+      FirestoreFields.examName: examName,
+      FirestoreFields.durationMinutes: durationMinutes,
+      FirestoreFields.questionCount: questionCount,
+      FirestoreFields.totalScore: totalScore,
+      FirestoreFields.participantsCount: participantsCount,
+      FirestoreFields.examStatus: statusToJson(status),
+      FirestoreFields.firstAttemptAt: firstAttemptAt == null
           ? null
           : Timestamp.fromDate(firstAttemptAt!),
-      'closedAt': closedAt == null
+      FirestoreFields.closedAt: closedAt == null
           ? null
           : Timestamp.fromDate(closedAt!),
-      'createdAt': createdAt == null
+      FirestoreFields.createdAt: createdAt == null
           ? null
           : Timestamp.fromDate(createdAt!),
-      'updatedAt': updatedAt == null
+      FirestoreFields.updatedAt: updatedAt == null
           ? null
           : Timestamp.fromDate(updatedAt!),
     };
@@ -78,6 +79,7 @@ class ExamModel extends ExamEntity {
       durationMinutes: durationMinutes,
       questionCount: questionCount,
       totalScore: totalScore,
+      participantsCount: participantsCount,
       status: status,
       questions: List.unmodifiable(questions),
       firstAttemptAt: firstAttemptAt,

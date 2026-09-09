@@ -106,9 +106,7 @@ class _EditExamContentState extends State<EditExamContent> {
           key: ValueKey<String>(state.exam.examId),
           exam: state.exam,
           grades: state.grades,
-          canEditSettings: state.canEditSettings,
           canCloseExam: state.canClose,
-          canDeleteExam: state.canDelete,
           isSavingChanges:
               state.isOperating && state.operation == EditExamOperation.save,
           isClosingExam:
@@ -162,7 +160,8 @@ class _EditExamContentState extends State<EditExamContent> {
     final String successMessage = switch (state.operation!) {
       EditExamOperation.save => 'تم حفظ تعديلات الاختبار بنجاح.',
       EditExamOperation.close => 'تم إغلاق الاختبار بنجاح.',
-      EditExamOperation.delete => 'تم حذف الاختبار وأسئلته بنجاح.',
+      EditExamOperation.delete =>
+        'تم حذف الاختبار وأسئلته وصوره ومحاولات الطلاب ونتائجهم بنجاح.',
     };
 
     _isDialogOpen = true;
@@ -238,7 +237,6 @@ class _EditExamContentState extends State<EditExamContent> {
     }
 
     final EditExamCubit cubit = context.read<EditExamCubit>();
-
     final EditExamState currentState = cubit.state;
 
     if (currentState is! EditExamReady || !currentState.canClose) {
@@ -270,10 +268,9 @@ class _EditExamContentState extends State<EditExamContent> {
     }
 
     final EditExamCubit cubit = context.read<EditExamCubit>();
-
     final EditExamState currentState = cubit.state;
 
-    if (currentState is! EditExamReady || !currentState.canDelete) {
+    if (currentState is! EditExamReady) {
       return;
     }
 
@@ -281,10 +278,14 @@ class _EditExamContentState extends State<EditExamContent> {
 
     final bool confirmed = await _confirm(
       title: 'حذف الاختبار',
-      message:
-          'سيتم حذف الاختبار وأسئلته وصورها نهائيًا، '
-          'ولا يمكن التراجع عن هذه العملية. '
-          'هل تريد المتابعة؟',
+      message: currentState.exam.isEnded
+          ? 'سيتم حذف الاختبار وأسئلته وصوره ومحاولات الطلاب '
+                'ونتائجهم نهائيًا، ولا يمكن التراجع عن هذه العملية. '
+                'هل تريد المتابعة؟'
+          : 'سيتم حذف الاختبار وأسئلته وصوره نهائيًا. '
+                'إذا بدأ طالب واحد على الأقل الاختبار، '
+                'فلن يُسمح بحذفه قبل إغلاقه. '
+                'هل تريد المتابعة؟',
       actionText: 'حذف الاختبار',
     );
 
@@ -301,10 +302,9 @@ class _EditExamContentState extends State<EditExamContent> {
     }
 
     final EditExamCubit cubit = context.read<EditExamCubit>();
+    final EditExamState currentState = cubit.state;
 
-    final EditExamState state = cubit.state;
-
-    if (state is! EditExamReady) {
+    if (currentState is! EditExamReady) {
       return;
     }
 
@@ -313,9 +313,10 @@ class _EditExamContentState extends State<EditExamContent> {
     _isQuestionsRouteOpen = true;
 
     try {
-      await Navigator.of(
-        context,
-      ).pushNamed(RouteNames.examQuestionsScreen, arguments: state.exam.examId);
+      await Navigator.of(context).pushNamed(
+        RouteNames.examQuestionsScreen,
+        arguments: currentState.exam.examId,
+      );
     } finally {
       _isQuestionsRouteOpen = false;
     }

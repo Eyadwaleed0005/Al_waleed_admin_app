@@ -4,14 +4,16 @@ import 'package:alwaleed_admain/features/exams/domain/repositories/exams_reposit
 import 'package:dartz/dartz.dart';
 
 class GetExamByIdUseCase {
-  const GetExamByIdUseCase(this._repository);
+  const GetExamByIdUseCase({
+    required ExamsRepository examsRepository,
+  }) : _examsRepository = examsRepository;
 
-  final ExamsRepository _repository;
+  final ExamsRepository _examsRepository;
 
   Future<Either<AppErrorModel, ExamEntity>> call({
     required String examId,
   }) {
-    return _repository.getExamById(
+    return _examsRepository.getExamById(
       examId: examId,
     );
   }

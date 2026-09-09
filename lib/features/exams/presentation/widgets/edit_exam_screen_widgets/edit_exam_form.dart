@@ -29,9 +29,7 @@ class EditExamForm extends StatefulWidget {
     required this.onOpenQuestionsPressed,
     required this.onCloseExamPressed,
     required this.onDeleteExamPressed,
-    this.canEditSettings = true,
     this.canCloseExam = true,
-    this.canDeleteExam = true,
     this.isSavingChanges = false,
     this.isClosingExam = false,
     this.isDeletingExam = false,
@@ -45,9 +43,7 @@ class EditExamForm extends StatefulWidget {
   final VoidCallback onCloseExamPressed;
   final VoidCallback onDeleteExamPressed;
 
-  final bool canEditSettings;
   final bool canCloseExam;
-  final bool canDeleteExam;
 
   final bool isSavingChanges;
   final bool isClosingExam;
@@ -77,8 +73,12 @@ class _EditExamFormState extends State<EditExamForm> {
         widget.isDeletingExam;
   }
 
+  bool get _isExamEnded {
+    return widget.exam.isEnded;
+  }
+
   bool get _fieldsEnabled {
-    return widget.canEditSettings && !_isActionInProgress;
+    return !_isExamEnded && !_isActionInProgress;
   }
 
   bool get _hasChanges {
@@ -93,7 +93,7 @@ class _EditExamFormState extends State<EditExamForm> {
     return _examNameController.text.trim() != exam.examName.trim() ||
         currentDuration != exam.durationMinutes ||
         _selectedGradeId != exam.gradeId ||
-        _isPublished != (exam.status == ExamStatus.published);
+        _isPublished != exam.isPublished;
   }
 
   @override
@@ -102,18 +102,17 @@ class _EditExamFormState extends State<EditExamForm> {
 
     _editExamValidation = AddExamValidation();
 
-    _examNameController = TextEditingController(
-      text: widget.exam.examName,
-    );
+    _examNameController = TextEditingController(text: widget.exam.examName);
 
     _examDurationController = TextEditingController(
       text: widget.exam.durationMinutes.toString(),
     );
 
     _selectedGradeId = widget.exam.gradeId;
-    _isPublished = widget.exam.status == ExamStatus.published;
+    _isPublished = widget.exam.isPublished;
 
     _examNameController.addListener(_onFormValueChanged);
+
     _examDurationController.addListener(_onFormValueChanged);
   }
 
@@ -121,8 +120,7 @@ class _EditExamFormState extends State<EditExamForm> {
   void didUpdateWidget(covariant EditExamForm oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    final bool isDifferentExam =
-        oldWidget.exam.examId != widget.exam.examId;
+    final bool isDifferentExam = oldWidget.exam.examId != widget.exam.examId;
 
     final bool settingsChanged =
         oldWidget.exam.examName != widget.exam.examName ||
@@ -130,7 +128,6 @@ class _EditExamFormState extends State<EditExamForm> {
         oldWidget.exam.durationMinutes != widget.exam.durationMinutes ||
         oldWidget.exam.status != widget.exam.status;
 
-    // لا نستبدل تعديلات المستخدم عند إعادة بناء نفس الامتحان.
     final bool hadLocalChanges = _hasChangesComparedTo(oldWidget.exam);
 
     if (isDifferentExam || (settingsChanged && !hadLocalChanges)) {
@@ -143,11 +140,11 @@ class _EditExamFormState extends State<EditExamForm> {
 
     try {
       _examNameController.text = widget.exam.examName;
-      _examDurationController.text =
-          widget.exam.durationMinutes.toString();
+
+      _examDurationController.text = widget.exam.durationMinutes.toString();
 
       _selectedGradeId = widget.exam.gradeId;
-      _isPublished = widget.exam.status == ExamStatus.published;
+      _isPublished = widget.exam.isPublished;
     } finally {
       _isSyncingForm = false;
     }
@@ -156,6 +153,7 @@ class _EditExamFormState extends State<EditExamForm> {
   @override
   void dispose() {
     _examNameController.removeListener(_onFormValueChanged);
+
     _examDurationController.removeListener(_onFormValueChanged);
 
     _examNameController.dispose();
@@ -242,12 +240,13 @@ class _EditExamFormState extends State<EditExamForm> {
             AppAnimations.screenSection(
               delay: 360,
               child: EditExamActions(
+                isExamEnded: _isExamEnded,
                 isSavingChanges: widget.isSavingChanges,
                 isClosingExam: widget.isClosingExam,
                 isDeletingExam: widget.isDeletingExam,
                 isSaveChangesEnabled: _fieldsEnabled && _hasChanges,
                 isCloseExamEnabled: widget.canCloseExam,
-                isDeleteExamEnabled: widget.canDeleteExam,
+                isDeleteExamEnabled: true,
                 onSaveChangesPressed: _saveChanges,
                 onCloseExamPressed: _closeExam,
                 onDeleteExamPressed: _deleteExam,
@@ -260,9 +259,7 @@ class _EditExamFormState extends State<EditExamForm> {
     );
   }
 
-  Widget _buildGradeField(
-    List<PopupSelectionItem<String>> gradeItems,
-  ) {
+  Widget _buildGradeField(List<PopupSelectionItem<String>> gradeItems) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -274,9 +271,7 @@ class _EditExamFormState extends State<EditExamForm> {
         ),
         verticalSpace(10),
         FormField<String>(
-          key: ValueKey<String>(
-            '${widget.exam.examId}:$_selectedGradeId',
-          ),
+          key: ValueKey<String>('${widget.exam.examId}:$_selectedGradeId'),
           initialValue: _selectedGradeId,
           enabled: _fieldsEnabled,
           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -323,16 +318,15 @@ class _EditExamFormState extends State<EditExamForm> {
   }
 
   String? _validateGrade(String? value) {
-    final String? validationError =
-        _editExamValidation.validateGrade(value);
+    final String? validationError = _editExamValidation.validateGrade(value);
 
     if (validationError != null) {
       return validationError;
     }
 
-    final bool exists = widget.grades.any(
-      (grade) => grade.gradeId == value,
-    );
+    final bool exists = widget.grades.any((grade) {
+      return grade.gradeId == value;
+    });
 
     if (!exists) {
       return 'الصف المحدد غير متاح. اختر صفًا دراسيًا آخر.';
@@ -390,7 +384,7 @@ class _EditExamFormState extends State<EditExamForm> {
   }
 
   void _deleteExam() {
-    if (_isActionInProgress || !widget.canDeleteExam) {
+    if (_isActionInProgress) {
       return;
     }
 
@@ -405,8 +399,7 @@ class _EditExamFormState extends State<EditExamForm> {
       return;
     }
 
-    final bool isFormValid =
-        _formKey.currentState?.validate() ?? false;
+    final bool isFormValid = _formKey.currentState?.validate() ?? false;
 
     if (!isFormValid) {
       return;

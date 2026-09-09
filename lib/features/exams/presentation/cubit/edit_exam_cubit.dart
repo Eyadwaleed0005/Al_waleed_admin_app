@@ -37,7 +37,7 @@ class EditExamCubit extends Cubit<EditExamState> {
       return;
     }
 
-    final current = state;
+    final EditExamState current = state;
 
     if (current is EditExamReady &&
         (current.isOperating || current.operationSucceeded)) {
@@ -48,7 +48,9 @@ class EditExamCubit extends Cubit<EditExamState> {
     emit(const EditExamLoading());
 
     try {
-      final examResult = await _getExamByIdUseCase(examId: _examId);
+      final examResult = await _getExamByIdUseCase(
+        examId: _examId,
+      );
 
       if (isClosed) {
         return;
@@ -58,8 +60,12 @@ class EditExamCubit extends Cubit<EditExamState> {
       AppErrorModel? loadError;
 
       examResult.fold(
-        (error) => loadError = error,
-        (exam) => loadedExam = exam,
+        (AppErrorModel error) {
+          loadError = error;
+        },
+        (ExamEntity exam) {
+          loadedExam = exam;
+        },
       );
 
       if (loadError != null) {
@@ -67,7 +73,6 @@ class EditExamCubit extends Cubit<EditExamState> {
         return;
       }
 
-      // نحمّل كل الصفوف لعرض الصف الحالي حتى لو لم يعد نشطًا.
       final gradesResult = await _gradesRepository
           .streamGrades(activeOnly: false)
           .first;
@@ -77,16 +82,25 @@ class EditExamCubit extends Cubit<EditExamState> {
       }
 
       gradesResult.fold(
-        (error) {
+        (AppErrorModel error) {
           emit(EditExamError(error: error));
         },
         (List<GradeEntity> grades) {
-          emit(EditExamReady(exam: loadedExam!, grades: grades));
+          emit(
+            EditExamReady(
+              exam: loadedExam!,
+              grades: grades,
+            ),
+          );
         },
       );
     } catch (error) {
       if (!isClosed) {
-        emit(EditExamError(error: FirebaseErrorHandler.handle(error)));
+        emit(
+          EditExamError(
+            error: FirebaseErrorHandler.handle(error),
+          ),
+        );
       }
     } finally {
       _isLoading = false;
@@ -103,12 +117,11 @@ class EditExamCubit extends Cubit<EditExamState> {
     required int durationMinutes,
     required bool isPublished,
   }) async {
-    final current = state;
+    final EditExamState currentState = state;
 
-    if (current is! EditExamReady ||
-        current.isOperating ||
-        current.operationSucceeded ||
-        !current.canEditSettings ||
+    if (currentState is! EditExamReady ||
+        currentState.isOperating ||
+        currentState.operationSucceeded ||
         isClosed) {
       return;
     }
@@ -119,63 +132,76 @@ class EditExamCubit extends Cubit<EditExamState> {
     if (normalizedName.isEmpty ||
         normalizedGradeId.isEmpty ||
         durationMinutes <= 0 ||
-        !current.grades.any((grade) => grade.gradeId == normalizedGradeId)) {
+        !currentState.grades.any(
+          (GradeEntity grade) {
+            return grade.gradeId == normalizedGradeId;
+          },
+        )) {
       return;
     }
 
     final ExamEntity updatedExam = _updatedExam(
-      current.exam,
+      currentState.exam,
       examName: normalizedName,
       gradeId: normalizedGradeId,
       durationMinutes: durationMinutes,
-      status: isPublished ? ExamStatus.published : ExamStatus.unpublished,
+      status: isPublished
+          ? ExamStatus.published
+          : ExamStatus.unpublished,
     );
 
     await _executeOperation(
-      current: current,
+      current: currentState,
       operation: EditExamOperation.save,
-      action: () => _updateExamUseCase(exam: updatedExam),
+      action: () {
+        return _updateExamUseCase(exam: updatedExam);
+      },
     );
   }
 
   Future<void> closeExam() async {
-    final current = state;
+    final EditExamState currentState = state;
 
-    if (current is! EditExamReady ||
-        current.isOperating ||
-        current.operationSucceeded ||
-        !current.canClose ||
+    if (currentState is! EditExamReady ||
+        currentState.isOperating ||
+        currentState.operationSucceeded ||
+        !currentState.canClose ||
         isClosed) {
       return;
     }
 
     final ExamEntity closedExam = _updatedExam(
-      current.exam,
+      currentState.exam,
       status: ExamStatus.ended,
     );
 
     await _executeOperation(
-      current: current,
+      current: currentState,
       operation: EditExamOperation.close,
-      action: () => _updateExamUseCase(exam: closedExam),
+      action: () {
+        return _updateExamUseCase(exam: closedExam);
+      },
     );
   }
 
   Future<void> deleteExam() async {
-    final current = state;
+    final EditExamState currentState = state;
 
-    if (current is! EditExamReady ||
-        current.isOperating ||
-        current.operationSucceeded ||
-        !current.canDelete ||
+    if (currentState is! EditExamReady ||
+        currentState.isOperating ||
+        currentState.operationSucceeded ||
         isClosed) {
       return;
     }
 
     await _executeOperation(
-      current: current,
+      current: currentState,
       operation: EditExamOperation.delete,
-      action: () => _deleteExamUseCase(examId: current.exam.examId),
+      action: () {
+        return _deleteExamUseCase(
+          examId: currentState.exam.examId,
+        );
+      },
     );
   }
 
@@ -194,14 +220,14 @@ class EditExamCubit extends Cubit<EditExamState> {
     );
 
     try {
-      final result = await action();
+      final Either<AppErrorModel, Unit> result = await action();
 
       if (isClosed) {
         return;
       }
 
       result.fold(
-        (error) {
+        (AppErrorModel error) {
           emit(
             EditExamReady(
               exam: current.exam,
@@ -250,6 +276,7 @@ class EditExamCubit extends Cubit<EditExamState> {
       durationMinutes: durationMinutes ?? exam.durationMinutes,
       questionCount: exam.questionCount,
       totalScore: exam.totalScore,
+      participantsCount: exam.participantsCount,
       status: status ?? exam.status,
       questions: exam.questions,
       firstAttemptAt: exam.firstAttemptAt,

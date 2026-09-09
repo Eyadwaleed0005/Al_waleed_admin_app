@@ -16,6 +16,7 @@ class ExamQuestionCard extends StatelessWidget {
     required this.onChoiceSelected,
     required this.onEditPressed,
     required this.onDeletePressed,
+    required this.showActions,
     this.localImage,
     this.isEnabled = true,
     this.isDeleting = false,
@@ -30,6 +31,7 @@ class ExamQuestionCard extends StatelessWidget {
   final VoidCallback onEditPressed;
   final VoidCallback onDeletePressed;
 
+  final bool showActions;
   final bool isEnabled;
   final bool isDeleting;
 
@@ -66,6 +68,7 @@ class ExamQuestionCard extends StatelessWidget {
               _QuestionCardHeader(
                 questionNumber: questionNumber,
                 degree: question.degree,
+                showActions: showActions,
                 isDeleting: isDeleting,
                 onEditPressed: onEditPressed,
                 onDeletePressed: onDeletePressed,
@@ -180,6 +183,7 @@ class _QuestionCardHeader extends StatelessWidget {
   const _QuestionCardHeader({
     required this.questionNumber,
     required this.degree,
+    required this.showActions,
     required this.isDeleting,
     required this.onEditPressed,
     required this.onDeletePressed,
@@ -187,6 +191,8 @@ class _QuestionCardHeader extends StatelessWidget {
 
   final int questionNumber;
   final int degree;
+
+  final bool showActions;
   final bool isDeleting;
 
   final VoidCallback onEditPressed;
@@ -229,35 +235,36 @@ class _QuestionCardHeader extends StatelessWidget {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _QuestionActionText(
-                  text: 'تعديل',
-                  color: ColorPalette.primary,
-                  onPressed: onEditPressed,
-                ),
-                horizontalSpace(12),
-                if (isDeleting)
-                  SizedBox(
-                    width: 18.w,
-                    height: 18.w,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.w,
-                      color: ColorPalette.error,
-                    ),
-                  )
-                else
+          if (showActions)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
                   _QuestionActionText(
-                    text: 'حذف',
-                    color: ColorPalette.error,
-                    onPressed: onDeletePressed,
+                    text: 'تعديل',
+                    color: ColorPalette.primary,
+                    onPressed: onEditPressed,
                   ),
-              ],
+                  horizontalSpace(12),
+                  if (isDeleting)
+                    SizedBox(
+                      width: 18.w,
+                      height: 18.w,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.w,
+                        color: ColorPalette.error,
+                      ),
+                    )
+                  else
+                    _QuestionActionText(
+                      text: 'حذف',
+                      color: ColorPalette.error,
+                      onPressed: onDeletePressed,
+                    ),
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );

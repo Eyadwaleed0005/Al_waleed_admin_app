@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class EditExamActions extends StatelessWidget {
   const EditExamActions({
     super.key,
+    required this.isExamEnded,
     required this.onSaveChangesPressed,
     required this.onCloseExamPressed,
     required this.onDeleteExamPressed,
@@ -18,22 +19,18 @@ class EditExamActions extends StatelessWidget {
     this.isDeleteExamEnabled = true,
   });
 
+  final bool isExamEnded;
+
   final VoidCallback onSaveChangesPressed;
-
   final VoidCallback onCloseExamPressed;
-
   final VoidCallback onDeleteExamPressed;
 
   final bool isSavingChanges;
-
   final bool isClosingExam;
-
   final bool isDeletingExam;
 
   final bool isSaveChangesEnabled;
-
   final bool isCloseExamEnabled;
-
   final bool isDeleteExamEnabled;
 
   bool get _isActionInProgress {
@@ -45,19 +42,21 @@ class EditExamActions extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        CustomButton(
-          text: 'حفظ التعديلات',
-          isLoading: isSavingChanges,
-          isEnabled: isSaveChangesEnabled && !_isActionInProgress,
-          onPressed: onSaveChangesPressed,
-        ),
-        verticalSpace(12),
-        CustomSecondaryButton(
-          text: isClosingExam ? 'جارٍ إغلاق الاختبار...' : 'إغلاق الاختبار',
-          isEnabled: isCloseExamEnabled && !_isActionInProgress,
-          onPressed: onCloseExamPressed,
-        ),
-        verticalSpace(12),
+        if (!isExamEnded) ...[
+          CustomButton(
+            text: 'حفظ التعديلات',
+            isLoading: isSavingChanges,
+            isEnabled: isSaveChangesEnabled && !_isActionInProgress,
+            onPressed: onSaveChangesPressed,
+          ),
+          verticalSpace(12),
+          CustomSecondaryButton(
+            text: isClosingExam ? 'جارٍ إغلاق الاختبار...' : 'إغلاق الاختبار',
+            isEnabled: isCloseExamEnabled && !_isActionInProgress,
+            onPressed: onCloseExamPressed,
+          ),
+          verticalSpace(12),
+        ],
         CustomDeleteButton(
           text: 'حذف الاختبار',
           icon: Icons.delete_outline_rounded,

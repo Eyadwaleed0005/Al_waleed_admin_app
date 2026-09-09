@@ -12,7 +12,7 @@ Future<bool> showCustomDeleteConfirmationBottomSheet(
   String cancelText = 'إلغاء',
   bool isDismissible = true,
 }) async {
-  final result = await showModalBottomSheet<bool>(
+  final bool? result = await showModalBottomSheet<bool>(
     context: context,
     useRootNavigator: true,
     isScrollControlled: true,
@@ -20,7 +20,7 @@ Future<bool> showCustomDeleteConfirmationBottomSheet(
     enableDrag: isDismissible,
     backgroundColor: Colors.transparent,
     barrierColor: ColorPalette.textPrimary.withValues(alpha: 0.35),
-    builder: (_) {
+    builder: (BuildContext bottomSheetContext) {
       return CustomDeleteConfirmationBottomSheet(
         title: title,
         message: message,
@@ -33,7 +33,7 @@ Future<bool> showCustomDeleteConfirmationBottomSheet(
   return result ?? false;
 }
 
-class CustomDeleteConfirmationBottomSheet extends StatelessWidget {
+class CustomDeleteConfirmationBottomSheet extends StatefulWidget {
   const CustomDeleteConfirmationBottomSheet({
     super.key,
     required this.title,
@@ -48,66 +48,106 @@ class CustomDeleteConfirmationBottomSheet extends StatelessWidget {
   final String cancelText;
 
   @override
+  State<CustomDeleteConfirmationBottomSheet> createState() {
+    return _CustomDeleteConfirmationBottomSheetState();
+  }
+}
+
+class _CustomDeleteConfirmationBottomSheetState
+    extends State<CustomDeleteConfirmationBottomSheet> {
+  bool _isClosing = false;
+
+  @override
   Widget build(BuildContext context) {
-    final bottomSafeArea = MediaQuery.paddingOf(context).bottom;
+    final double bottomSafeArea = MediaQuery.paddingOf(context).bottom;
 
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.fromLTRB(24.w, 12.h, 24.w, 20.h + bottomSafeArea),
-        decoration: BoxDecoration(
-          color: ColorPalette.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(26.r)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const _BottomSheetHandle(),
-            verticalSpace(20),
-            Text(
-              title,
-              textAlign: TextAlign.right,
-              textDirection: TextDirection.rtl,
-              style: AppTextStyle.font18PrimarySemiBoldKufam(),
+      child: PopScope(
+        canPop: !_isClosing,
+        child: AbsorbPointer(
+          absorbing: _isClosing,
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.fromLTRB(
+              24.w,
+              12.h,
+              24.w,
+              20.h + bottomSafeArea,
             ),
-            verticalSpace(14),
-            Text(
-              message,
-              textAlign: TextAlign.right,
-              textDirection: TextDirection.rtl,
-              style: AppTextStyle.font14TextSecondaryRegularTajawal().copyWith(
-                height: 1.6.h,
-              ),
+            decoration: BoxDecoration(
+              color: ColorPalette.surface,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(26.r)),
             ),
-            verticalSpace(72),
-            Row(
-              textDirection: TextDirection.rtl,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: _ConfirmButton(
-                    text: confirmText,
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                  ),
+                const _BottomSheetHandle(),
+                verticalSpace(20),
+                Text(
+                  widget.title,
+                  textAlign: TextAlign.right,
+                  textDirection: TextDirection.rtl,
+                  style: AppTextStyle.font18PrimarySemiBoldKufam(),
                 ),
-                horizontalSpace(16),
-                Expanded(
-                  child: _CancelButton(
-                    text: cancelText,
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                  ),
+                verticalSpace(14),
+                Text(
+                  widget.message,
+                  textAlign: TextAlign.right,
+                  textDirection: TextDirection.rtl,
+                  style: AppTextStyle.font14TextSecondaryRegularTajawal()
+                      .copyWith(height: 1.6),
+                ),
+                verticalSpace(72),
+                Row(
+                  textDirection: TextDirection.rtl,
+                  children: [
+                    Expanded(
+                      child: _ConfirmButton(
+                        text: widget.confirmText,
+                        isEnabled: !_isClosing,
+                        onPressed: () {
+                          _closeBottomSheet(true);
+                        },
+                      ),
+                    ),
+                    horizontalSpace(16),
+                    Expanded(
+                      child: _CancelButton(
+                        text: widget.cancelText,
+                        isEnabled: !_isClosing,
+                        onPressed: () {
+                          _closeBottomSheet(false);
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
+  }
+
+  void _closeBottomSheet(bool result) {
+    if (_isClosing || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _isClosing = true;
+    });
+
+    final NavigatorState navigator = Navigator.of(context);
+
+    if (!navigator.canPop()) {
+      return;
+    }
+
+    navigator.pop<bool>(result);
   }
 }
 
@@ -130,17 +170,22 @@ class _BottomSheetHandle extends StatelessWidget {
 }
 
 class _ConfirmButton extends StatelessWidget {
-  const _ConfirmButton({required this.text, required this.onPressed});
+  const _ConfirmButton({
+    required this.text,
+    required this.onPressed,
+    required this.isEnabled,
+  });
 
   final String text;
   final VoidCallback onPressed;
+  final bool isEnabled;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 52.h,
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
           elevation: 0,
           backgroundColor: ColorPalette.error,
@@ -158,21 +203,32 @@ class _ConfirmButton extends StatelessWidget {
 }
 
 class _CancelButton extends StatelessWidget {
-  const _CancelButton({required this.text, required this.onPressed});
+  const _CancelButton({
+    required this.text,
+    required this.onPressed,
+    required this.isEnabled,
+  });
 
   final String text;
   final VoidCallback onPressed;
+  final bool isEnabled;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 52.h,
       child: OutlinedButton(
-        onPressed: onPressed,
+        onPressed: isEnabled ? onPressed : null,
         style: OutlinedButton.styleFrom(
           foregroundColor: ColorPalette.primary,
           backgroundColor: ColorPalette.surface,
-          side: BorderSide(color: ColorPalette.primary, width: 1.4.w),
+          disabledForegroundColor: ColorPalette.primary.withValues(alpha: 0.45),
+          side: BorderSide(
+            color: isEnabled
+                ? ColorPalette.primary
+                : ColorPalette.primary.withValues(alpha: 0.45),
+            width: 1.4.w,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(13.r),
           ),

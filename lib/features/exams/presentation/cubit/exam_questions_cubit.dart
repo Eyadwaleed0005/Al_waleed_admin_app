@@ -66,25 +66,25 @@ class ExamQuestionsCubit extends Cubit<ExamQuestionsState> {
   }
 
   ExamDraftEntity? get currentExamDraft {
-  final ExamDraftEntity? draft = examDraft;
+    final ExamDraftEntity? draft = examDraft;
 
-  if (draft != null) {
-    return draft;
+    if (draft != null) {
+      return draft;
+    }
+
+    final ExamEntity? exam = _loadedExam;
+
+    if (exam == null || exam.status == ExamStatus.ended) {
+      return null;
+    }
+
+    return ExamDraftEntity(
+      examName: exam.examName,
+      gradeId: exam.gradeId,
+      durationMinutes: exam.durationMinutes,
+      status: exam.status,
+    );
   }
-
-  final ExamEntity? exam = _loadedExam;
-
-  if (exam == null || exam.status == ExamStatus.ended) {
-    return null;
-  }
-
-  return ExamDraftEntity(
-    examName: exam.examName,
-    gradeId: exam.gradeId,
-    durationMinutes: exam.durationMinutes,
-    status: exam.status,
-  );
-}
 
   bool get _canEditQuestions {
     if (isCreatingExam) {
@@ -97,7 +97,7 @@ class ExamQuestionsCubit extends Cubit<ExamQuestionsState> {
       return false;
     }
 
-    return exam.firstAttemptAt == null && exam.status != ExamStatus.ended;
+    return !exam.isEnded;
   }
 
   bool get _canModify {

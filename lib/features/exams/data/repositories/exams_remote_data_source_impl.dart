@@ -3,17 +3,19 @@ import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart
 import 'package:alwaleed_admain/features/exams/data/data_sources/exams_remote_data_source.dart';
 import 'package:alwaleed_admain/features/exams/data/models/exam_model.dart';
 import 'package:alwaleed_admain/features/exams/data/models/exam_question_model.dart';
+import 'package:alwaleed_admain/features/exams/data/models/exam_result_model.dart';
+import 'package:alwaleed_admain/features/exams/domain/entities/exam_attempt_status.dart';
 import 'package:alwaleed_admain/features/exams/domain/entities/exam_draft_entity.dart';
 import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
 import 'package:alwaleed_admain/features/exams/domain/entities/exam_question_entity.dart';
+import 'package:alwaleed_admain/features/exams/domain/entities/exam_result_entity.dart';
 import 'package:alwaleed_admain/features/exams/domain/exam_question_image_file.dart';
 import 'package:alwaleed_admain/features/exams/domain/repositories/exams_repository.dart';
 import 'package:dartz/dartz.dart';
 
 class ExamsRepositoryImpl implements ExamsRepository {
-  const ExamsRepositoryImpl({
-    required ExamsRemoteDataSource remoteDataSource,
-  }) : _remoteDataSource = remoteDataSource;
+  const ExamsRepositoryImpl({required ExamsRemoteDataSource remoteDataSource})
+    : _remoteDataSource = remoteDataSource;
 
   final ExamsRemoteDataSource _remoteDataSource;
 
@@ -23,25 +25,20 @@ class ExamsRepositoryImpl implements ExamsRepository {
     ExamStatus? status,
   }) async {
     try {
-      final List<ExamModel> examModels =
-          await _remoteDataSource.getExams(
-            gradeId: gradeId,
-            status: status,
-          );
+      final List<ExamModel> examModels = await _remoteDataSource.getExams(
+        gradeId: gradeId,
+        status: status,
+      );
 
       final List<ExamEntity> exams = examModels
-          .map(
-            (ExamModel model) => model.toEntity(),
-          )
+          .map((ExamModel model) {
+            return model.toEntity();
+          })
           .toList(growable: false);
 
-      return right(
-        List<ExamEntity>.unmodifiable(exams),
-      );
+      return right(List<ExamEntity>.unmodifiable(exams));
     } catch (error) {
-      return left(
-        FirebaseErrorHandler.handle(error),
-      );
+      return left(FirebaseErrorHandler.handle(error));
     }
   }
 
@@ -52,24 +49,17 @@ class ExamsRepositoryImpl implements ExamsRepository {
   }) async* {
     try {
       await for (final List<ExamModel> examModels
-          in _remoteDataSource.streamExams(
-        gradeId: gradeId,
-        status: status,
-      )) {
+          in _remoteDataSource.streamExams(gradeId: gradeId, status: status)) {
         final List<ExamEntity> exams = examModels
-            .map(
-              (ExamModel model) => model.toEntity(),
-            )
+            .map((ExamModel model) {
+              return model.toEntity();
+            })
             .toList(growable: false);
 
-        yield right(
-          List<ExamEntity>.unmodifiable(exams),
-        );
+        yield right(List<ExamEntity>.unmodifiable(exams));
       }
     } catch (error) {
-      yield left(
-        FirebaseErrorHandler.handle(error),
-      );
+      yield left(FirebaseErrorHandler.handle(error));
     }
   }
 
@@ -78,16 +68,13 @@ class ExamsRepositoryImpl implements ExamsRepository {
     required String examId,
   }) async {
     try {
-      final ExamModel examModel =
-          await _remoteDataSource.getExamById(
-            examId: examId,
-          );
+      final ExamModel examModel = await _remoteDataSource.getExamById(
+        examId: examId,
+      );
 
       return right(examModel.toEntity());
     } catch (error) {
-      return left(
-        FirebaseErrorHandler.handle(error),
-      );
+      return left(FirebaseErrorHandler.handle(error));
     }
   }
 
@@ -98,24 +85,18 @@ class ExamsRepositoryImpl implements ExamsRepository {
     required Map<String, ExamQuestionImageFile> questionImages,
   }) async {
     try {
-      final List<ExamQuestionModel> questionModels =
-          questions.map(
-        (ExamQuestionEntity question) {
-          return ExamQuestionModel.fromEntity(
-            question,
-          );
-        },
-      ).toList(growable: false);
+      final List<ExamQuestionModel> questionModels = questions
+          .map((ExamQuestionEntity question) {
+            return ExamQuestionModel.fromEntity(question);
+          })
+          .toList(growable: false);
 
-      final int totalScore = questions.fold<int>(
-        0,
-        (
-          int currentScore,
-          ExamQuestionEntity question,
-        ) {
-          return currentScore + question.degree;
-        },
-      );
+      final int totalScore = questions.fold<int>(0, (
+        int currentScore,
+        ExamQuestionEntity question,
+      ) {
+        return currentScore + question.degree;
+      });
 
       final ExamModel examModel = ExamModel(
         examId: '',
@@ -124,27 +105,22 @@ class ExamsRepositoryImpl implements ExamsRepository {
         durationMinutes: examDraft.durationMinutes,
         questionCount: questions.length,
         totalScore: totalScore,
-        status: examDraft.isPublished
-            ? ExamStatus.published
-            : ExamStatus.unpublished,
+        participantsCount: 0,
+        status: examDraft.status,
         questions: questionModels,
       );
 
-      final String createdExamId =
-          await _remoteDataSource.createExam(
+      final String createdExamId = await _remoteDataSource.createExam(
         exam: examModel,
         questions: questionModels,
-        questionImages:
-            Map<String, ExamQuestionImageFile>.unmodifiable(
+        questionImages: Map<String, ExamQuestionImageFile>.unmodifiable(
           questionImages,
         ),
       );
 
       return right(createdExamId);
     } catch (error) {
-      return left(
-        FirebaseErrorHandler.handle(error),
-      );
+      return left(FirebaseErrorHandler.handle(error));
     }
   }
 
@@ -155,25 +131,20 @@ class ExamsRepositoryImpl implements ExamsRepository {
     ExamQuestionImageFile? image,
   }) async {
     try {
-      final ExamQuestionModel questionModel =
-          ExamQuestionModel.fromEntity(
+      final ExamQuestionModel questionModel = ExamQuestionModel.fromEntity(
         question,
       );
 
-      final ExamQuestionModel createdQuestionModel =
-          await _remoteDataSource.createQuestion(
-        examId: examId,
-        question: questionModel,
-        image: image,
-      );
+      final ExamQuestionModel createdQuestionModel = await _remoteDataSource
+          .createQuestion(
+            examId: examId,
+            question: questionModel,
+            image: image,
+          );
 
-      return right(
-        createdQuestionModel.toEntity(),
-      );
+      return right(createdQuestionModel.toEntity());
     } catch (error) {
-      return left(
-        FirebaseErrorHandler.handle(error),
-      );
+      return left(FirebaseErrorHandler.handle(error));
     }
   }
 
@@ -189,26 +160,20 @@ class ExamsRepositoryImpl implements ExamsRepository {
         durationMinutes: exam.durationMinutes,
         questionCount: exam.questionCount,
         totalScore: exam.totalScore,
+        participantsCount: exam.participantsCount,
         status: exam.status,
-        questions:
-            List<ExamQuestionEntity>.unmodifiable(
-          exam.questions,
-        ),
+        questions: List<ExamQuestionEntity>.unmodifiable(exam.questions),
         firstAttemptAt: exam.firstAttemptAt,
         closedAt: exam.closedAt,
         createdAt: exam.createdAt,
         updatedAt: exam.updatedAt,
       );
 
-      await _remoteDataSource.updateExam(
-        exam: examModel,
-      );
+      await _remoteDataSource.updateExam(exam: examModel);
 
       return right(unit);
     } catch (error) {
-      return left(
-        FirebaseErrorHandler.handle(error),
-      );
+      return left(FirebaseErrorHandler.handle(error));
     }
   }
 
@@ -217,15 +182,11 @@ class ExamsRepositoryImpl implements ExamsRepository {
     required String examId,
   }) async {
     try {
-      await _remoteDataSource.deleteExam(
-        examId: examId,
-      );
+      await _remoteDataSource.deleteExam(examId: examId);
 
       return right(unit);
     } catch (error) {
-      return left(
-        FirebaseErrorHandler.handle(error),
-      );
+      return left(FirebaseErrorHandler.handle(error));
     }
   }
 
@@ -236,8 +197,7 @@ class ExamsRepositoryImpl implements ExamsRepository {
     required bool removeCurrentImage,
   }) async {
     try {
-      final ExamQuestionModel questionModel =
-          ExamQuestionModel.fromEntity(
+      final ExamQuestionModel questionModel = ExamQuestionModel.fromEntity(
         question,
       );
 
@@ -249,9 +209,7 @@ class ExamsRepositoryImpl implements ExamsRepository {
 
       return right(unit);
     } catch (error) {
-      return left(
-        FirebaseErrorHandler.handle(error),
-      );
+      return left(FirebaseErrorHandler.handle(error));
     }
   }
 
@@ -268,9 +226,52 @@ class ExamsRepositoryImpl implements ExamsRepository {
 
       return right(unit);
     } catch (error) {
-      return left(
-        FirebaseErrorHandler.handle(error),
-      );
+      return left(FirebaseErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<Either<AppErrorModel, List<ExamResultEntity>>> getExamResults({
+    required String examId,
+    ExamAttemptStatus? status,
+  }) async {
+    try {
+      final List<ExamResultModel> resultModels = await _remoteDataSource
+          .getExamResults(examId: examId, status: status);
+
+      final List<ExamResultEntity> results = resultModels
+          .map((ExamResultModel model) {
+            return model.toEntity();
+          })
+          .toList(growable: false);
+
+      return right(List<ExamResultEntity>.unmodifiable(results));
+    } catch (error) {
+      return left(FirebaseErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Stream<Either<AppErrorModel, List<ExamResultEntity>>> streamExamResults({
+    required String examId,
+    ExamAttemptStatus? status,
+  }) async* {
+    try {
+      await for (final List<ExamResultModel> resultModels
+          in _remoteDataSource.streamExamResults(
+            examId: examId,
+            status: status,
+          )) {
+        final List<ExamResultEntity> results = resultModels
+            .map((ExamResultModel model) {
+              return model.toEntity();
+            })
+            .toList(growable: false);
+
+        yield right(List<ExamResultEntity>.unmodifiable(results));
+      }
+    } catch (error) {
+      yield left(FirebaseErrorHandler.handle(error));
     }
   }
 }

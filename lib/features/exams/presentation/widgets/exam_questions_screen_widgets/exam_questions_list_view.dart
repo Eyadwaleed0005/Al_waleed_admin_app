@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 typedef ExamQuestionChoiceSelected =
-    void Function(ExamQuestionEntity question, int choiceIndex);
+    void Function(
+      ExamQuestionEntity question,
+      int choiceIndex,
+    );
 
 class ExamQuestionsListView extends StatelessWidget {
   const ExamQuestionsListView({
@@ -13,6 +16,7 @@ class ExamQuestionsListView extends StatelessWidget {
     required this.questions,
     required this.selectedChoiceIndexes,
     required this.questionImages,
+    required this.showActions,
     required this.onChoiceSelected,
     required this.onEditQuestion,
     required this.onDeleteQuestion,
@@ -28,6 +32,7 @@ class ExamQuestionsListView extends StatelessWidget {
   final ValueChanged<ExamQuestionEntity> onEditQuestion;
   final ValueChanged<ExamQuestionEntity> onDeleteQuestion;
 
+  final bool showActions;
   final bool isEnabled;
   final String? deletingQuestionId;
 
@@ -35,32 +40,52 @@ class ExamQuestionsListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: List<Widget>.generate(questions.length, (int index) {
-        final ExamQuestionEntity question = questions[index];
-        final bool isLastQuestion = index == questions.length - 1;
+      children: List<Widget>.generate(
+        questions.length,
+        (int index) {
+          final ExamQuestionEntity question =
+              questions[index];
 
-        return Padding(
-          key: ValueKey<String>(question.questionId),
-          padding: EdgeInsets.only(bottom: isLastQuestion ? 0 : 16.h),
-          child: ExamQuestionCard(
-            question: question,
-            questionNumber: index + 1,
-            selectedChoiceIndex: selectedChoiceIndexes[question.questionId],
-            localImage: questionImages[question.questionId],
-            isEnabled: isEnabled,
-            isDeleting: deletingQuestionId == question.questionId,
-            onChoiceSelected: (int choiceIndex) {
-              onChoiceSelected(question, choiceIndex);
-            },
-            onEditPressed: () {
-              onEditQuestion(question);
-            },
-            onDeletePressed: () {
-              onDeleteQuestion(question);
-            },
-          ),
-        );
-      }),
+          final bool isLastQuestion =
+              index == questions.length - 1;
+
+          return Padding(
+            key: ValueKey<String>(
+              question.questionId,
+            ),
+            padding: EdgeInsets.only(
+              bottom: isLastQuestion ? 0 : 16.h,
+            ),
+            child: ExamQuestionCard(
+              question: question,
+              questionNumber: index + 1,
+              selectedChoiceIndex:
+                  selectedChoiceIndexes[
+                    question.questionId
+                  ],
+              localImage:
+                  questionImages[question.questionId],
+              showActions: showActions,
+              isEnabled: isEnabled,
+              isDeleting:
+                  deletingQuestionId ==
+                  question.questionId,
+              onChoiceSelected: (int choiceIndex) {
+                onChoiceSelected(
+                  question,
+                  choiceIndex,
+                );
+              },
+              onEditPressed: () {
+                onEditQuestion(question);
+              },
+              onDeletePressed: () {
+                onDeleteQuestion(question);
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }

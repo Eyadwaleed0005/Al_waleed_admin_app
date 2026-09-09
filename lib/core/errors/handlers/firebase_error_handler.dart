@@ -36,8 +36,12 @@ abstract final class FirebaseErrorHandler {
     }
   }
 
-  static Never throwFirestoreCode(String code) {
-    throw FirebaseRemoteException(errorModel: handleFirestoreCode(code));
+  static Never throwFirestoreCode(String code, {String? message}) {
+    final AppErrorModel errorModel = handleFirestoreCode(code);
+
+    throw FirebaseRemoteException(
+      errorModel: _replaceMessage(errorModel: errorModel, message: message),
+    );
   }
 
   static Never throwFunctionsCode(String code) {
@@ -46,6 +50,10 @@ abstract final class FirebaseErrorHandler {
 
   static Never throwStorageCode(String code) {
     throw FirebaseRemoteException(errorModel: handleStorageCode(code));
+  }
+
+  static Never throwAppError(AppErrorModel errorModel) {
+    throw FirebaseRemoteException(errorModel: errorModel);
   }
 
   static AppErrorModel handle(Object error) {
@@ -88,11 +96,30 @@ abstract final class FirebaseErrorHandler {
     return FirebaseStorageErrorHandler.handleCode(code);
   }
 
+  static AppErrorModel _replaceMessage({
+    required AppErrorModel errorModel,
+    required String? message,
+  }) {
+    final String normalizedMessage = message?.trim() ?? '';
+
+    if (normalizedMessage.isEmpty) {
+      return errorModel;
+    }
+
+    return AppErrorModel(
+      code: errorModel.code,
+      message: normalizedMessage,
+      type: errorModel.type,
+      isRetryable: errorModel.isRetryable,
+    );
+  }
+
   static Never _throwRemoteException({
     required Object error,
     required StackTrace stackTrace,
   }) {
-    final remoteException = error is FirebaseRemoteException
+    final FirebaseRemoteException remoteException =
+        error is FirebaseRemoteException
         ? error
         : FirebaseRemoteException(errorModel: handle(error));
 
@@ -100,13 +127,13 @@ abstract final class FirebaseErrorHandler {
   }
 
   static bool _isFirestoreError(FirebaseException error) {
-    final plugin = error.plugin.trim().toLowerCase();
+    final String plugin = error.plugin.trim().toLowerCase();
 
     return plugin.contains('cloud_firestore') || plugin == 'firestore';
   }
 
   static bool _isStorageError(FirebaseException error) {
-    final plugin = error.plugin.trim().toLowerCase();
+    final String plugin = error.plugin.trim().toLowerCase();
 
     return plugin.contains('firebase_storage') || plugin == 'storage';
   }

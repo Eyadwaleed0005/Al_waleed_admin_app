@@ -333,6 +333,7 @@ class _ExamQuestionsContentState extends State<ExamQuestionsContent> {
               questions: state.questions,
               selectedChoiceIndexes: state.selectedChoiceIndexes,
               questionImages: state.questionImages,
+              showActions: state.canEdit,
               isEnabled: isEnabled,
               deletingQuestionId: deletingQuestionId,
               onChoiceSelected: _selectCorrectChoice,

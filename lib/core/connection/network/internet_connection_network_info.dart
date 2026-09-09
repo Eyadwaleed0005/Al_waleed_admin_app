@@ -15,6 +15,10 @@ class InternetConnectionNetworkInfo implements NetworkInfo {
   final InternetConnection _internetConnection;
   final bool _ownsInternetConnection;
 
+  Future<bool>? _activeConnectionCheck;
+
+  bool _isDisposed = false;
+
   static InternetConnection _createInternetConnection() {
     return InternetConnection.createInstance(
       useDefaultOptions: false,
@@ -41,7 +45,35 @@ class InternetConnectionNetworkInfo implements NetworkInfo {
 
   @override
   Future<bool> get isConnected async {
+    if (_isDisposed) {
+      return false;
+    }
+
+    final Future<bool>? activeCheck = _activeConnectionCheck;
+
+    if (activeCheck != null) {
+      return activeCheck;
+    }
+
+    final Future<bool> newCheck = _performConnectionCheck();
+
+    _activeConnectionCheck = newCheck;
+
+    try {
+      return await newCheck;
+    } finally {
+      if (identical(_activeConnectionCheck, newCheck)) {
+        _activeConnectionCheck = null;
+      }
+    }
+  }
+
+  Future<bool> _performConnectionCheck() async {
     for (int attempt = 0; attempt < _maximumCheckAttempts; attempt++) {
+      if (_isDisposed) {
+        return false;
+      }
+
       final bool hasInternet = await _checkConnectionSafely();
 
       if (hasInternet) {
@@ -59,6 +91,10 @@ class InternetConnectionNetworkInfo implements NetworkInfo {
   }
 
   Future<bool> _checkConnectionSafely() async {
+    if (_isDisposed) {
+      return false;
+    }
+
     try {
       return await _internetConnection.hasInternetAccess;
     } catch (_) {
@@ -68,19 +104,30 @@ class InternetConnectionNetworkInfo implements NetworkInfo {
 
   @override
   Stream<bool> get onConnectionChanged {
+    if (_isDisposed) {
+      return Stream<bool>.value(false);
+    }
+
     return _connectionChanges().distinct();
   }
 
   Stream<bool> _connectionChanges() async* {
-    yield await isConnected;
-
     await for (final InternetStatus status
         in _internetConnection.onStatusChange) {
+      if (_isDisposed) {
+        return;
+      }
+
       if (status == InternetStatus.connected) {
         yield true;
         continue;
       }
+
       await Future<void>.delayed(_offlineConfirmationDelay);
+
+      if (_isDisposed) {
+        return;
+      }
 
       final bool connectionAfterRecheck = await isConnected;
 
@@ -90,6 +137,13 @@ class InternetConnectionNetworkInfo implements NetworkInfo {
 
   @override
   Future<void> dispose() async {
+    if (_isDisposed) {
+      return;
+    }
+
+    _isDisposed = true;
+    _activeConnectionCheck = null;
+
     if (!_ownsInternetConnection) {
       return;
     }

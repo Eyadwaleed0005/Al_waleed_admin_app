@@ -1,3 +1,4 @@
+import 'package:alwaleed_admain/core/helper/arabic_numbers_helper.dart';
 import 'package:alwaleed_admain/core/helper/spacer.dart';
 import 'package:alwaleed_admain/core/style/app_color.dart';
 import 'package:alwaleed_admain/core/style/textstyles.dart';
@@ -13,6 +14,7 @@ class ExamCardViewData {
     required this.questionCount,
     required this.totalScore,
     required this.durationMinutes,
+    required this.participantsCount,
     required this.status,
     this.closedDateText,
   });
@@ -24,6 +26,7 @@ class ExamCardViewData {
   final int questionCount;
   final int totalScore;
   final int durationMinutes;
+  final int participantsCount;
 
   final ExamStatus status;
 
@@ -51,7 +54,7 @@ class ExamCard extends StatelessWidget {
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(20.r),
       child: InkWell(
-        onTap: isExamEnded ? null : onExamPressed,
+        onTap: onExamPressed,
         borderRadius: BorderRadius.circular(20.r),
         child: Ink(
           padding: EdgeInsets.all(16.r),
@@ -73,6 +76,8 @@ class ExamCard extends StatelessWidget {
               _buildExamHeader(),
               verticalSpace(8),
               _buildExamDetails(),
+              verticalSpace(12),
+              _buildParticipantsBadge(),
               if (isExamEnded) ...[
                 verticalSpace(18),
                 _buildViewResultsButton(),
@@ -118,6 +123,13 @@ class ExamCard extends StatelessWidget {
     );
   }
 
+  Widget _buildParticipantsBadge() {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: _ExamParticipantsBadge(participantsCount: exam.participantsCount),
+    );
+  }
+
   Widget _buildViewResultsButton() {
     return Align(
       alignment: Alignment.centerLeft,
@@ -150,7 +162,7 @@ class ExamCard extends StatelessWidget {
   String get _endedExamDetails {
     final List<String> examDetails = [
       exam.gradeName,
-      '${exam.totalScore} درجة',
+      '${toArabicNumbers(exam.totalScore)} درجة',
     ];
 
     final String? closedDateText = exam.closedDateText;
@@ -165,18 +177,53 @@ class ExamCard extends StatelessWidget {
   String get _publishedExamDetails {
     return [
       exam.gradeName,
-      '${exam.questionCount} سؤال',
-      '${exam.durationMinutes} دقيقة',
+      '${toArabicNumbers(exam.questionCount)} سؤال',
+      '${toArabicNumbers(exam.durationMinutes)} دقيقة',
     ].join(' • ');
   }
 
   String get _unpublishedExamDetails {
     return [
       exam.gradeName,
-      '${exam.questionCount} سؤال',
-      '${exam.durationMinutes} دقيقة',
+      '${toArabicNumbers(exam.questionCount)} سؤال',
+      '${toArabicNumbers(exam.durationMinutes)} دقيقة',
       'لم يُنشر',
     ].join(' • ');
+  }
+}
+
+class _ExamParticipantsBadge extends StatelessWidget {
+  const _ExamParticipantsBadge({required this.participantsCount});
+
+  final int participantsCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 7.h),
+      decoration: BoxDecoration(
+        color: ColorPalette.primarySoftBackground,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        textDirection: TextDirection.rtl,
+        children: [
+          Icon(
+            Icons.people_alt_outlined,
+            size: 17.sp,
+            color: ColorPalette.primary,
+          ),
+          horizontalSpace(6),
+          Text(
+            '${toArabicNumbers(participantsCount)} دخلوا الاختبار',
+            style: AppTextStyle.font12PrimaryMediumTajawal().copyWith(
+              color: ColorPalette.primary,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

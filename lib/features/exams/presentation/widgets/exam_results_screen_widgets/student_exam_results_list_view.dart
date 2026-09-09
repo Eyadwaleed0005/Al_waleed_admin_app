@@ -3,28 +3,28 @@ import 'package:alwaleed_admain/features/exams/presentation/widgets/exam_results
 import 'package:flutter/material.dart';
 
 class StudentExamResultsListView extends StatelessWidget {
-  const StudentExamResultsListView({
-    super.key,
-    required this.studentResults,
-  });
+  const StudentExamResultsListView({super.key, required this.studentResults});
 
   final List<StudentExamResultViewData> studentResults;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: EdgeInsets.zero,
-      physics: const BouncingScrollPhysics(),
-      itemCount: studentResults.length,
-      separatorBuilder: (_, __) => verticalSpace(14),
-      itemBuilder: (context, index) {
-        final StudentExamResultViewData studentResult =
-            studentResults[index];
+    final int childrenCount = studentResults.isEmpty
+        ? 0
+        : studentResults.length * 2 - 1;
+
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+        if (index.isOdd) {
+          return verticalSpace(14);
+        }
+
+        final int studentIndex = index ~/ 2;
 
         return StudentExamResultCard(
-          studentResult: studentResult,
+          studentResult: studentResults[studentIndex],
         );
-      },
+      }, childCount: childrenCount),
     );
   }
 }

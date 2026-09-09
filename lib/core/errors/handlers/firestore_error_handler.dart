@@ -2,149 +2,130 @@ import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 abstract final class FirestoreErrorHandler {
+  const FirestoreErrorHandler._();
+
   static AppErrorModel handle(FirebaseException error) {
     return handleCode(error.code);
   }
 
   static AppErrorModel handleCode(String errorCode) {
-    final code = _normalizeCode(errorCode);
+    final String code = _normalizeCode(errorCode);
 
-    switch (code) {
-      case 'cancelled':
-        return _error(
-          code: code,
-          message: 'تم إلغاء العملية.',
-          type: AppErrorType.unknown,
-        );
+    return switch (code) {
+      'cancelled' => _error(
+        code: code,
+        message: 'تم إلغاء العملية.',
+        type: AppErrorType.unknown,
+      ),
 
-      case 'invalid-argument':
-      case 'out-of-range':
-        return _error(
-          code: code,
-          message: 'البيانات المدخلة غير صحيحة.',
-          type: AppErrorType.validation,
-        );
+      'invalid-argument' || 'out-of-range' => _error(
+        code: code,
+        message: 'البيانات المدخلة غير صحيحة.',
+        type: AppErrorType.validation,
+      ),
 
-      case 'not-found':
-        return _error(
-          code: code,
-          message: 'البيانات المطلوبة غير موجودة.',
-          type: AppErrorType.notFound,
-        );
+      'not-found' => _error(
+        code: code,
+        message: 'البيانات المطلوبة غير موجودة.',
+        type: AppErrorType.notFound,
+      ),
 
-      case 'already-exists':
-        return _error(
-          code: code,
-          message: 'هذه البيانات موجودة بالفعل.',
-          type: AppErrorType.conflict,
-        );
+      'already-exists' => _error(
+        code: code,
+        message: 'هذه البيانات موجودة بالفعل.',
+        type: AppErrorType.conflict,
+      ),
 
-      case 'permission-denied':
-        return _error(
-          code: code,
-          message: 'ليس لديك صلاحية لتنفيذ هذه العملية.',
-          type: AppErrorType.authorization,
-        );
+      'permission-denied' => _error(
+        code: code,
+        message: 'ليس لديك صلاحية لتنفيذ هذه العملية.',
+        type: AppErrorType.authorization,
+      ),
 
-      case 'unauthenticated':
-        return _error(
-          code: code,
-          message: 'انتهت صلاحية الجلسة، حاول مرة أخرى.',
-          type: AppErrorType.authentication,
-        );
+      'unauthenticated' => _error(
+        code: code,
+        message: 'انتهت صلاحية الجلسة، سجل الدخول وحاول مرة أخرى.',
+        type: AppErrorType.authentication,
+      ),
 
-      case 'no-internet':
-        return _error(
-          code: code,
-          message: 'لا يوجد اتصال بالإنترنت، تحقق من الشبكة وحاول مرة أخرى.',
-          type: AppErrorType.network,
-          isRetryable: true,
-        );
+      'no-internet' ||
+      'network-error' ||
+      'network-request-failed' ||
+      'unavailable' =>
+        _networkError(code),
 
-      case 'deadline-exceeded':
-        return _error(
-          code: code,
-          message: 'انتهت مهلة الاتصال، حاول مرة أخرى.',
-          type: AppErrorType.timeout,
-          isRetryable: true,
-        );
+      'deadline-exceeded' => _error(
+        code: code,
+        message:
+            'انتهت مهلة الاتصال بالخادم. '
+            'تحقق من اتصالك بالإنترنت وحاول مرة أخرى.',
+        type: AppErrorType.timeout,
+        isRetryable: true,
+      ),
 
-      case 'unavailable':
-        return _error(
-          code: code,
-          message: 'خدمة Firebase غير متاحة حاليًا، حاول مرة أخرى.',
-          type: AppErrorType.server,
-          isRetryable: true,
-        );
+      'resource-exhausted' => _error(
+        code: code,
+        message: 'الخدمة مشغولة حاليًا، حاول مرة أخرى لاحقًا.',
+        type: AppErrorType.rateLimit,
+        isRetryable: true,
+      ),
 
-      case 'network-error':
-      case 'network-request-failed':
-        return _error(
-          code: code,
-          message: 'حدث خطأ في الاتصال، تحقق من الإنترنت.',
-          type: AppErrorType.network,
-          isRetryable: true,
-        );
+      'failed-precondition' => _error(
+        code: code,
+        message: 'لا يمكن تنفيذ العملية في الوقت الحالي.',
+        type: AppErrorType.validation,
+      ),
 
-      case 'resource-exhausted':
-        return _error(
-          code: code,
-          message: 'الخدمة مشغولة حاليًا، حاول مرة أخرى لاحقًا.',
-          type: AppErrorType.rateLimit,
-          isRetryable: true,
-        );
+      'aborted' => _error(
+        code: code,
+        message: 'حدث تعارض أثناء تنفيذ العملية، حاول مرة أخرى.',
+        type: AppErrorType.conflict,
+        isRetryable: true,
+      ),
 
-      case 'failed-precondition':
-        return _error(
-          code: code,
-          message: 'لا يمكن تنفيذ العملية في الوقت الحالي.',
-          type: AppErrorType.validation,
-        );
+      'internal' => _error(
+        code: code,
+        message: 'حدث خطأ في الخادم، حاول مرة أخرى.',
+        type: AppErrorType.server,
+        isRetryable: true,
+      ),
 
-      case 'aborted':
-        return _error(
-          code: code,
-          message: 'حدث تعارض أثناء تنفيذ العملية، حاول مرة أخرى.',
-          type: AppErrorType.conflict,
-          isRetryable: true,
-        );
+      'data-loss' => _error(
+        code: code,
+        message: 'تعذر معالجة البيانات بصورة صحيحة.',
+        type: AppErrorType.server,
+      ),
 
-      case 'internal':
-        return _error(
-          code: code,
-          message: 'حدث خطأ في الخادم، حاول مرة أخرى.',
-          type: AppErrorType.server,
-          isRetryable: true,
-        );
+      'unimplemented' => _error(
+        code: code,
+        message: 'هذه العملية غير متاحة حاليًا.',
+        type: AppErrorType.server,
+      ),
 
-      case 'data-loss':
-        return _error(
-          code: code,
-          message: 'تعذر معالجة البيانات بشكل صحيح.',
-          type: AppErrorType.server,
-        );
+      'unknown' => _error(
+        code: code,
+        message: 'حدث خطأ غير متوقع، حاول مرة أخرى.',
+        type: AppErrorType.unknown,
+      ),
 
-      case 'unimplemented':
-        return _error(
-          code: code,
-          message: 'هذه العملية غير متاحة حاليًا.',
-          type: AppErrorType.server,
-        );
+      _ => _error(
+        code: code,
+        message: 'تعذر تحميل البيانات، حاول مرة أخرى.',
+        type: AppErrorType.unknown,
+        isRetryable: true,
+      ),
+    };
+  }
 
-      case 'unknown':
-        return _error(
-          code: code,
-          message: 'حدث خطأ غير متوقع، حاول مرة أخرى.',
-          type: AppErrorType.unknown,
-        );
-
-      default:
-        return _error(
-          code: code,
-          message: 'تعذر تحميل البيانات، حاول مرة أخرى.',
-          type: AppErrorType.unknown,
-        );
-    }
+  static AppErrorModel _networkError(String code) {
+    return _error(
+      code: code,
+      message:
+          'تعذر الاتصال بالخادم. '
+          'تحقق من اتصالك بالإنترنت وحاول مرة أخرى.',
+      type: AppErrorType.network,
+      isRetryable: true,
+    );
   }
 
   static AppErrorModel _error({
@@ -162,10 +143,17 @@ abstract final class FirestoreErrorHandler {
   }
 
   static String _normalizeCode(String code) {
-    return code
+    final String normalizedCode = code
+        .trim()
         .toLowerCase()
         .replaceFirst('cloud_firestore/', '')
         .replaceFirst('firestore/', '')
         .replaceAll('_', '-');
+
+    if (normalizedCode.isEmpty) {
+      return 'unknown';
+    }
+
+    return normalizedCode;
   }
 }

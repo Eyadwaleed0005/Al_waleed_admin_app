@@ -2,7 +2,11 @@ import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
 import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
 import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
 
-enum EditExamOperation { save, close, delete }
+enum EditExamOperation {
+  save,
+  close,
+  delete,
+}
 
 sealed class EditExamState {
   const EditExamState();
@@ -13,7 +17,9 @@ final class EditExamLoading extends EditExamState {
 }
 
 final class EditExamError extends EditExamState {
-  const EditExamError({required this.error});
+  const EditExamError({
+    required this.error,
+  });
 
   final AppErrorModel error;
 }
@@ -36,15 +42,20 @@ final class EditExamReady extends EditExamState {
   final bool operationSucceeded;
   final AppErrorModel? operationError;
 
-  bool get canEditSettings {
-    return exam.firstAttemptAt == null && exam.status != ExamStatus.ended;
+  bool get isEnded {
+    return exam.isEnded;
+  }
+
+  bool get canEditForm {
+    return !exam.isEnded;
   }
 
   bool get canClose {
-    return exam.status != ExamStatus.ended && exam.questionCount > 0;
+    return exam.status == ExamStatus.published &&
+        exam.questionCount > 0;
   }
 
-  bool get canDelete {
-    return exam.firstAttemptAt == null;
+  bool get canRequestDelete {
+    return true;
   }
 }

@@ -1,0 +1,4 @@
+enum ExamAttemptStatus {
+  inProgress,
+  submitted,
+}

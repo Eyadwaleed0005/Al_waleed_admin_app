@@ -1,67 +1,126 @@
 import 'dart:async';
 
 import 'package:alwaleed_admain/core/connection/network/network_info.dart';
+import 'package:alwaleed_admain/core/connection/cubit/network_status_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'network_status_state.dart';
-
 class NetworkStatusCubit extends Cubit<NetworkStatusState> {
-  NetworkStatusCubit({required NetworkInfo networkInfo})
-    : _networkInfo = networkInfo,
-      super(const NetworkStatusInitial());
+  NetworkStatusCubit({
+    required NetworkInfo networkInfo,
+  }) : _networkInfo = networkInfo,
+       super(const NetworkStatusInitial());
 
   final NetworkInfo _networkInfo;
 
   StreamSubscription<bool>? _connectionSubscription;
 
+  bool _isStartingMonitoring = false;
+
   Future<void> startMonitoring() async {
-    await _connectionSubscription?.cancel();
+    if (isClosed || _isStartingMonitoring) {
+      return;
+    }
 
-    _connectionSubscription = _networkInfo.onConnectionChanged.listen(
-      (isConnected) {
-        unawaited(_emitConnectionStatus(isConnected));
-      },
-      onError: (_) {
-        unawaited(_emitDisconnectedStatus());
-      },
-    );
+    _isStartingMonitoring = true;
 
-    await checkConnection();
+    try {
+      await _connectionSubscription?.cancel();
+      _connectionSubscription = null;
+
+      if (isClosed) {
+        return;
+      }
+
+      await checkConnection();
+
+      if (isClosed) {
+        return;
+      }
+
+      _connectionSubscription =
+          _networkInfo.onConnectionChanged.listen(
+        _handleConnectionChanged,
+        onError: _handleConnectionError,
+      );
+    } finally {
+      _isStartingMonitoring = false;
+    }
   }
 
-  Future<void> checkConnection({bool forceShowOfflineBanner = false}) async {
-    try {
-      final isConnected = await _networkInfo.isConnected;
+  Future<void> checkConnection({
+    bool forceShowOfflineBanner = false,
+  }) async {
+    if (isClosed) {
+      return;
+    }
 
-      await _emitConnectionStatus(
+    try {
+      final bool isConnected =
+          await _networkInfo.isConnected;
+
+      if (isClosed) {
+        return;
+      }
+
+      _emitConnectionStatus(
         isConnected,
-        forceShowOfflineBanner: forceShowOfflineBanner,
+        forceShowOfflineBanner:
+            forceShowOfflineBanner,
       );
     } catch (_) {
-      await _emitDisconnectedStatus(
-        forceShowOfflineBanner: forceShowOfflineBanner,
+      if (isClosed) {
+        return;
+      }
+
+      _emitDisconnectedStatus(
+        forceShowOfflineBanner:
+            forceShowOfflineBanner,
       );
     }
   }
 
   void hideOfflineBanner() {
-    final currentState = state;
-
-    if (currentState is! NetworkStatusDisconnected) {
+    if (isClosed) {
       return;
     }
 
-    if (!currentState.showOfflineBanner) {
+    final NetworkStatusState currentState = state;
+
+    if (currentState is! NetworkStatusDisconnected ||
+        !currentState.showOfflineBanner) {
       return;
     }
 
-    emit(const NetworkStatusDisconnected(showOfflineBanner: false));
+    emit(
+      const NetworkStatusDisconnected(
+        showOfflineBanner: false,
+      ),
+    );
   }
 
-  Future<void> _emitConnectionStatus(
+  void _handleConnectionChanged(bool isConnected) {
+    if (isClosed) {
+      return;
+    }
+
+    _emitConnectionStatus(isConnected);
+  }
+
+  void _handleConnectionError(
+    Object error,
+    StackTrace stackTrace,
+  ) {
+    if (isClosed) {
+      return;
+    }
+
+    _emitDisconnectedStatus();
+  }
+
+  void _emitConnectionStatus(
     bool isConnected, {
     bool forceShowOfflineBanner = false,
-  }) async {
+  }) {
     if (isClosed) {
       return;
     }
@@ -72,44 +131,50 @@ class NetworkStatusCubit extends Cubit<NetworkStatusState> {
       }
 
       emit(const NetworkStatusConnected());
-
       return;
     }
 
-    await _emitDisconnectedStatus(
-      forceShowOfflineBanner: forceShowOfflineBanner,
+    _emitDisconnectedStatus(
+      forceShowOfflineBanner:
+          forceShowOfflineBanner,
     );
   }
 
-  Future<void> _emitDisconnectedStatus({
+  void _emitDisconnectedStatus({
     bool forceShowOfflineBanner = false,
-  }) async {
+  }) {
     if (isClosed) {
       return;
     }
 
-    final currentState = state;
+    final NetworkStatusState currentState = state;
 
     if (currentState is NetworkStatusDisconnected) {
-      if (!forceShowOfflineBanner) {
+      if (!forceShowOfflineBanner ||
+          currentState.showOfflineBanner) {
         return;
       }
 
-      if (currentState.showOfflineBanner) {
-        return;
-      }
-
-      emit(const NetworkStatusDisconnected(showOfflineBanner: true));
+      emit(
+        const NetworkStatusDisconnected(
+          showOfflineBanner: true,
+        ),
+      );
 
       return;
     }
 
-    emit(const NetworkStatusDisconnected(showOfflineBanner: true));
+    emit(
+      const NetworkStatusDisconnected(
+        showOfflineBanner: true,
+      ),
+    );
   }
 
   @override
   Future<void> close() async {
     await _connectionSubscription?.cancel();
+    _connectionSubscription = null;
 
     return super.close();
   }

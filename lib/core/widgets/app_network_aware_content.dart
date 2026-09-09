@@ -12,21 +12,27 @@ class AppNetworkAwareContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocSelector<NetworkStatusCubit, NetworkStatusState, bool>(
-      selector: (state) {
+      selector: (NetworkStatusState state) {
         return state is NetworkStatusDisconnected && state.showOfflineBanner;
       },
-      builder: (context, shouldShowOfflineBanner) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+      builder: (BuildContext context, bool shouldShowOfflineBanner) {
+        return Stack(
+          fit: StackFit.expand,
+          clipBehavior: Clip.none,
           children: [
+            child,
             if (shouldShowOfflineBanner)
-              AppOfflineBanner(
-                key: const ValueKey('app-offline-banner'),
-                onHidden: () {
-                  context.read<NetworkStatusCubit>().hideOfflineBanner();
-                },
+              Positioned(
+                top: 0,
+                right: 0,
+                left: 0,
+                child: AppOfflineBanner(
+                  key: const ValueKey<String>('app-offline-banner'),
+                  onHidden: () {
+                    context.read<NetworkStatusCubit>().hideOfflineBanner();
+                  },
+                ),
               ),
-            Expanded(child: child),
           ],
         );
       },

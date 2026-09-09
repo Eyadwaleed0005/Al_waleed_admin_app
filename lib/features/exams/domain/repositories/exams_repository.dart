@@ -1,7 +1,9 @@
 import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admain/features/exams/domain/entities/exam_attempt_status.dart';
 import 'package:alwaleed_admain/features/exams/domain/entities/exam_draft_entity.dart';
 import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
 import 'package:alwaleed_admain/features/exams/domain/entities/exam_question_entity.dart';
+import 'package:alwaleed_admain/features/exams/domain/entities/exam_result_entity.dart';
 import 'package:alwaleed_admain/features/exams/domain/exam_question_image_file.dart';
 import 'package:dartz/dartz.dart';
 
@@ -45,5 +47,15 @@ abstract class ExamsRepository {
   Future<Either<AppErrorModel, Unit>> deleteQuestion({
     required String examId,
     required String questionId,
+  });
+
+  Future<Either<AppErrorModel, List<ExamResultEntity>>> getExamResults({
+    required String examId,
+    ExamAttemptStatus? status,
+  });
+
+  Stream<Either<AppErrorModel, List<ExamResultEntity>>> streamExamResults({
+    required String examId,
+    ExamAttemptStatus? status,
   });
 }

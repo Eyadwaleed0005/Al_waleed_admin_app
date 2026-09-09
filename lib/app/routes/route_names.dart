@@ -50,4 +50,7 @@ class RouteNames {
   static const String editExamQuestionScreen = '/editExamQuestionScreen';
 
   static const String editExamScreen = '/editExamScreen';
+
+  static const String debugStudentExamScreen =
+    '/debug-student-exam';
 }
