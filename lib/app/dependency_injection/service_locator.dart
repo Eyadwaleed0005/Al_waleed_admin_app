@@ -6,6 +6,7 @@ import 'package:alwaleed_admain/app/dependency_injection/features/grades_depende
 import 'package:alwaleed_admain/app/dependency_injection/features/lesson_exams_dependencies.dart';
 import 'package:alwaleed_admain/app/dependency_injection/features/lessons_dependencies.dart';
 import 'package:alwaleed_admain/app/dependency_injection/features/live_session_dependencies.dart';
+import 'package:alwaleed_admain/app/dependency_injection/features/student_exam_results_dependencies.dart';
 import 'package:alwaleed_admain/app/dependency_injection/features/students_dependencies.dart';
 import 'package:alwaleed_admain/app/dependency_injection/features/study_notes_dependencies.dart';
 import 'package:get_it/get_it.dart';
@@ -22,5 +23,6 @@ void setupServiceLocator() {
   registerLessonsDependencies(getIt);
   registerLessonExamsDependencies(getIt);
   registerExamsDependencies(getIt);
+  registerStudentExamResultsDependencies(getIt);
   registerAppDependencies(getIt);
 }
