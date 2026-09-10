@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
             title: 'الوليد',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(fontFamily: 'Tajawal'),
-            initialRoute: RouteNames.viewExamsScreen,
+            initialRoute: RouteNames.splashScreen,
             onGenerateRoute: AppRoutes.generateRoute,
             navigatorObservers: [routeObserver],
             builder: (context, child) {

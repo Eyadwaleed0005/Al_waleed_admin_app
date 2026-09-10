@@ -1,3 +1,4 @@
+import 'package:alwaleed_admain/app/routes/route_names.dart';
 import 'package:alwaleed_admain/core/helper/spacer.dart';
 import 'package:alwaleed_admain/core/style/app_animations.dart';
 import 'package:alwaleed_admain/core/widgets/custom_button.dart';
@@ -11,9 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UpdateStudentActions extends StatelessWidget {
-  const UpdateStudentActions({super.key, this.onViewStudentExams});
-
-  final VoidCallback? onViewStudentExams;
+  const UpdateStudentActions({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,7 @@ class UpdateStudentActions extends StatelessWidget {
         return previous.status != current.status;
       },
       builder: (context, state) {
-        final cubit = context.read<UpdateStudentCubit>();
+        final UpdateStudentCubit cubit = context.read<UpdateStudentCubit>();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -72,8 +71,13 @@ class UpdateStudentActions extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   ViewStudentExamsButton(
-                    onPressed: onViewStudentExams,
                     isEnabled: !state.isBusy,
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(
+                        RouteNames.studentExamResultsScreen,
+                        arguments: cubit.studentId,
+                      );
+                    },
                   ),
                   horizontalSpace(12),
                   Expanded(
@@ -82,22 +86,21 @@ class UpdateStudentActions extends StatelessWidget {
                       isLoading: state.isDeleting,
                       isEnabled: !state.isBusy,
                       onPressed: () async {
-                        final confirmed =
-                            await showCustomDeleteConfirmationBottomSheet(
-                              context,
-                              title: 'حذف الطالب؟',
-                              message:
-                                  'هل أنت متأكد من حذف حساب الطالب؟ لا يمكن التراجع عن هذه العملية.',
-                              confirmText: 'حذف الطالب',
-                              cancelText: 'إلغاء',
-                            );
+                        final bool
+                        confirmed = await showCustomDeleteConfirmationBottomSheet(
+                          context,
+                          title: 'حذف الطالب؟',
+                          message:
+                              'هل أنت متأكد من حذف حساب الطالب؟ لا يمكن التراجع عن هذه العملية.',
+                          confirmText: 'حذف الطالب',
+                          cancelText: 'إلغاء',
+                        );
 
                         if (!confirmed || !context.mounted) {
                           return;
                         }
-                        await context
-                            .read<UpdateStudentCubit>()
-                            .deleteStudent();
+
+                        await cubit.deleteStudent();
                       },
                     ),
                   ),
