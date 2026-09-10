@@ -1,13 +1,13 @@
-import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_collections.dart';
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_service.dart';
-import 'package:alwaleed_admain/core/firebase/storage/storage_content_types.dart';
-import 'package:alwaleed_admain/core/firebase/storage/storage_folders.dart';
-import 'package:alwaleed_admain/core/firebase/storage/storage_metadata_fields.dart';
-import 'package:alwaleed_admain/core/firebase/storage/storage_service.dart';
-import 'package:alwaleed_admain/features/study_notes/data/data_sources/study_notes_remote_data_source.dart';
-import 'package:alwaleed_admain/features/study_notes/data/models/study_note_model.dart';
+import 'package:alwaleed_admin/core/errors/handlers/firebase_error_handler.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_collections.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_fields.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_service.dart';
+import 'package:alwaleed_admin/core/firebase/storage/storage_content_types.dart';
+import 'package:alwaleed_admin/core/firebase/storage/storage_folders.dart';
+import 'package:alwaleed_admin/core/firebase/storage/storage_metadata_fields.dart';
+import 'package:alwaleed_admin/core/firebase/storage/storage_service.dart';
+import 'package:alwaleed_admin/features/study_notes/data/data_sources/study_notes_remote_data_source.dart';
+import 'package:alwaleed_admin/features/study_notes/data/models/study_note_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {

@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_fields.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../domain/entities/student_exam_results_overview_entity.dart';

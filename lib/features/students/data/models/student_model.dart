@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
-import 'package:alwaleed_admain/features/students/domain/entities/student_entity.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_fields.dart';
+import 'package:alwaleed_admin/features/students/domain/entities/student_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentModel extends StudentEntity {

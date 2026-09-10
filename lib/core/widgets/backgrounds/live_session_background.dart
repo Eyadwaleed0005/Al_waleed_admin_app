@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/core/style/app_color.dart';
+import 'package:alwaleed_admin/core/style/app_color.dart';
 import 'package:flutter/material.dart';
 
 class LiveSessionBackground extends StatelessWidget {

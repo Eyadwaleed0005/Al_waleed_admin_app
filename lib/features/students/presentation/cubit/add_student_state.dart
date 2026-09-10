@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
-import 'package:alwaleed_admain/features/students/domain/entities/student_entity.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/features/students/domain/entities/student_entity.dart';
 
 enum AddStudentStatus { idle, submitting, success, failure }
 

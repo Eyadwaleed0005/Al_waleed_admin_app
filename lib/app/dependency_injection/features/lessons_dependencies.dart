@@ -1,15 +1,15 @@
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_service.dart';
-import 'package:alwaleed_admain/core/firebase/storage/storage_service.dart';
-import 'package:alwaleed_admain/features/lessons/data/data_sources/firebase_lessons_remote_data_source.dart';
-import 'package:alwaleed_admain/features/lessons/data/data_sources/lessons_remote_data_source.dart';
-import 'package:alwaleed_admain/features/lessons/data/repositories/lessons_repository_impl.dart';
-import 'package:alwaleed_admain/features/lessons/domain/repositories/lessons_repository.dart';
-import 'package:alwaleed_admain/features/lessons/domain/use_case/create_lesson_use_case.dart';
-import 'package:alwaleed_admain/features/lessons/domain/use_case/delete_lesson_use_case.dart';
-import 'package:alwaleed_admain/features/lessons/domain/use_case/get_lesson_by_id_use_case.dart';
-import 'package:alwaleed_admain/features/lessons/domain/use_case/get_lessons_use_case.dart';
-import 'package:alwaleed_admain/features/lessons/domain/use_case/stream_lessons_use_case.dart';
-import 'package:alwaleed_admain/features/lessons/domain/use_case/update_lesson_use_case.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_service.dart';
+import 'package:alwaleed_admin/core/firebase/storage/storage_service.dart';
+import 'package:alwaleed_admin/features/lessons/data/data_sources/firebase_lessons_remote_data_source.dart';
+import 'package:alwaleed_admin/features/lessons/data/data_sources/lessons_remote_data_source.dart';
+import 'package:alwaleed_admin/features/lessons/data/repositories/lessons_repository_impl.dart';
+import 'package:alwaleed_admin/features/lessons/domain/repositories/lessons_repository.dart';
+import 'package:alwaleed_admin/features/lessons/domain/use_case/create_lesson_use_case.dart';
+import 'package:alwaleed_admin/features/lessons/domain/use_case/delete_lesson_use_case.dart';
+import 'package:alwaleed_admin/features/lessons/domain/use_case/get_lesson_by_id_use_case.dart';
+import 'package:alwaleed_admin/features/lessons/domain/use_case/get_lessons_use_case.dart';
+import 'package:alwaleed_admin/features/lessons/domain/use_case/stream_lessons_use_case.dart';
+import 'package:alwaleed_admin/features/lessons/domain/use_case/update_lesson_use_case.dart';
 import 'package:get_it/get_it.dart';
 
 void registerLessonsDependencies(GetIt getIt) {

@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/core/widgets/app_empty_widget.dart';
-import 'package:alwaleed_admain/features/result_student/domain/entities/student_exam_results_overview_entity.dart';
+import 'package:alwaleed_admin/core/widgets/app_empty_widget.dart';
+import 'package:alwaleed_admin/features/result_student/domain/entities/student_exam_results_overview_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

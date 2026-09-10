@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/features/study_notes/domain/entities/study_note_entity.dart';
+import 'package:alwaleed_admin/features/study_notes/domain/entities/study_note_entity.dart';
 
 class CreateStudyNoteParams {
   const CreateStudyNoteParams({

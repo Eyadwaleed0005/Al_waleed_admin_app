@@ -1,15 +1,15 @@
-import 'package:alwaleed_admain/app/routes/app_images_routes.dart';
-import 'package:alwaleed_admain/app/routes/route_names.dart';
-import 'package:alwaleed_admain/core/helper/app_system_ui.dart';
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/style/app_color.dart';
-import 'package:alwaleed_admain/core/style/textstyles.dart';
-import 'package:alwaleed_admain/features/app_startup/presentation/cubit/app_startup_cubit.dart';
-import 'package:alwaleed_admain/features/app_startup/presentation/cubit/app_startup_state.dart';
-import 'package:alwaleed_admain/features/app_startup/presentation/widgets/blurred_oval_shadow.dart';
-import 'package:alwaleed_admain/features/app_startup/presentation/widgets/splash_loading_bar.dart';
-import 'package:alwaleed_admain/features/app_startup/presentation/widgets/splash_title_text.dart';
+import 'package:alwaleed_admin/app/routes/app_images_routes.dart';
+import 'package:alwaleed_admin/app/routes/route_names.dart';
+import 'package:alwaleed_admin/core/helper/app_system_ui.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/style/app_color.dart';
+import 'package:alwaleed_admin/core/style/textstyles.dart';
+import 'package:alwaleed_admin/features/app_startup/presentation/cubit/app_startup_cubit.dart';
+import 'package:alwaleed_admin/features/app_startup/presentation/cubit/app_startup_state.dart';
+import 'package:alwaleed_admin/features/app_startup/presentation/widgets/blurred_oval_shadow.dart';
+import 'package:alwaleed_admin/features/app_startup/presentation/widgets/splash_loading_bar.dart';
+import 'package:alwaleed_admin/features/app_startup/presentation/widgets/splash_title_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,7 +32,7 @@ class SplashScreen extends StatelessWidget {
         }
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: AppSystemUi.light(),
+        value: AppSystemUi.dark(),
         child: Scaffold(
           backgroundColor: ColorPalette.deepSurface,
           body: SafeArea(

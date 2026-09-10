@@ -1,8 +1,8 @@
-import 'package:alwaleed_admain/core/widgets/app_error_widget.dart';
-import 'package:alwaleed_admain/features/students/presentation/cubit/update_student_cubit.dart';
-import 'package:alwaleed_admain/features/students/presentation/cubit/update_student_state.dart';
-import 'package:alwaleed_admain/features/students/presentation/widgets/update_student_form_fields.dart';
-import 'package:alwaleed_admain/features/students/presentation/widgets/update_student_loading_skeleton.dart';
+import 'package:alwaleed_admin/core/widgets/app_error_widget.dart';
+import 'package:alwaleed_admin/features/students/presentation/cubit/update_student_cubit.dart';
+import 'package:alwaleed_admin/features/students/presentation/cubit/update_student_state.dart';
+import 'package:alwaleed_admin/features/students/presentation/widgets/update_student_form_fields.dart';
+import 'package:alwaleed_admin/features/students/presentation/widgets/update_student_loading_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

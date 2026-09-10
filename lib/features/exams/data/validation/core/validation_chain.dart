@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/features/exams/data/validation/core/validation_handler.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/core/validation_handler.dart';
 
 class ValidationChain<T> {
   ValidationChain({required List<ValidationHandler<T>> handlers})

@@ -1,13 +1,13 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/widgets/app_empty_widget.dart';
-import 'package:alwaleed_admain/core/widgets/app_no_search_results_widget.dart';
-import 'package:alwaleed_admain/core/widgets/custom_button.dart';
-import 'package:alwaleed_admain/features/lessons/domain/entities/lesson_entity.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/cubit/view_lessons_cubit.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/cubit/view_lessons_state.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/widgets/lesson_search_filter_section.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/widgets/lessons_list.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/widgets/app_empty_widget.dart';
+import 'package:alwaleed_admin/core/widgets/app_no_search_results_widget.dart';
+import 'package:alwaleed_admin/core/widgets/custom_button.dart';
+import 'package:alwaleed_admin/features/lessons/domain/entities/lesson_entity.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/cubit/view_lessons_cubit.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/cubit/view_lessons_state.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/widgets/lesson_search_filter_section.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/widgets/lessons_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

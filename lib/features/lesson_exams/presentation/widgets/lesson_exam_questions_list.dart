@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/lesson_exam_question_card.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/widgets/lesson_exam_question_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

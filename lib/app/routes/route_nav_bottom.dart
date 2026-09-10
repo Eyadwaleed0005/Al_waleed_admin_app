@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/app/routes/app_images_routes.dart';
+import 'package:alwaleed_admin/app/routes/app_images_routes.dart';
 import 'package:flutter/material.dart';
 
 class RouteNavBottom {

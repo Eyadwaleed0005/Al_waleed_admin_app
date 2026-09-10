@@ -1,13 +1,13 @@
-import 'package:alwaleed_admain/app/routes/route_nav_bottom.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/style/app_color.dart';
-import 'package:alwaleed_admain/features/dashboard/presentation/screens/home_screen.dart';
-import 'package:alwaleed_admain/features/exams/presentation/screens/view_exams_screen.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/screens/live_session_screen.dart';
-import 'package:alwaleed_admain/features/main_navigation/presentation/cubit/bottom_navigation_cubit.dart';
-import 'package:alwaleed_admain/features/main_navigation/presentation/widgets/custom_bottom_nav_bar.dart';
-import 'package:alwaleed_admain/features/students/presentation/screens/student_management_screen.dart';
-import 'package:alwaleed_admain/features/study_notes/presentation/screens/content_management_screen.dart';
+import 'package:alwaleed_admin/app/routes/route_nav_bottom.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/style/app_color.dart';
+import 'package:alwaleed_admin/features/dashboard/presentation/screens/home_screen.dart';
+import 'package:alwaleed_admin/features/exams/presentation/screens/view_exams_screen.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/screens/live_session_screen.dart';
+import 'package:alwaleed_admin/features/main_navigation/presentation/cubit/bottom_navigation_cubit.dart';
+import 'package:alwaleed_admin/features/main_navigation/presentation/widgets/custom_bottom_nav_bar.dart';
+import 'package:alwaleed_admin/features/students/presentation/screens/student_management_screen.dart';
+import 'package:alwaleed_admin/features/study_notes/presentation/screens/content_management_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

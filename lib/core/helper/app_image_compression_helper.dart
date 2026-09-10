@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:alwaleed_admain/core/helper/app_image_validator.dart';
+import 'package:alwaleed_admin/core/helper/app_image_validator.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class AppImageCompressionResult {

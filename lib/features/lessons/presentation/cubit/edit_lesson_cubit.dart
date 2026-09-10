@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/core/helper/app_validator.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
-import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
-import 'package:alwaleed_admain/features/lessons/domain/entities/lesson_entity.dart';
-import 'package:alwaleed_admain/features/lessons/domain/use_case/delete_lesson_use_case.dart';
-import 'package:alwaleed_admain/features/lessons/domain/use_case/get_lesson_by_id_use_case.dart';
-import 'package:alwaleed_admain/features/lessons/domain/use_case/update_lesson_use_case.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/cubit/edit_lesson_state.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/core/helper/app_validator.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/features/grades/domain/use_cases/stream_grades_use_case.dart';
+import 'package:alwaleed_admin/features/lessons/domain/entities/lesson_entity.dart';
+import 'package:alwaleed_admin/features/lessons/domain/use_case/delete_lesson_use_case.dart';
+import 'package:alwaleed_admin/features/lessons/domain/use_case/get_lesson_by_id_use_case.dart';
+import 'package:alwaleed_admin/features/lessons/domain/use_case/update_lesson_use_case.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/cubit/edit_lesson_state.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

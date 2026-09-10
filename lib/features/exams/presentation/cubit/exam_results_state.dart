@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_results_report_entity.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_entity.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_results_report_entity.dart';
 
 abstract class ExamResultsState {
   const ExamResultsState();

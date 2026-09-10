@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/features/lesson_exams/domain/lesson_exam_question_image_file.dart';
-import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/create_lesson_exam_question_use_case.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/cubit/add_lesson_exam_question_state.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/lesson_exam_question_image_file.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/use_case/create_lesson_exam_question_use_case.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/cubit/add_lesson_exam_question_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddLessonExamQuestionCubit extends Cubit<AddLessonExamQuestionState> {

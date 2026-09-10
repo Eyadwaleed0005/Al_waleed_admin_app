@@ -1,13 +1,13 @@
-import 'package:alwaleed_admain/core/helper/app_system_ui.dart';
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/widgets/app_network_aware_content.dart';
-import 'package:alwaleed_admain/core/widgets/backgrounds/content_management_background.dart';
-import 'package:alwaleed_admain/core/widgets/custom_operation_result_dialog.dart';
-import 'package:alwaleed_admain/core/widgets/secondary_custom_header_bar.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/cubit/add_lesson_exam_question_cubit.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/cubit/add_lesson_exam_question_state.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/add_lesson_exam_question_content.dart';
+import 'package:alwaleed_admin/core/helper/app_system_ui.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/widgets/app_network_aware_content.dart';
+import 'package:alwaleed_admin/core/widgets/backgrounds/content_management_background.dart';
+import 'package:alwaleed_admin/core/widgets/custom_operation_result_dialog.dart';
+import 'package:alwaleed_admin/core/widgets/secondary_custom_header_bar.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/cubit/add_lesson_exam_question_cubit.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/cubit/add_lesson_exam_question_state.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/widgets/add_lesson_exam_question_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -72,7 +72,7 @@ class AddLessonExamQuestionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: AppSystemUi.light(),
+      value: AppSystemUi.dark(),
       child: Scaffold(
         body: ContentManagementBackground(
           child: SafeArea(

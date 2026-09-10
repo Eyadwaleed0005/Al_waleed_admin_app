@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'package:alwaleed_admain/app/dependency_injection/service_locator.dart';
-import 'package:alwaleed_admain/app/routes/app_route_observer.dart';
-import 'package:alwaleed_admain/app/routes/app_routes.dart';
-import 'package:alwaleed_admain/app/routes/route_names.dart';
-import 'package:alwaleed_admain/core/connection/cubit/network_status_cubit.dart';
-import 'package:alwaleed_admain/core/widgets/app_network_status_listener.dart';
-import 'package:alwaleed_admain/firebase_options.dart';
+import 'package:alwaleed_admin/app/dependency_injection/service_locator.dart';
+import 'package:alwaleed_admin/app/routes/app_route_observer.dart';
+import 'package:alwaleed_admin/app/routes/app_routes.dart';
+import 'package:alwaleed_admin/app/routes/route_names.dart';
+import 'package:alwaleed_admin/core/connection/cubit/network_status_cubit.dart';
+import 'package:alwaleed_admin/core/widgets/app_network_status_listener.dart';
+import 'package:alwaleed_admin/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         builder: (context, child) {
           return MaterialApp(
-            title: 'الوليد',
+            title: 'الوليد الادارة',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(fontFamily: 'Tajawal'),
             initialRoute: RouteNames.splashScreen,

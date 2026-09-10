@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/textstyles.dart';
-import 'package:alwaleed_admain/core/widgets/custom_status_switch.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/textstyles.dart';
+import 'package:alwaleed_admin/core/widgets/custom_status_switch.dart';
 import 'package:flutter/material.dart';
 
 class ExamPublicationSwitch extends StatelessWidget {

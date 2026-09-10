@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/features/dashboard/domin/entities/dashboard_students_summary_entity.dart';
+import 'package:alwaleed_admin/features/dashboard/domin/entities/dashboard_students_summary_entity.dart';
 
 sealed class HomeDashboardState {
   const HomeDashboardState();

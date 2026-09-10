@@ -1,15 +1,15 @@
-import 'package:alwaleed_admain/app/routes/app_images_routes.dart';
-import 'package:alwaleed_admain/app/routes/route_names.dart';
-import 'package:alwaleed_admain/core/helper/app_system_ui.dart';
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/style/app_color.dart';
-import 'package:alwaleed_admain/core/widgets/app_network_aware_content.dart';
-import 'package:alwaleed_admain/core/widgets/backgrounds/content_management_background.dart';
-import 'package:alwaleed_admain/core/widgets/custom_header_bar.dart';
-import 'package:alwaleed_admain/features/study_notes/presentation/widgets/content_management_welcome_card.dart';
-import 'package:alwaleed_admain/features/study_notes/presentation/widgets/content_section_card.dart';
-import 'package:alwaleed_admain/features/study_notes/presentation/widgets/content_sections_title.dart';
+import 'package:alwaleed_admin/app/routes/app_images_routes.dart';
+import 'package:alwaleed_admin/app/routes/route_names.dart';
+import 'package:alwaleed_admin/core/helper/app_system_ui.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/style/app_color.dart';
+import 'package:alwaleed_admin/core/widgets/app_network_aware_content.dart';
+import 'package:alwaleed_admin/core/widgets/backgrounds/content_management_background.dart';
+import 'package:alwaleed_admin/core/widgets/custom_header_bar.dart';
+import 'package:alwaleed_admin/features/study_notes/presentation/widgets/content_management_welcome_card.dart';
+import 'package:alwaleed_admin/features/study_notes/presentation/widgets/content_section_card.dart';
+import 'package:alwaleed_admin/features/study_notes/presentation/widgets/content_sections_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,7 +20,7 @@ class ContentManagementScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: AppSystemUi.light(),
+      value: AppSystemUi.dark(),
       child: Scaffold(
         body: ContentManagementBackground(
           child: SafeArea(

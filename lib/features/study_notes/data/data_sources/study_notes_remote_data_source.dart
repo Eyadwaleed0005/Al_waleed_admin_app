@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/features/study_notes/data/models/study_note_model.dart';
+import 'package:alwaleed_admin/features/study_notes/data/models/study_note_model.dart';
 
 abstract class StudyNotesRemoteDataSource {
   Future<List<StudyNoteModel>> getStudyNotes({

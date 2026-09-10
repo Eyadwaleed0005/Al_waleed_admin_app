@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/widgets/custom_operation_result_dialog.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/cubit/edit_lesson_cubit.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/cubit/edit_lesson_state.dart';
+import 'package:alwaleed_admin/core/widgets/custom_operation_result_dialog.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/cubit/edit_lesson_cubit.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/cubit/edit_lesson_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

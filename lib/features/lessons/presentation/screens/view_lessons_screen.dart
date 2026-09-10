@@ -1,16 +1,16 @@
-import 'package:alwaleed_admain/app/routes/route_names.dart';
-import 'package:alwaleed_admain/core/helper/app_system_ui.dart';
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/widgets/app_error_widget.dart';
-import 'package:alwaleed_admain/core/widgets/app_network_aware_content.dart';
-import 'package:alwaleed_admain/core/widgets/backgrounds/content_management_background.dart';
-import 'package:alwaleed_admain/core/widgets/secondary_custom_header_bar.dart';
-import 'package:alwaleed_admain/features/lessons/domain/entities/lesson_entity.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/cubit/view_lessons_cubit.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/cubit/view_lessons_state.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/widgets/view_lessons_content.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/widgets/view_lessons_loading_skeleton.dart';
+import 'package:alwaleed_admin/app/routes/route_names.dart';
+import 'package:alwaleed_admin/core/helper/app_system_ui.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/widgets/app_error_widget.dart';
+import 'package:alwaleed_admin/core/widgets/app_network_aware_content.dart';
+import 'package:alwaleed_admin/core/widgets/backgrounds/content_management_background.dart';
+import 'package:alwaleed_admin/core/widgets/secondary_custom_header_bar.dart';
+import 'package:alwaleed_admin/features/lessons/domain/entities/lesson_entity.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/cubit/view_lessons_cubit.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/cubit/view_lessons_state.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/widgets/view_lessons_content.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/widgets/view_lessons_loading_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,7 +29,7 @@ class ViewLessonsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: AppSystemUi.light(),
+      value: AppSystemUi.dark(),
       child: Scaffold(
         body: ContentManagementBackground(
           child: SafeArea(

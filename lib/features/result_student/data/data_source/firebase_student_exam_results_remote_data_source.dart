@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_collections.dart';
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
+import 'package:alwaleed_admin/core/errors/handlers/firebase_error_handler.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_collections.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_fields.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/student_exam_result_model.dart';

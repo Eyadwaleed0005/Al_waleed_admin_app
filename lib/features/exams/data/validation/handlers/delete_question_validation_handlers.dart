@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/features/exams/data/validation/core/validation_handler.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/exams_data_validator.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/models/exams_validation_data.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/core/validation_handler.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/exams_data_validator.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/models/exams_validation_data.dart';
 
 class DeleteQuestionExamIdHandler
     extends ValidationHandler<DeleteQuestionValidationData> {

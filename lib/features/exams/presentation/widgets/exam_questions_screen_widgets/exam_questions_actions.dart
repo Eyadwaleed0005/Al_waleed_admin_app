@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/widgets/custom_button.dart';
-import 'package:alwaleed_admain/core/widgets/custom_secondary_button.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/widgets/custom_button.dart';
+import 'package:alwaleed_admin/core/widgets/custom_secondary_button.dart';
 import 'package:flutter/material.dart';
 
 class ExamQuestionsActions extends StatelessWidget {

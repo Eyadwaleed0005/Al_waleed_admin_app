@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
-import 'package:alwaleed_admain/features/lesson_exams/domain/lesson_exam_question_image_file.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/edit_lesson_exam_question_form.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/lesson_exam_question_image_file.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/widgets/edit_lesson_exam_question_form.dart';
 import 'package:flutter/material.dart';
 
 typedef EditLessonExamQuestionSubmit =

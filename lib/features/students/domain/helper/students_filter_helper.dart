@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/features/students/domain/entities/student_entity.dart';
-import 'package:alwaleed_admain/features/students/domain/params/student_params.dart';
+import 'package:alwaleed_admin/features/students/domain/entities/student_entity.dart';
+import 'package:alwaleed_admin/features/students/domain/params/student_params.dart';
 
 abstract final class StudentsFilterHelper {
   static List<StudentEntity> apply({

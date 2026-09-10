@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/features/lesson_exams/data/models/lesson_exam_question_model.dart';
-import 'package:alwaleed_admain/features/lesson_exams/domain/lesson_exam_question_image_file.dart';
+import 'package:alwaleed_admin/features/lesson_exams/data/models/lesson_exam_question_model.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/lesson_exam_question_image_file.dart';
 
 abstract class LessonExamsRemoteDataSource {
   Stream<List<LessonExamQuestionModel>> streamQuestions({

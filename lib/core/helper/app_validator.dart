@@ -13,17 +13,8 @@ class AppValidator {
       return 'من فضلك اكتب اسم الطالب';
     }
 
-    if (!RegExp(r'^[\u0600-\u06FFa-zA-Z\s]+$').hasMatch(name)) {
+    if (!RegExp(r'^[\u0621-\u063A\u0641-\u064Aa-zA-Z\s]+$').hasMatch(name)) {
       return 'اسم الطالب يجب أن يحتوي على حروف فقط';
-    }
-
-    final words = name
-        .split(RegExp(r'\s+'))
-        .where((word) => word.isNotEmpty)
-        .toList();
-
-    if (words.length != 3) {
-      return 'من فضلك اكتب اسم الطالب ثلاثيًا';
     }
 
     return null;

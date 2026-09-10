@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/features/lessons/domain/entities/lesson_entity.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/widgets/lesson_card.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/features/lessons/domain/entities/lesson_entity.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/widgets/lesson_card.dart';
 import 'package:flutter/material.dart';
 
 class LessonsList extends StatelessWidget {

@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_fields.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
 
 class GradeModel extends GradeEntity {
   const GradeModel({

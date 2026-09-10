@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/core/helper/app_validator.dart';
-import 'package:alwaleed_admain/core/helper/password_generator.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
-import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
-import 'package:alwaleed_admain/features/students/domain/params/student_params.dart';
-import 'package:alwaleed_admain/features/students/domain/use_cases/create_student_use_case.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/core/helper/app_validator.dart';
+import 'package:alwaleed_admin/core/helper/password_generator.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/features/grades/domain/use_cases/stream_grades_use_case.dart';
+import 'package:alwaleed_admin/features/students/domain/params/student_params.dart';
+import 'package:alwaleed_admin/features/students/domain/use_cases/create_student_use_case.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

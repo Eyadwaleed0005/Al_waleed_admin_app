@@ -1,9 +1,9 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/core/errors/exceptions/firebase_remote_exception.dart';
-import 'package:alwaleed_admain/features/study_notes/data/data_sources/study_notes_remote_data_source.dart';
-import 'package:alwaleed_admain/features/study_notes/data/models/study_note_model.dart';
-import 'package:alwaleed_admain/features/study_notes/domain/entities/study_note_entity.dart';
-import 'package:alwaleed_admain/features/study_notes/domain/repositories/study_notes_repository.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/core/errors/exceptions/firebase_remote_exception.dart';
+import 'package:alwaleed_admin/features/study_notes/data/data_sources/study_notes_remote_data_source.dart';
+import 'package:alwaleed_admin/features/study_notes/data/models/study_note_model.dart';
+import 'package:alwaleed_admin/features/study_notes/domain/entities/study_note_entity.dart';
+import 'package:alwaleed_admin/features/study_notes/domain/repositories/study_notes_repository.dart';
 import 'package:dartz/dartz.dart';
 
 class StudyNotesRepositoryImpl implements StudyNotesRepository {

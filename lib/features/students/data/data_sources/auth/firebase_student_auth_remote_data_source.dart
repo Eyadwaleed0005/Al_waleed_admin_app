@@ -1,7 +1,7 @@
-import 'package:alwaleed_admain/core/errors/exceptions/firebase_remote_exception.dart';
-import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
-import 'package:alwaleed_admain/core/firebase/functions/firebase_function_keys.dart';
-import 'package:alwaleed_admain/core/firebase/functions/firebase_function_names.dart';
+import 'package:alwaleed_admin/core/errors/exceptions/firebase_remote_exception.dart';
+import 'package:alwaleed_admin/core/errors/handlers/firebase_error_handler.dart';
+import 'package:alwaleed_admin/core/firebase/functions/firebase_function_keys.dart';
+import 'package:alwaleed_admin/core/firebase/functions/firebase_function_names.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 import 'student_auth_remote_data_source.dart';

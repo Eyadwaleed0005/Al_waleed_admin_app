@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
-import 'package:alwaleed_admain/features/exams/domain/use_case/stream_exams_use_case.dart';
-import 'package:alwaleed_admain/features/exams/presentation/cubit/view_exams_state.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
-import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_entity.dart';
+import 'package:alwaleed_admin/features/exams/domain/use_case/stream_exams_use_case.dart';
+import 'package:alwaleed_admin/features/exams/presentation/cubit/view_exams_state.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/features/grades/domain/use_cases/stream_grades_use_case.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

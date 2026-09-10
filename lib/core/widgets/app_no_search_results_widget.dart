@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/core/widgets/app_empty_widget.dart';
+import 'package:alwaleed_admin/core/widgets/app_empty_widget.dart';
 import 'package:flutter/material.dart';
 
 class AppNoSearchResultsWidget

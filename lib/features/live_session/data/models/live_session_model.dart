@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_fields.dart';
 
 import '../../domain/entities/live_session_entity.dart';
 import '../../domain/entities/meeting_type.dart';

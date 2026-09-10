@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 abstract final class FirebaseStorageErrorHandler {

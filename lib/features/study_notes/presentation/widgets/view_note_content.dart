@@ -1,13 +1,13 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/widgets/app_empty_widget.dart';
-import 'package:alwaleed_admain/core/widgets/app_no_search_results_widget.dart';
-import 'package:alwaleed_admain/core/widgets/custom_button.dart';
-import 'package:alwaleed_admain/features/study_notes/domain/entities/study_note_entity.dart';
-import 'package:alwaleed_admain/features/study_notes/presentation/cubit/view_notes_cubit.dart';
-import 'package:alwaleed_admain/features/study_notes/presentation/cubit/view_notes_state.dart';
-import 'package:alwaleed_admain/features/study_notes/presentation/widgets/note_search_filter_section.dart';
-import 'package:alwaleed_admain/features/study_notes/presentation/widgets/study_notes_list.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/widgets/app_empty_widget.dart';
+import 'package:alwaleed_admin/core/widgets/app_no_search_results_widget.dart';
+import 'package:alwaleed_admin/core/widgets/custom_button.dart';
+import 'package:alwaleed_admin/features/study_notes/domain/entities/study_note_entity.dart';
+import 'package:alwaleed_admin/features/study_notes/presentation/cubit/view_notes_cubit.dart';
+import 'package:alwaleed_admin/features/study_notes/presentation/cubit/view_notes_state.dart';
+import 'package:alwaleed_admin/features/study_notes/presentation/widgets/note_search_filter_section.dart';
+import 'package:alwaleed_admin/features/study_notes/presentation/widgets/study_notes_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

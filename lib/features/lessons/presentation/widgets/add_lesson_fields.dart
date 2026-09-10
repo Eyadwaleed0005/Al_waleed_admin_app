@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/core/helper/app_validator.dart';
-import 'package:alwaleed_admain/core/widgets/custom_text_form_field.dart';
+import 'package:alwaleed_admin/core/helper/app_validator.dart';
+import 'package:alwaleed_admin/core/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 
 class AddLessonTitleField extends StatelessWidget {

@@ -1,7 +1,7 @@
-import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
-import 'package:alwaleed_admain/features/exams/data/models/exam_model.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/constants/exam_feature_messages.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
+import 'package:alwaleed_admin/core/errors/handlers/firebase_error_handler.dart';
+import 'package:alwaleed_admin/features/exams/data/models/exam_model.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/core/constants/exam_feature_messages.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_entity.dart';
 
 class ExamEditingPolicy {
   const ExamEditingPolicy();

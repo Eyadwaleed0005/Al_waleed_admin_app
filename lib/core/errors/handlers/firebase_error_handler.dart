@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/core/errors/exceptions/firebase_remote_exception.dart';
-import 'package:alwaleed_admain/core/errors/handlers/firebase_functions_error_handler.dart';
-import 'package:alwaleed_admain/core/errors/handlers/firebase_storage_error_handler.dart';
-import 'package:alwaleed_admain/core/errors/handlers/firestore_error_handler.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/core/errors/exceptions/firebase_remote_exception.dart';
+import 'package:alwaleed_admin/core/errors/handlers/firebase_functions_error_handler.dart';
+import 'package:alwaleed_admin/core/errors/handlers/firebase_storage_error_handler.dart';
+import 'package:alwaleed_admin/core/errors/handlers/firestore_error_handler.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 

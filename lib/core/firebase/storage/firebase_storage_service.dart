@@ -4,8 +4,8 @@ import 'dart:developer' as developer;
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:alwaleed_admain/core/connection/network/network_info.dart';
-import 'package:alwaleed_admain/core/firebase/storage/storage_service.dart';
+import 'package:alwaleed_admin/core/connection/network/network_info.dart';
+import 'package:alwaleed_admin/core/firebase/storage/storage_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -98,7 +98,7 @@ class FirebaseStorageService implements StorageService {
             return uploadedMetadata;
           }
 
-          return reference.getMetadata();
+          return await reference.getMetadata();
         } finally {
           await progressSubscription?.cancel();
         }
@@ -163,7 +163,7 @@ class FirebaseStorageService implements StorageService {
             return uploadedMetadata;
           }
 
-          return reference.getMetadata();
+          return await reference.getMetadata();
         } finally {
           await progressSubscription?.cancel();
         }

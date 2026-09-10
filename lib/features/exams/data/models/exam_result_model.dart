@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_attempt_status.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_result_entity.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_fields.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_attempt_status.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_result_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ExamResultModel extends ExamResultEntity {

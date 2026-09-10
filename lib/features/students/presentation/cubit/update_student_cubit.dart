@@ -1,17 +1,18 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/core/helper/password_generator.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
-import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
-import 'package:alwaleed_admain/features/students/domain/entities/student_entity.dart';
-import 'package:alwaleed_admain/features/students/domain/use_cases/delete_student_use_case.dart';
-import 'package:alwaleed_admain/features/students/domain/use_cases/get_student_by_id_use_case.dart';
-import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_email_use_case.dart';
-import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_password_use_case.dart';
-import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_profile_use_case.dart';
-import 'package:alwaleed_admain/features/students/domain/use_cases/update_student_subscription_use_case.dart';
-import 'package:alwaleed_admain/features/students/presentation/cubit/update_student_state.dart';
+
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/core/helper/password_generator.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/features/grades/domain/use_cases/stream_grades_use_case.dart';
+import 'package:alwaleed_admin/features/students/domain/entities/student_entity.dart';
+import 'package:alwaleed_admin/features/students/domain/use_cases/delete_student_use_case.dart';
+import 'package:alwaleed_admin/features/students/domain/use_cases/get_student_by_id_use_case.dart';
+import 'package:alwaleed_admin/features/students/domain/use_cases/update_student_email_use_case.dart';
+import 'package:alwaleed_admin/features/students/domain/use_cases/update_student_password_use_case.dart';
+import 'package:alwaleed_admin/features/students/domain/use_cases/update_student_profile_use_case.dart';
+import 'package:alwaleed_admin/features/students/domain/use_cases/update_student_subscription_use_case.dart';
+import 'package:alwaleed_admin/features/students/presentation/cubit/update_student_state.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +34,9 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
        _updateStudentPasswordUseCase = updateStudentPasswordUseCase,
        _updateStudentSubscriptionUseCase = updateStudentSubscriptionUseCase,
        _deleteStudentUseCase = deleteStudentUseCase,
-       super(const UpdateStudentState());
+       super(const UpdateStudentState()) {
+    _addFormListeners();
+  }
 
   final String studentId;
 
@@ -51,13 +54,9 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   final TextEditingController studentNameController = TextEditingController();
-
   final TextEditingController studentAgeController = TextEditingController();
-
   final TextEditingController phoneController = TextEditingController();
-
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
 
   final TextEditingController subscriptionStartDateController =
@@ -65,6 +64,8 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
 
   final TextEditingController subscriptionEndDateController =
       TextEditingController();
+
+  bool _isFillingControllers = false;
 
   DateTime get subscriptionEndFirstDate {
     final startDate = state.subscriptionStartDate;
@@ -74,6 +75,22 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
     }
 
     return startDate.add(const Duration(days: 1));
+  }
+
+  void _addFormListeners() {
+    studentNameController.addListener(_updateHasChanges);
+    studentAgeController.addListener(_updateHasChanges);
+    phoneController.addListener(_updateHasChanges);
+    emailController.addListener(_updateHasChanges);
+    passwordController.addListener(_updateHasChanges);
+  }
+
+  void _removeFormListeners() {
+    studentNameController.removeListener(_updateHasChanges);
+    studentAgeController.removeListener(_updateHasChanges);
+    phoneController.removeListener(_updateHasChanges);
+    emailController.removeListener(_updateHasChanges);
+    passwordController.removeListener(_updateHasChanges);
   }
 
   Future<void> initialize() async {
@@ -102,7 +119,13 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
       return;
     }
 
-    emit(state.copyWith(status: UpdateStudentStatus.loading, clearError: true));
+    emit(
+      state.copyWith(
+        status: UpdateStudentStatus.loading,
+        hasChanges: false,
+        clearError: true,
+      ),
+    );
 
     final result = await _getStudentByIdUseCase(studentId: studentId);
 
@@ -127,6 +150,7 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
             subscriptionStartDate: _normalizeDate(student.subscriptionStartAt),
             subscriptionEndDate: _normalizeDate(student.subscriptionEndAt),
             hasGeneratedPassword: false,
+            hasChanges: false,
             clearError: true,
           ),
         );
@@ -135,11 +159,12 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
   }
 
   void _fillControllers(StudentEntity student) {
+    _isFillingControllers = true;
+
     studentNameController.text = student.name;
     studentAgeController.text = student.age.toString();
     phoneController.text = student.phoneNumber;
     emailController.text = student.email;
-
     passwordController.clear();
 
     subscriptionStartDateController.text = _formatDate(
@@ -147,6 +172,8 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
     );
 
     subscriptionEndDateController.text = _formatDate(student.subscriptionEndAt);
+
+    _isFillingControllers = false;
   }
 
   void selectGrade(String gradeId) {
@@ -157,13 +184,14 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
         clearError: true,
       ),
     );
+
+    _updateHasChanges();
   }
 
   void selectSubscriptionStartDate(DateTime date) {
     final normalizedDate = _normalizeDate(date);
 
     subscriptionStartDateController.text = _formatDate(normalizedDate);
-
     subscriptionEndDateController.clear();
 
     emit(
@@ -175,6 +203,7 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
       ),
     );
 
+    _updateHasChanges();
     formKey.currentState?.validate();
   }
 
@@ -191,6 +220,7 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
       ),
     );
 
+    _updateHasChanges();
     formKey.currentState?.validate();
   }
 
@@ -205,19 +235,83 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
       ),
     );
 
+    _updateHasChanges();
     formKey.currentState?.validate();
   }
 
   void onPasswordChanged(String _) {
-    if (!state.hasGeneratedPassword) {
+    if (state.hasGeneratedPassword) {
+      emit(state.copyWith(hasGeneratedPassword: false));
+    }
+
+    _updateHasChanges();
+  }
+
+  void _updateHasChanges() {
+    if (isClosed || _isFillingControllers) {
       return;
     }
 
-    emit(state.copyWith(hasGeneratedPassword: false));
+    final hasChanges = _calculateHasChanges();
+
+    if (hasChanges == state.hasChanges) {
+      return;
+    }
+
+    emit(state.copyWith(hasChanges: hasChanges));
+  }
+
+  bool _calculateHasChanges() {
+    final currentStudent = state.student;
+
+    if (currentStudent == null) {
+      return false;
+    }
+
+    final currentAge = int.tryParse(studentAgeController.text.trim());
+
+    final nameChanged =
+        studentNameController.text.trim() != currentStudent.name.trim();
+
+    final ageChanged = currentAge != currentStudent.age;
+
+    final phoneChanged =
+        phoneController.text.trim() != currentStudent.phoneNumber.trim();
+
+    final emailChanged =
+        emailController.text.trim().toLowerCase() !=
+        currentStudent.email.trim().toLowerCase();
+
+    final passwordChanged = passwordController.text.isNotEmpty;
+
+    final gradeChanged = state.selectedGradeId != currentStudent.gradeId;
+
+    final subscriptionStartChanged =
+        state.subscriptionStartDate == null ||
+        !_isSameDate(
+          state.subscriptionStartDate!,
+          currentStudent.subscriptionStartAt,
+        );
+
+    final subscriptionEndChanged =
+        state.subscriptionEndDate == null ||
+        !_isSameDate(
+          state.subscriptionEndDate!,
+          currentStudent.subscriptionEndAt,
+        );
+
+    return nameChanged ||
+        ageChanged ||
+        phoneChanged ||
+        emailChanged ||
+        passwordChanged ||
+        gradeChanged ||
+        subscriptionStartChanged ||
+        subscriptionEndChanged;
   }
 
   Future<void> submit() async {
-    if (state.isBusy) {
+    if (state.isBusy || !state.hasChanges) {
       return;
     }
 
@@ -265,16 +359,6 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
           currentStudent.subscriptionStartAt,
         ) ||
         !_isSameDate(subscriptionEndDate, currentStudent.subscriptionEndAt);
-
-    final hasAnyChanges =
-        profileChanged ||
-        emailChanged ||
-        passwordChanged ||
-        subscriptionChanged;
-
-    if (!hasAnyChanges) {
-      return;
-    }
 
     final updatedStudent = currentStudent.copyWith(
       gradeId: gradeId,
@@ -345,10 +429,16 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
       return;
     }
 
+    _isFillingControllers = true;
+    passwordController.clear();
+    _isFillingControllers = false;
+
     emit(
       state.copyWith(
         status: UpdateStudentStatus.updateSuccess,
         student: updatedStudent,
+        hasGeneratedPassword: false,
+        hasChanges: false,
         clearError: true,
       ),
     );
@@ -375,9 +465,7 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
         !currentEndDate.isAfter(today) || !currentStudent.isActive;
 
     final newStartDate = subscriptionExpired ? today : currentStartDate;
-
     final renewalBaseDate = subscriptionExpired ? today : currentEndDate;
-
     final newEndDate = _addOneCalendarMonth(renewalBaseDate);
 
     final renewedStudent = currentStudent.copyWith(
@@ -414,7 +502,6 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
       },
       (_) {
         subscriptionStartDateController.text = _formatDate(newStartDate);
-
         subscriptionEndDateController.text = _formatDate(newEndDate);
 
         emit(
@@ -426,6 +513,8 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
             clearError: true,
           ),
         );
+
+        _updateHasChanges();
       },
     );
   }
@@ -475,6 +564,8 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
             clearError: true,
           ),
         );
+
+        _updateHasChanges();
       },
     );
   }
@@ -566,11 +657,8 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
 
   DateTime _addOneCalendarMonth(DateTime date) {
     final targetYear = date.month == 12 ? date.year + 1 : date.year;
-
     final targetMonth = date.month == 12 ? 1 : date.month + 1;
-
     final lastDay = DateTime(targetYear, targetMonth + 1, 0).day;
-
     final targetDay = min(date.day, lastDay);
 
     return DateTime(targetYear, targetMonth, targetDay);
@@ -590,7 +678,6 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
     final normalizedDate = _normalizeDate(date);
 
     final day = normalizedDate.day.toString().padLeft(2, '0');
-
     final month = normalizedDate.month.toString().padLeft(2, '0');
 
     return '$day/$month/${normalizedDate.year}';
@@ -599,6 +686,8 @@ class UpdateStudentCubit extends Cubit<UpdateStudentState> {
   @override
   Future<void> close() async {
     await _gradesSubscription?.cancel();
+
+    _removeFormListeners();
 
     studentNameController.dispose();
     studentAgeController.dispose();

@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
 
 class LessonExamEntity {
   const LessonExamEntity({

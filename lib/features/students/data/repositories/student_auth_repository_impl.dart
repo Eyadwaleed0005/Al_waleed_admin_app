@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
-import 'package:alwaleed_admain/features/students/domain/repositories/student_auth_repository.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/core/errors/handlers/firebase_error_handler.dart';
+import 'package:alwaleed_admin/features/students/domain/repositories/student_auth_repository.dart';
 import 'package:dartz/dartz.dart';
 
 import '../data_sources/auth/student_auth_remote_data_source.dart';

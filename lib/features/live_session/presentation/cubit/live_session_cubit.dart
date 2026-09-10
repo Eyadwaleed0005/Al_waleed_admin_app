@@ -1,15 +1,15 @@
 import 'dart:async';
 
-import 'package:alwaleed_admain/core/connection/cubit/network_status_cubit.dart';
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
-import 'package:alwaleed_admain/features/grades/domain/use_cases/stream_grades_use_case.dart';
-import 'package:alwaleed_admain/features/live_session/domain/entities/live_session_entity.dart';
-import 'package:alwaleed_admain/features/live_session/domain/entities/meeting_type.dart';
-import 'package:alwaleed_admain/features/live_session/domain/use_case/delete_live_session_use_case.dart';
-import 'package:alwaleed_admain/features/live_session/domain/use_case/get_live_session_use_case.dart';
-import 'package:alwaleed_admain/features/live_session/domain/use_case/save_live_session_use_case.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/cubit/live_session_state.dart';
+import 'package:alwaleed_admin/core/connection/cubit/network_status_cubit.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/features/grades/domain/use_cases/stream_grades_use_case.dart';
+import 'package:alwaleed_admin/features/live_session/domain/entities/live_session_entity.dart';
+import 'package:alwaleed_admin/features/live_session/domain/entities/meeting_type.dart';
+import 'package:alwaleed_admin/features/live_session/domain/use_case/delete_live_session_use_case.dart';
+import 'package:alwaleed_admin/features/live_session/domain/use_case/get_live_session_use_case.dart';
+import 'package:alwaleed_admin/features/live_session/domain/use_case/save_live_session_use_case.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/cubit/live_session_state.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -1,8 +1,8 @@
-import 'package:alwaleed_admain/features/live_session/presentation/cubit/live_session_cubit.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/cubit/live_session_state.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/widgets/live_session_form.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/widgets/live_session_loading_skeleton.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/widgets/live_session_saved_content.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/cubit/live_session_cubit.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/cubit/live_session_state.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/widgets/live_session_form.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/widgets/live_session_loading_skeleton.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/widgets/live_session_saved_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

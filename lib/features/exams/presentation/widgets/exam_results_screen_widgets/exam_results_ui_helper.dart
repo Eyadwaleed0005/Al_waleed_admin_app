@@ -1,9 +1,9 @@
-import 'package:alwaleed_admain/core/helper/app_date_time_formatter.dart';
-import 'package:alwaleed_admain/core/helper/arabic_numbers_helper.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_result_entity.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_results_report_entity.dart';
-import 'package:alwaleed_admain/features/exams/presentation/widgets/exam_results_screen_widgets/student_exam_result_card.dart';
+import 'package:alwaleed_admin/core/helper/app_date_time_formatter.dart';
+import 'package:alwaleed_admin/core/helper/arabic_numbers_helper.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_entity.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_result_entity.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_results_report_entity.dart';
+import 'package:alwaleed_admin/features/exams/presentation/widgets/exam_results_screen_widgets/student_exam_result_card.dart';
 
 abstract final class ExamResultsUiHelper {
   const ExamResultsUiHelper._();

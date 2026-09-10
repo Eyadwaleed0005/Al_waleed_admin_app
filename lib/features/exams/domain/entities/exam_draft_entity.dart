@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_entity.dart';
 
 class ExamDraftEntity {
   const ExamDraftEntity({

@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/features/lessons/data/models/lesson_model.dart';
+import 'package:alwaleed_admin/features/lessons/data/models/lesson_model.dart';
 
 abstract class LessonsRemoteDataSource {
   Future<List<LessonModel>> getLessons({String? gradeId, bool? isPublished});

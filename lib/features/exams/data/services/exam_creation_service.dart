@@ -1,11 +1,11 @@
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_collections.dart';
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
-import 'package:alwaleed_admain/features/exams/data/models/exam_model.dart';
-import 'package:alwaleed_admain/features/exams/data/models/exam_question_model.dart';
-import 'package:alwaleed_admain/features/exams/data/services/exam_firestore_guard_service.dart';
-import 'package:alwaleed_admain/features/exams/data/services/exam_question_image_service.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/exams_data_validator.dart';
-import 'package:alwaleed_admain/features/exams/domain/exam_question_image_file.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_collections.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_fields.dart';
+import 'package:alwaleed_admin/features/exams/data/models/exam_model.dart';
+import 'package:alwaleed_admin/features/exams/data/models/exam_question_model.dart';
+import 'package:alwaleed_admin/features/exams/data/services/exam_firestore_guard_service.dart';
+import 'package:alwaleed_admin/features/exams/data/services/exam_question_image_service.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/exams_data_validator.dart';
+import 'package:alwaleed_admin/features/exams/domain/exam_question_image_file.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ExamCreationService {
