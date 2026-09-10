@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/features/live_session/domain/entities/meeting_type.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/widgets/meeting_type_item.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/features/live_session/domain/entities/meeting_type.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/widgets/meeting_type_item.dart';
 import 'package:flutter/material.dart';
 
 class MeetingTypeSelector extends StatelessWidget {

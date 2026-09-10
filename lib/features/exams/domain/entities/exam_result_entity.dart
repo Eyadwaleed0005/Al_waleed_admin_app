@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_attempt_status.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_attempt_status.dart';
 
 class ExamResultEntity {
   const ExamResultEntity({

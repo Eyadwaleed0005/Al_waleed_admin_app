@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/core/helper/app_system_ui.dart';
-import 'package:alwaleed_admain/features/result_student/presentation/widgets/student_exam_results_content.dart';
+import 'package:alwaleed_admin/core/helper/app_system_ui.dart';
+import 'package:alwaleed_admin/features/result_student/presentation/widgets/student_exam_results_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -14,7 +14,7 @@ class StudentExamResultsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: AppSystemUi.light(),
+      value: AppSystemUi.dark(),
       child: StudentExamResultsContent(
         studentId: studentId,
       ),

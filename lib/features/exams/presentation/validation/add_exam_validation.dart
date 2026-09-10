@@ -1,7 +1,7 @@
-import 'package:alwaleed_admain/features/exams/presentation/validation/add_exam_validation_handler.dart';
-import 'package:alwaleed_admain/features/exams/presentation/validation/exam_duration_validation.dart';
-import 'package:alwaleed_admain/features/exams/presentation/validation/exam_grade_validation.dart';
-import 'package:alwaleed_admain/features/exams/presentation/validation/exam_name_validation.dart';
+import 'package:alwaleed_admin/features/exams/presentation/validation/add_exam_validation_handler.dart';
+import 'package:alwaleed_admin/features/exams/presentation/validation/exam_duration_validation.dart';
+import 'package:alwaleed_admin/features/exams/presentation/validation/exam_grade_validation.dart';
+import 'package:alwaleed_admin/features/exams/presentation/validation/exam_name_validation.dart';
 
 class AddExamValidation {
   AddExamValidation() {

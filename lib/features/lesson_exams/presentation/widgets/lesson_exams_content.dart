@@ -1,9 +1,9 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/cubit/lesson_exams_state.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/lesson_exam_questions_list.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/lesson_exam_total_degrees_card.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/lesson_exams_actions.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/cubit/lesson_exams_state.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/widgets/lesson_exam_questions_list.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/widgets/lesson_exam_total_degrees_card.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/widgets/lesson_exams_actions.dart';
 import 'package:flutter/material.dart';
 
 class LessonExamsContent extends StatelessWidget {

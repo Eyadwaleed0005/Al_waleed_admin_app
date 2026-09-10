@@ -1,9 +1,9 @@
-import 'package:alwaleed_admain/features/exams/data/models/exam_model.dart';
-import 'package:alwaleed_admain/features/exams/data/models/exam_question_model.dart';
-import 'package:alwaleed_admain/features/exams/data/models/exam_result_model.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_attempt_status.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_entity.dart';
-import 'package:alwaleed_admain/features/exams/domain/exam_question_image_file.dart';
+import 'package:alwaleed_admin/features/exams/data/models/exam_model.dart';
+import 'package:alwaleed_admin/features/exams/data/models/exam_question_model.dart';
+import 'package:alwaleed_admin/features/exams/data/models/exam_result_model.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_attempt_status.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_entity.dart';
+import 'package:alwaleed_admin/features/exams/domain/exam_question_image_file.dart';
 
 abstract class ExamsRemoteDataSource {
   Future<List<ExamModel>> getExams({

@@ -1,7 +1,7 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
-import 'package:alwaleed_admain/features/students/domain/entities/student_entity.dart';
-import 'package:alwaleed_admain/features/students/presentation/widgets/student_card.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/features/students/domain/entities/student_entity.dart';
+import 'package:alwaleed_admin/features/students/presentation/widgets/student_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

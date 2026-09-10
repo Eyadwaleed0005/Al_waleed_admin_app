@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/connection/cubit/network_status_cubit.dart';
-import 'package:alwaleed_admain/features/dashboard/domin/entities/dashboard_students_summary_entity.dart';
-import 'package:alwaleed_admain/features/dashboard/domin/use_cases/get_dashboard_students_summary_use_case.dart';
+import 'package:alwaleed_admin/core/connection/cubit/network_status_cubit.dart';
+import 'package:alwaleed_admin/features/dashboard/domin/entities/dashboard_students_summary_entity.dart';
+import 'package:alwaleed_admin/features/dashboard/domin/use_cases/get_dashboard_students_summary_use_case.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'home_dashboard_state.dart';

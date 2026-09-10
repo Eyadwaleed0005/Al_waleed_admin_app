@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/core/widgets/app_error_widget.dart';
-import 'package:alwaleed_admain/features/result_student/presentation/cubit/student_exam_results_cubit.dart';
+import 'package:alwaleed_admin/core/widgets/app_error_widget.dart';
+import 'package:alwaleed_admin/features/result_student/presentation/cubit/student_exam_results_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

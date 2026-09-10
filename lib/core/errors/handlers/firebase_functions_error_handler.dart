@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 abstract final class FirebaseFunctionsErrorHandler {

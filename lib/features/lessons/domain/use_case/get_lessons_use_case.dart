@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/features/lessons/domain/entities/lesson_entity.dart';
-import 'package:alwaleed_admain/features/lessons/domain/repositories/lessons_repository.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/features/lessons/domain/entities/lesson_entity.dart';
+import 'package:alwaleed_admin/features/lessons/domain/repositories/lessons_repository.dart';
 import 'package:dartz/dartz.dart';
 
 class GetLessonsUseCase {

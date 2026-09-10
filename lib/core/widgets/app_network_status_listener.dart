@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:alwaleed_admain/app/routes/app_route_observer.dart';
-import 'package:alwaleed_admain/app/routes/route_names.dart';
-import 'package:alwaleed_admain/core/connection/cubit/network_status_cubit.dart';
+import 'package:alwaleed_admin/app/routes/app_route_observer.dart';
+import 'package:alwaleed_admin/app/routes/route_names.dart';
+import 'package:alwaleed_admin/core/connection/cubit/network_status_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

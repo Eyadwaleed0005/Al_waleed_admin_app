@@ -1,16 +1,16 @@
-import 'package:alwaleed_admain/features/exams/data/models/exam_model.dart';
-import 'package:alwaleed_admain/features/exams/data/models/exam_question_model.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/core/validation_chain.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/handlers/create_exam_validation_handlers.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/handlers/create_question_validation_handlers.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/handlers/delete_question_validation_handlers.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/handlers/id_validation_handlers.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/handlers/image_validation_handlers.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/handlers/question_validation_handlers.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/handlers/update_exam_validation_handlers.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/handlers/update_question_validation_handlers.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/models/exams_validation_data.dart';
-import 'package:alwaleed_admain/features/exams/domain/exam_question_image_file.dart';
+import 'package:alwaleed_admin/features/exams/data/models/exam_model.dart';
+import 'package:alwaleed_admin/features/exams/data/models/exam_question_model.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/core/validation_chain.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/handlers/create_exam_validation_handlers.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/handlers/create_question_validation_handlers.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/handlers/delete_question_validation_handlers.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/handlers/id_validation_handlers.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/handlers/image_validation_handlers.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/handlers/question_validation_handlers.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/handlers/update_exam_validation_handlers.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/handlers/update_question_validation_handlers.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/models/exams_validation_data.dart';
+import 'package:alwaleed_admin/features/exams/domain/exam_question_image_file.dart';
 
 class ExamsDataValidator {
   const ExamsDataValidator();

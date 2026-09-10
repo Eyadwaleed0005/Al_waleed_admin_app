@@ -1,8 +1,8 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/core/helper/app_validator.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
-import 'package:alwaleed_admain/features/live_session/domain/entities/live_session_entity.dart';
-import 'package:alwaleed_admain/features/live_session/domain/entities/meeting_type.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/core/helper/app_validator.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/features/live_session/domain/entities/live_session_entity.dart';
+import 'package:alwaleed_admin/features/live_session/domain/entities/meeting_type.dart';
 
 enum LiveSessionStatus {
   initial,

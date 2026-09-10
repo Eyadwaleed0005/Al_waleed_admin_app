@@ -1,8 +1,8 @@
-import 'package:alwaleed_admain/core/connection/network/network_info.dart';
-import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_collections.dart';
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_fields.dart';
-import 'package:alwaleed_admain/core/firebase/firestore/firestore_service.dart';
+import 'package:alwaleed_admin/core/connection/network/network_info.dart';
+import 'package:alwaleed_admin/core/errors/handlers/firebase_error_handler.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_collections.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_fields.dart';
+import 'package:alwaleed_admin/core/firebase/firestore/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/live_session_model.dart';

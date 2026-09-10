@@ -1,13 +1,13 @@
-import 'package:alwaleed_admain/app/routes/route_names.dart';
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/widgets/custom_button.dart';
-import 'package:alwaleed_admain/core/widgets/custom_delete_button.dart';
-import 'package:alwaleed_admain/core/widgets/custom_delete_confirmation_bottom_sheet.dart';
-import 'package:alwaleed_admain/core/widgets/custom_secondary_button.dart';
-import 'package:alwaleed_admain/features/students/presentation/cubit/update_student_cubit.dart';
-import 'package:alwaleed_admain/features/students/presentation/cubit/update_student_state.dart';
-import 'package:alwaleed_admain/features/students/presentation/widgets/view_student_exams_button.dart';
+import 'package:alwaleed_admin/app/routes/route_names.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/widgets/custom_button.dart';
+import 'package:alwaleed_admin/core/widgets/custom_delete_button.dart';
+import 'package:alwaleed_admin/core/widgets/custom_delete_confirmation_bottom_sheet.dart';
+import 'package:alwaleed_admin/core/widgets/custom_secondary_button.dart';
+import 'package:alwaleed_admin/features/students/presentation/cubit/update_student_cubit.dart';
+import 'package:alwaleed_admin/features/students/presentation/cubit/update_student_state.dart';
+import 'package:alwaleed_admin/features/students/presentation/widgets/view_student_exams_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,7 +18,8 @@ class UpdateStudentActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<UpdateStudentCubit, UpdateStudentState>(
       buildWhen: (previous, current) {
-        return previous.status != current.status;
+        return previous.status != current.status ||
+            previous.hasChanges != current.hasChanges;
       },
       builder: (context, state) {
         final UpdateStudentCubit cubit = context.read<UpdateStudentCubit>();
@@ -36,7 +37,7 @@ class UpdateStudentActions extends StatelessWidget {
                       text: 'حفظ التعديلات',
                       onPressed: cubit.submit,
                       isLoading: state.isSubmitting,
-                      isEnabled: !state.isBusy,
+                      isEnabled: !state.isBusy && state.hasChanges,
                     ),
                   ),
                   horizontalSpace(12),
@@ -86,15 +87,15 @@ class UpdateStudentActions extends StatelessWidget {
                       isLoading: state.isDeleting,
                       isEnabled: !state.isBusy,
                       onPressed: () async {
-                        final bool
-                        confirmed = await showCustomDeleteConfirmationBottomSheet(
-                          context,
-                          title: 'حذف الطالب؟',
-                          message:
-                              'هل أنت متأكد من حذف حساب الطالب؟ لا يمكن التراجع عن هذه العملية.',
-                          confirmText: 'حذف الطالب',
-                          cancelText: 'إلغاء',
-                        );
+                        final confirmed =
+                            await showCustomDeleteConfirmationBottomSheet(
+                              context,
+                              title: 'حذف الطالب؟',
+                              message:
+                                  'هل أنت متأكد من حذف حساب الطالب؟ لا يمكن التراجع عن هذه العملية.',
+                              confirmText: 'حذف الطالب',
+                              cancelText: 'إلغاء',
+                            );
 
                         if (!confirmed || !context.mounted) {
                           return;

@@ -1,14 +1,14 @@
-import 'package:alwaleed_admain/app/routes/app_images_routes.dart';
-import 'package:alwaleed_admain/core/helper/app_system_ui.dart';
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/widgets/app_network_aware_content.dart';
-import 'package:alwaleed_admain/core/widgets/app_refresh_indicator.dart';
-import 'package:alwaleed_admain/core/widgets/backgrounds/live_session_background.dart';
-import 'package:alwaleed_admain/core/widgets/custom_header_bar.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/cubit/live_session_cubit.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/widgets/live_session_body.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/widgets/live_session_feedback_listener.dart';
+import 'package:alwaleed_admin/app/routes/app_images_routes.dart';
+import 'package:alwaleed_admin/core/helper/app_system_ui.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/widgets/app_network_aware_content.dart';
+import 'package:alwaleed_admin/core/widgets/app_refresh_indicator.dart';
+import 'package:alwaleed_admin/core/widgets/backgrounds/live_session_background.dart';
+import 'package:alwaleed_admin/core/widgets/custom_header_bar.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/cubit/live_session_cubit.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/widgets/live_session_body.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/widgets/live_session_feedback_listener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +22,7 @@ class LiveSessionScreen extends StatelessWidget {
     final cubit = context.read<LiveSessionCubit>();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: AppSystemUi.light(),
+      value: AppSystemUi.dark(),
       child: Scaffold(
         body: LiveSessionBackground(
           child: SafeArea(

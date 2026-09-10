@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/features/exams/presentation/validation/add_exam_validation_handler.dart';
+import 'package:alwaleed_admin/features/exams/presentation/validation/add_exam_validation_handler.dart';
 
 class ExamDurationValidation
     extends AddExamValidationHandler {

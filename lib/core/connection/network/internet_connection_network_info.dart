@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/core/connection/network/network_info.dart';
+import 'package:alwaleed_admin/core/connection/network/network_info.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 class InternetConnectionNetworkInfo implements NetworkInfo {

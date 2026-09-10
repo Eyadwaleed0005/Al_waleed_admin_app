@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
-import 'package:alwaleed_admain/features/students/domain/entities/student_entity.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/features/students/domain/entities/student_entity.dart';
 
 enum UpdateStudentStatus {
   initial,
@@ -35,21 +35,22 @@ class UpdateStudentState {
     this.subscriptionStartDate,
     this.subscriptionEndDate,
     this.hasGeneratedPassword = false,
+    this.hasChanges = false,
     this.error,
   });
 
   final UpdateStudentStatus status;
-
   final StudentEntity? student;
-
   final List<GradeEntity> grades;
-
   final String? selectedGradeId;
 
   final DateTime? subscriptionStartDate;
   final DateTime? subscriptionEndDate;
 
   final bool hasGeneratedPassword;
+
+  /// هل توجد تعديلات لم يتم حفظها؟
+  final bool hasChanges;
 
   final AppErrorModel? error;
 
@@ -115,6 +116,7 @@ class UpdateStudentState {
     DateTime? subscriptionEndDate,
     bool clearSubscriptionEndDate = false,
     bool? hasGeneratedPassword,
+    bool? hasChanges,
     AppErrorModel? error,
     bool clearError = false,
   }) {
@@ -131,8 +133,8 @@ class UpdateStudentState {
       subscriptionEndDate: clearSubscriptionEndDate
           ? null
           : subscriptionEndDate ?? this.subscriptionEndDate,
-      hasGeneratedPassword:
-          hasGeneratedPassword ?? this.hasGeneratedPassword,
+      hasGeneratedPassword: hasGeneratedPassword ?? this.hasGeneratedPassword,
+      hasChanges: hasChanges ?? this.hasChanges,
       error: clearError ? null : error ?? this.error,
     );
   }

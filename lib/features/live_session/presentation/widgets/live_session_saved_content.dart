@@ -1,7 +1,7 @@
-import 'package:alwaleed_admain/core/widgets/custom_delete_confirmation_bottom_sheet.dart';
-import 'package:alwaleed_admain/features/live_session/domain/entities/live_session_entity.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/cubit/live_session_cubit.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/widgets/live_session_details_card.dart';
+import 'package:alwaleed_admin/core/widgets/custom_delete_confirmation_bottom_sheet.dart';
+import 'package:alwaleed_admin/features/live_session/domain/entities/live_session_entity.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/cubit/live_session_cubit.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/widgets/live_session_details_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

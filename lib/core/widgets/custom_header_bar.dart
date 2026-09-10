@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/core/style/textstyles.dart';
+import 'package:alwaleed_admin/core/style/textstyles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

@@ -1,10 +1,10 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/core/errors/exceptions/firebase_remote_exception.dart';
-import 'package:alwaleed_admain/features/dashboard/data/data_sources/cache/dashboard_local_data_source.dart';
-import 'package:alwaleed_admain/features/dashboard/data/data_sources/remotely_data_base/dashboard_remote_data_source.dart';
-import 'package:alwaleed_admain/features/dashboard/data/models/dashboard_students_summary_model.dart';
-import 'package:alwaleed_admain/features/dashboard/domin/entities/dashboard_students_summary_entity.dart';
-import 'package:alwaleed_admain/features/dashboard/domin/repositories/dashboard_repository.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/core/errors/exceptions/firebase_remote_exception.dart';
+import 'package:alwaleed_admin/features/dashboard/data/data_sources/cache/dashboard_local_data_source.dart';
+import 'package:alwaleed_admin/features/dashboard/data/data_sources/remotely_data_base/dashboard_remote_data_source.dart';
+import 'package:alwaleed_admin/features/dashboard/data/models/dashboard_students_summary_model.dart';
+import 'package:alwaleed_admin/features/dashboard/domin/entities/dashboard_students_summary_entity.dart';
+import 'package:alwaleed_admin/features/dashboard/domin/repositories/dashboard_repository.dart';
 import 'package:dartz/dartz.dart';
 
 class DashboardRepositoryImpl implements DashboardRepository {

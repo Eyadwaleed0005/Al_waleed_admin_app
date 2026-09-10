@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_question_entity.dart';
-import 'package:alwaleed_admain/features/exams/domain/exam_question_image_file.dart';
-import 'package:alwaleed_admain/features/exams/presentation/widgets/exam_questions_screen_widgets/exam_question_card.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_question_entity.dart';
+import 'package:alwaleed_admin/features/exams/domain/exam_question_image_file.dart';
+import 'package:alwaleed_admin/features/exams/presentation/widgets/exam_questions_screen_widgets/exam_question_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

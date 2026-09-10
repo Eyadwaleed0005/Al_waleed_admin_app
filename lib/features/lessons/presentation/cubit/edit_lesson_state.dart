@@ -1,7 +1,7 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/core/helper/app_validator.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
-import 'package:alwaleed_admain/features/lessons/domain/entities/lesson_entity.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/core/helper/app_validator.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/features/lessons/domain/entities/lesson_entity.dart';
 
 enum EditLessonPageStatus { initial, loading, ready, failure }
 

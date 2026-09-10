@@ -1,4 +1,4 @@
-import 'package:alwaleed_admain/features/grades/data/models/grade_model.dart';
+import 'package:alwaleed_admin/features/grades/data/models/grade_model.dart';
 
 abstract interface class GradesRemoteDataSource {
   Future<List<GradeModel>> getGrades({

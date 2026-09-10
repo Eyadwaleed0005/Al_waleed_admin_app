@@ -1,19 +1,19 @@
-import 'package:alwaleed_admain/app/routes/app_images_routes.dart';
-import 'package:alwaleed_admain/app/routes/route_names.dart';
-import 'package:alwaleed_admain/core/helper/app_system_ui.dart';
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/style/app_color.dart';
-import 'package:alwaleed_admain/core/widgets/app_loading_indicator.dart';
-import 'package:alwaleed_admain/core/widgets/app_network_aware_content.dart';
-import 'package:alwaleed_admain/core/widgets/app_refresh_indicator.dart';
-import 'package:alwaleed_admain/core/widgets/backgrounds/background_student_feature.dart';
-import 'package:alwaleed_admain/core/widgets/custom_header_bar.dart';
-import 'package:alwaleed_admain/features/dashboard/presentation/cubit/home_dashboard_cubit.dart';
-import 'package:alwaleed_admain/features/dashboard/presentation/cubit/home_dashboard_state.dart';
-import 'package:alwaleed_admain/features/dashboard/presentation/widgets/quick_actions_section.dart';
-import 'package:alwaleed_admain/features/dashboard/presentation/widgets/students_overview_cards.dart';
-import 'package:alwaleed_admain/features/dashboard/presentation/widgets/welcome_card.dart';
+import 'package:alwaleed_admin/app/routes/app_images_routes.dart';
+import 'package:alwaleed_admin/app/routes/route_names.dart';
+import 'package:alwaleed_admin/core/helper/app_system_ui.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/style/app_color.dart';
+import 'package:alwaleed_admin/core/widgets/app_loading_indicator.dart';
+import 'package:alwaleed_admin/core/widgets/app_network_aware_content.dart';
+import 'package:alwaleed_admin/core/widgets/app_refresh_indicator.dart';
+import 'package:alwaleed_admin/core/widgets/backgrounds/background_student_feature.dart';
+import 'package:alwaleed_admin/core/widgets/custom_header_bar.dart';
+import 'package:alwaleed_admin/features/dashboard/presentation/cubit/home_dashboard_cubit.dart';
+import 'package:alwaleed_admin/features/dashboard/presentation/cubit/home_dashboard_state.dart';
+import 'package:alwaleed_admin/features/dashboard/presentation/widgets/quick_actions_section.dart';
+import 'package:alwaleed_admin/features/dashboard/presentation/widgets/students_overview_cards.dart';
+import 'package:alwaleed_admin/features/dashboard/presentation/widgets/welcome_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +25,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: AppSystemUi.light(),
+      value: AppSystemUi.dark(),
       child: Scaffold(
         backgroundColor: ColorPalette.background,
         body: BackgroundStudentFeature(
@@ -95,11 +95,21 @@ class HomeScreen extends StatelessWidget {
                               context,
                             ).pushNamed(RouteNames.addStudentScreen);
                           },
-                          onContentTap: () {},
-                          onExamsTap: () {},
-                          onLiveLinkTap: () {Navigator.of(
+                          onContentTap: () {
+                            Navigator.of(
                               context,
-                            ).pushNamed(RouteNames.liveSession);},
+                            ).pushNamed(RouteNames.addLessonScreen);
+                          },
+                          onExamsTap: () {
+                            Navigator.of(
+                              context,
+                            ).pushNamed(RouteNames.addExamScreen);
+                          },
+                          onNotesTap: () {
+                            Navigator.of(
+                              context,
+                            ).pushNamed(RouteNames.addNoteScreen);
+                          },
                         ),
                       ),
                     ],

@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_question_entity.dart';
-import 'package:alwaleed_admain/features/exams/domain/exam_question_image_file.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_question_entity.dart';
+import 'package:alwaleed_admin/features/exams/domain/exam_question_image_file.dart';
 
 class ExamQuestionDraftEntity {
   const ExamQuestionDraftEntity({

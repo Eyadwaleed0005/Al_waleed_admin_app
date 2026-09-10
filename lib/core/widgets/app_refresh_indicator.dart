@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:alwaleed_admain/core/connection/cubit/network_status_cubit.dart';
-import 'package:alwaleed_admain/core/connection/cubit/network_status_state.dart';
-import 'package:alwaleed_admain/core/style/app_color.dart';
+import 'package:alwaleed_admin/core/connection/cubit/network_status_cubit.dart';
+import 'package:alwaleed_admin/core/connection/cubit/network_status_state.dart';
+import 'package:alwaleed_admin/core/style/app_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

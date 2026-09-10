@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/features/live_session/presentation/widgets/live_session_welcome.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/features/live_session/presentation/widgets/live_session_welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

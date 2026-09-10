@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/features/exams/domain/entities/exam_question_entity.dart';
-import 'package:alwaleed_admain/features/exams/domain/exam_question_image_file.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/features/exams/domain/entities/exam_question_entity.dart';
+import 'package:alwaleed_admin/features/exams/domain/exam_question_image_file.dart';
 
 enum ExamQuestionsOperation {
   createExam,

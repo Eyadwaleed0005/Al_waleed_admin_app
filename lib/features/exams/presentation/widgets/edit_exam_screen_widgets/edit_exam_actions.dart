@@ -1,7 +1,7 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/widgets/custom_button.dart';
-import 'package:alwaleed_admain/core/widgets/custom_delete_button.dart';
-import 'package:alwaleed_admain/core/widgets/custom_secondary_button.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/widgets/custom_button.dart';
+import 'package:alwaleed_admin/core/widgets/custom_delete_button.dart';
+import 'package:alwaleed_admin/core/widgets/custom_secondary_button.dart';
 import 'package:flutter/material.dart';
 
 class EditExamActions extends StatelessWidget {
@@ -49,14 +49,19 @@ class EditExamActions extends StatelessWidget {
             isEnabled: isSaveChangesEnabled && !_isActionInProgress,
             onPressed: onSaveChangesPressed,
           ),
+
           verticalSpace(12),
+
           CustomSecondaryButton(
-            text: isClosingExam ? 'جارٍ إغلاق الاختبار...' : 'إغلاق الاختبار',
+            text: 'إغلاق الاختبار',
+            isLoading: isClosingExam,
             isEnabled: isCloseExamEnabled && !_isActionInProgress,
             onPressed: onCloseExamPressed,
           ),
+
           verticalSpace(12),
         ],
+
         CustomDeleteButton(
           text: 'حذف الاختبار',
           icon: Icons.delete_outline_rounded,

@@ -1,8 +1,8 @@
-import 'package:alwaleed_admain/core/errors/handlers/firebase_error_handler.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/core/validation_handler.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/exams_data_validator.dart';
-import 'package:alwaleed_admain/features/exams/data/validation/models/exams_validation_data.dart';
-import 'package:alwaleed_admain/features/exams/domain/exam_question_image_file.dart';
+import 'package:alwaleed_admin/core/errors/handlers/firebase_error_handler.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/core/validation_handler.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/exams_data_validator.dart';
+import 'package:alwaleed_admin/features/exams/data/validation/models/exams_validation_data.dart';
+import 'package:alwaleed_admin/features/exams/domain/exam_question_image_file.dart';
 
 class CreateQuestionExamIdHandler
     extends ValidationHandler<CreateQuestionValidationData> {

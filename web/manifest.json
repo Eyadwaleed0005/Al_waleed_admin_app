@@ -1,6 +1,6 @@
 {
-    "name": "alwaleed_admain",
-    "short_name": "alwaleed_admain",
+    "name": "alwaleed_admin",
+    "short_name": "alwaleed_admin",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

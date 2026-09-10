@@ -1,5 +1,5 @@
-import 'package:alwaleed_admain/core/widgets/custom_popup_menu_field.dart';
-import 'package:alwaleed_admain/features/grades/domain/entities/grade_entity.dart';
+import 'package:alwaleed_admin/core/widgets/custom_popup_menu_field.dart';
+import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
 import 'package:flutter/material.dart';
 
 class GradePopupMenuField extends StatelessWidget {

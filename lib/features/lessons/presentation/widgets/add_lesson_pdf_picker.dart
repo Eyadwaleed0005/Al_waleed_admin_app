@@ -1,10 +1,10 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_color.dart';
-import 'package:alwaleed_admain/core/style/textstyles.dart';
-import 'package:alwaleed_admain/core/widgets/app_loading_indicator.dart';
-import 'package:alwaleed_admain/core/widgets/app_toast.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/cubit/add_lesson_pdf_picker_cubit.dart';
-import 'package:alwaleed_admain/features/lessons/presentation/cubit/add_lesson_pdf_picker_state.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_color.dart';
+import 'package:alwaleed_admin/core/style/textstyles.dart';
+import 'package:alwaleed_admin/core/widgets/app_loading_indicator.dart';
+import 'package:alwaleed_admin/core/widgets/app_toast.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/cubit/add_lesson_pdf_picker_cubit.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/cubit/add_lesson_pdf_picker_state.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,6 @@
-import 'package:alwaleed_admain/app/routes/route_names.dart';
-import 'package:alwaleed_admain/features/app_startup/presentation/cubit/app_startup_cubit.dart';
-import 'package:alwaleed_admain/features/app_startup/presentation/screens/splash_screen.dart';
+import 'package:alwaleed_admin/app/routes/route_names.dart';
+import 'package:alwaleed_admin/features/app_startup/presentation/cubit/app_startup_cubit.dart';
+import 'package:alwaleed_admin/features/app_startup/presentation/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

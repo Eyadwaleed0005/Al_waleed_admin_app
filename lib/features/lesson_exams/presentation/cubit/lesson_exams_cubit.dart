@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:alwaleed_admain/core/errors/error_model/app_error_model.dart';
-import 'package:alwaleed_admain/features/lesson_exams/domain/entities/lesson_exam_entity.dart';
-import 'package:alwaleed_admain/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
-import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/delete_lesson_exam_question_use_case.dart';
-import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/save_lesson_exam_answers_use_case.dart';
-import 'package:alwaleed_admain/features/lesson_exams/domain/use_case/stream_lesson_exam_use_case.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/cubit/lesson_exams_state.dart';
+import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/entities/lesson_exam_entity.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/entities/lesson_exam_question_entity.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/use_case/delete_lesson_exam_question_use_case.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/use_case/save_lesson_exam_answers_use_case.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/use_case/stream_lesson_exam_use_case.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/cubit/lesson_exams_state.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

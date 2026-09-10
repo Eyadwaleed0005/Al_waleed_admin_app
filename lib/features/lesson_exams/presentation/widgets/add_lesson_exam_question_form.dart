@@ -1,11 +1,11 @@
-import 'package:alwaleed_admain/core/helper/app_validator.dart';
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/widgets/custom_button.dart';
-import 'package:alwaleed_admain/core/widgets/custom_text_form_field.dart';
-import 'package:alwaleed_admain/features/lesson_exams/domain/lesson_exam_question_image_file.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/lesson_exam_question_choices_fields.dart';
-import 'package:alwaleed_admain/features/lesson_exams/presentation/widgets/lesson_exam_question_image_picker.dart';
+import 'package:alwaleed_admin/core/helper/app_validator.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/widgets/custom_button.dart';
+import 'package:alwaleed_admin/core/widgets/custom_text_form_field.dart';
+import 'package:alwaleed_admin/features/lesson_exams/domain/lesson_exam_question_image_file.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/widgets/lesson_exam_question_choices_fields.dart';
+import 'package:alwaleed_admin/features/lesson_exams/presentation/widgets/lesson_exam_question_image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

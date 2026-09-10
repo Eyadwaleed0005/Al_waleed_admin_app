@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:alwaleed_admain/core/connection/network/network_info.dart';
-import 'package:alwaleed_admain/core/connection/cubit/network_status_state.dart';
+import 'package:alwaleed_admin/core/connection/network/network_info.dart';
+import 'package:alwaleed_admin/core/connection/cubit/network_status_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NetworkStatusCubit extends Cubit<NetworkStatusState> {

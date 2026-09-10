@@ -1,10 +1,10 @@
-import 'package:alwaleed_admain/core/helper/app_validator.dart';
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_animations.dart';
-import 'package:alwaleed_admain/core/widgets/custom_date_picker_field.dart';
-import 'package:alwaleed_admain/core/widgets/custom_form_field_error_text.dart';
-import 'package:alwaleed_admain/features/students/presentation/cubit/add_student_cubit.dart';
-import 'package:alwaleed_admain/features/students/presentation/cubit/add_student_state.dart';
+import 'package:alwaleed_admin/core/helper/app_validator.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_animations.dart';
+import 'package:alwaleed_admin/core/widgets/custom_date_picker_field.dart';
+import 'package:alwaleed_admin/core/widgets/custom_form_field_error_text.dart';
+import 'package:alwaleed_admin/features/students/presentation/cubit/add_student_cubit.dart';
+import 'package:alwaleed_admin/features/students/presentation/cubit/add_student_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

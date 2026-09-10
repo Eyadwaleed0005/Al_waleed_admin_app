@@ -1,7 +1,7 @@
-import 'package:alwaleed_admain/core/helper/spacer.dart';
-import 'package:alwaleed_admain/core/style/app_color.dart';
-import 'package:alwaleed_admain/core/style/textstyles.dart';
-import 'package:alwaleed_admain/features/dashboard/presentation/widgets/quick_action_card.dart';
+import 'package:alwaleed_admin/core/helper/spacer.dart';
+import 'package:alwaleed_admin/core/style/app_color.dart';
+import 'package:alwaleed_admin/core/style/textstyles.dart';
+import 'package:alwaleed_admin/features/dashboard/presentation/widgets/quick_action_card.dart';
 import 'package:flutter/material.dart';
 
 class QuickActionsSection extends StatelessWidget {
@@ -10,13 +10,13 @@ class QuickActionsSection extends StatelessWidget {
     required this.onStudentsTap,
     required this.onContentTap,
     required this.onExamsTap,
-    required this.onLiveLinkTap,
+    required this.onNotesTap,
   });
 
   final VoidCallback onStudentsTap;
   final VoidCallback onContentTap;
   final VoidCallback onExamsTap;
-  final VoidCallback onLiveLinkTap;
+  final VoidCallback onNotesTap;
 
   @override
   Widget build(BuildContext context) {
@@ -61,18 +61,18 @@ class QuickActionsSection extends StatelessWidget {
           children: [
             Expanded(
               child: QuickActionCard(
-                title: 'رابط البث',
-                icon: Icons.videocam_outlined,
+                title: 'إضافة مذاكرة',
+                icon: Icons.library_add_rounded,
                 backgroundColor: ColorPalette.background,
                 iconBackgroundColor: ColorPalette.primary,
-                onTap: onLiveLinkTap,
+                onTap: onNotesTap,
               ),
             ),
             horizontalSpace(12),
             Expanded(
               child: QuickActionCard(
                 title: 'إنشاء اختبار',
-               icon: Icons.done,
+                icon: Icons.done,
                 backgroundColor: ColorPalette.warning,
                 iconBackgroundColor: ColorPalette.warning,
                 onTap: onExamsTap,

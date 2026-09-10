@@ -1,9 +1,9 @@
-import 'package:alwaleed_admain/core/widgets/app_error_widget.dart';
-import 'package:alwaleed_admain/features/exams/presentation/cubit/exam_results_cubit.dart';
-import 'package:alwaleed_admain/features/exams/presentation/cubit/exam_results_state.dart';
-import 'package:alwaleed_admain/features/exams/presentation/widgets/exam_results_screen_widgets/exam_results_empty_view.dart';
-import 'package:alwaleed_admain/features/exams/presentation/widgets/exam_results_screen_widgets/exam_results_loading_skeleton.dart';
-import 'package:alwaleed_admain/features/exams/presentation/widgets/exam_results_screen_widgets/exam_results_success_view.dart';
+import 'package:alwaleed_admin/core/widgets/app_error_widget.dart';
+import 'package:alwaleed_admin/features/exams/presentation/cubit/exam_results_cubit.dart';
+import 'package:alwaleed_admin/features/exams/presentation/cubit/exam_results_state.dart';
+import 'package:alwaleed_admin/features/exams/presentation/widgets/exam_results_screen_widgets/exam_results_empty_view.dart';
+import 'package:alwaleed_admin/features/exams/presentation/widgets/exam_results_screen_widgets/exam_results_loading_skeleton.dart';
+import 'package:alwaleed_admin/features/exams/presentation/widgets/exam_results_screen_widgets/exam_results_success_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
