@@ -19,7 +19,7 @@ abstract class LessonsRepository {
 
   Future<Either<AppErrorModel, Unit>> createLesson({
     required LessonEntity lesson,
-    required String localPdfFilePath,
+    String? localPdfFilePath,
   });
 
   Future<Either<AppErrorModel, Unit>> updateLesson({

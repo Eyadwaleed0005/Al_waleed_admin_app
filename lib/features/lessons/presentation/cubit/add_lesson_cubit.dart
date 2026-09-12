@@ -50,37 +50,45 @@ class AddLessonCubit extends Cubit<AddLessonState> {
   }
 
   void changeTitle(String value) {
-    _updateForm((currentState) => currentState.copyWith(title: value));
+    _updateForm((currentState) {
+      return currentState.copyWith(title: value);
+    });
   }
 
   void changeSubtitle(String value) {
-    _updateForm((currentState) => currentState.copyWith(subtitle: value));
+    _updateForm((currentState) {
+      return currentState.copyWith(subtitle: value);
+    });
   }
 
   void changeYoutubeUrl(String value) {
-    _updateForm((currentState) => currentState.copyWith(youtubeUrl: value));
+    _updateForm((currentState) {
+      return currentState.copyWith(youtubeUrl: value);
+    });
   }
 
   void selectGrade(String gradeId) {
-    _updateForm(
-      (currentState) => currentState.copyWith(selectedGradeId: gradeId.trim()),
-    );
+    _updateForm((currentState) {
+      return currentState.copyWith(selectedGradeId: gradeId.trim());
+    });
   }
 
   void changePublicationStatus(bool isPublished) {
-    _updateForm(
-      (currentState) => currentState.copyWith(isPublished: isPublished),
-    );
+    _updateForm((currentState) {
+      return currentState.copyWith(isPublished: isPublished);
+    });
   }
 
   void selectPdf(AddLessonPdfFile pdfFile) {
-    _updateForm((currentState) => currentState.copyWith(selectedPdf: pdfFile));
+    _updateForm((currentState) {
+      return currentState.copyWith(selectedPdf: pdfFile);
+    });
   }
 
   void removePdf() {
-    _updateForm(
-      (currentState) => currentState.copyWith(clearSelectedPdf: true),
-    );
+    _updateForm((currentState) {
+      return currentState.copyWith(clearSelectedPdf: true);
+    });
   }
 
   void _updateForm(
@@ -109,10 +117,6 @@ class AddLessonCubit extends Cubit<AddLessonState> {
 
     final selectedPdf = currentState.selectedPdf;
 
-    if (selectedPdf == null) {
-      return;
-    }
-
     emit(
       currentState.copyWith(
         submissionStatus: AddLessonSubmissionStatus.loading,
@@ -120,20 +124,23 @@ class AddLessonCubit extends Cubit<AddLessonState> {
       ),
     );
 
+    final normalizedYoutubeUrl = currentState.youtubeUrl.trim();
+
     final lesson = LessonEntity(
       lessonId: _generateLessonId(),
       gradeId: currentState.selectedGradeId.trim(),
       title: currentState.title.trim(),
       subtitle: currentState.subtitle.trim(),
-      youtubeUrl: currentState.youtubeUrl.trim(),
-      pdfFileName: selectedPdf.name.trim(),
-      pdfFileSize: selectedPdf.sizeInBytes,
+      youtubeUrl: normalizedYoutubeUrl.isEmpty ? null : normalizedYoutubeUrl,
+      pdfFileName: selectedPdf?.name.trim(),
+      pdfFileSize: selectedPdf?.sizeInBytes,
+      pdfStoragePath: null,
       isPublished: currentState.isPublished,
     );
 
     final result = await _createLessonUseCase(
       lesson: lesson,
-      localPdfFilePath: selectedPdf.path,
+      localPdfFilePath: selectedPdf?.path.trim(),
     );
 
     if (isClosed) {
@@ -181,9 +188,9 @@ class AddLessonCubit extends Cubit<AddLessonState> {
 
     final availableGrades = List<GradeEntity>.unmodifiable(grades);
 
-    final selectedGradeExists = availableGrades.any(
-      (grade) => grade.gradeId == state.selectedGradeId,
-    );
+    final selectedGradeExists = availableGrades.any((grade) {
+      return grade.gradeId == state.selectedGradeId;
+    });
 
     emit(
       state.copyWith(
@@ -223,7 +230,6 @@ class AddLessonCubit extends Cubit<AddLessonState> {
 
   String _generateLessonId() {
     final timestamp = DateTime.now().toUtc().microsecondsSinceEpoch;
-
     return 'lesson_$timestamp';
   }
 

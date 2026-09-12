@@ -43,10 +43,10 @@ class LessonModel extends LessonEntity {
       gradeId: _readString(map[FirestoreFields.gradeId]),
       title: _readString(map[FirestoreFields.title]),
       subtitle: _readString(map[FirestoreFields.description]),
-      youtubeUrl: _readString(map[FirestoreFields.youtubeUrl]),
-      pdfFileName: _readString(map[FirestoreFields.pdfFileName]),
-      pdfFileSize: _readInt(map[FirestoreFields.pdfFileSize]),
-      pdfStoragePath: _readString(map[FirestoreFields.pdfStoragePath]),
+      youtubeUrl: _readNullableString(map[FirestoreFields.youtubeUrl]),
+      pdfFileName: _readNullableString(map[FirestoreFields.pdfFileName]),
+      pdfFileSize: _readNullablePositiveInt(map[FirestoreFields.pdfFileSize]),
+      pdfStoragePath: _readNullableString(map[FirestoreFields.pdfStoragePath]),
       isPublished: _readBool(map[FirestoreFields.isPublished]),
       createdAt: _readDateTime(map[FirestoreFields.createdAt]),
       updatedAt: _readDateTime(map[FirestoreFields.updatedAt]),
@@ -54,48 +54,84 @@ class LessonModel extends LessonEntity {
   }
 
   Map<String, dynamic> toCreateMap() {
-    return {
+    final map = <String, dynamic>{
       FirestoreFields.gradeId: gradeId.trim(),
       FirestoreFields.title: title.trim(),
       FirestoreFields.description: subtitle.trim(),
       FirestoreFields.youtubeUrl: youtubeUrl?.trim() ?? '',
-      FirestoreFields.pdfFileName: pdfFileName?.trim() ?? '',
-      FirestoreFields.pdfFileSize: pdfFileSize ?? 0,
-      FirestoreFields.pdfStoragePath: pdfStoragePath?.trim() ?? '',
       FirestoreFields.isPublished: isPublished,
       FirestoreFields.createdAt: FieldValue.serverTimestamp(),
       FirestoreFields.updatedAt: FieldValue.serverTimestamp(),
     };
+
+    _addPdfFieldsIfAvailable(map);
+
+    return map;
   }
 
   Map<String, dynamic> toUpdateMap() {
-    return {
+    final map = <String, dynamic>{
       FirestoreFields.gradeId: gradeId.trim(),
       FirestoreFields.title: title.trim(),
       FirestoreFields.description: subtitle.trim(),
       FirestoreFields.youtubeUrl: youtubeUrl?.trim() ?? '',
-      FirestoreFields.pdfFileName: pdfFileName?.trim() ?? '',
-      FirestoreFields.pdfFileSize: pdfFileSize ?? 0,
-      FirestoreFields.pdfStoragePath: pdfStoragePath?.trim() ?? '',
       FirestoreFields.isPublished: isPublished,
       FirestoreFields.updatedAt: FieldValue.serverTimestamp(),
     };
+
+    _addPdfFieldsIfAvailable(map);
+
+    return map;
+  }
+
+  void _addPdfFieldsIfAvailable(Map<String, dynamic> map) {
+    final normalizedStoragePath = pdfStoragePath?.trim();
+    final normalizedFileName = pdfFileName?.trim();
+    final normalizedFileSize = pdfFileSize;
+
+    final hasValidPdf =
+        normalizedStoragePath != null &&
+        normalizedStoragePath.isNotEmpty &&
+        normalizedFileName != null &&
+        normalizedFileName.isNotEmpty &&
+        normalizedFileSize != null &&
+        normalizedFileSize > 0;
+
+    if (!hasValidPdf) {
+      return;
+    }
+
+    map[FirestoreFields.pdfFileName] = normalizedFileName;
+    map[FirestoreFields.pdfFileSize] = normalizedFileSize;
+    map[FirestoreFields.pdfStoragePath] = normalizedStoragePath;
   }
 
   static String _readString(dynamic value) {
     return value is String ? value.trim() : '';
   }
 
-  static int _readInt(dynamic value) {
-    if (value is int) {
-      return value;
+  static String? _readNullableString(dynamic value) {
+    if (value is! String) {
+      return null;
     }
 
-    if (value is num) {
-      return value.toInt();
+    final normalizedValue = value.trim();
+
+    return normalizedValue.isEmpty ? null : normalizedValue;
+  }
+
+  static int? _readNullablePositiveInt(dynamic value) {
+    final intValue = value is int
+        ? value
+        : value is num
+        ? value.toInt()
+        : null;
+
+    if (intValue == null || intValue <= 0) {
+      return null;
     }
 
-    return 0;
+    return intValue;
   }
 
   static bool _readBool(dynamic value) {
@@ -114,6 +150,7 @@ class LessonModel extends LessonEntity {
     if (value is String) {
       return DateTime.tryParse(value);
     }
+
     return null;
   }
 }

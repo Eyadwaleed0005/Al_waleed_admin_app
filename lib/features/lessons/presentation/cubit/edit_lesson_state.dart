@@ -25,6 +25,10 @@ class EditLessonPdfFile {
   final String name;
   final String path;
   final int sizeInBytes;
+
+  bool get isValid {
+    return name.trim().isNotEmpty && path.trim().isNotEmpty && sizeInBytes > 0;
+  }
 }
 
 class EditLessonState {
@@ -129,7 +133,9 @@ class EditLessonState {
 
     final fileName = currentLesson.pdfFileName?.trim() ?? '';
 
-    return storagePath.isNotEmpty && fileName.isNotEmpty;
+    final fileSize = currentLesson.pdfFileSize ?? 0;
+
+    return storagePath.isNotEmpty && fileName.isNotEmpty && fileSize > 0;
   }
 
   String get displayedPdfFileName {
@@ -153,13 +159,34 @@ class EditLessonState {
   }
 
   bool get hasValidSelectedGrade {
-    final gradeValidationError = AppValidator.grade(selectedGradeId);
+    final normalizedGradeId = selectedGradeId.trim();
+
+    final gradeValidationError = AppValidator.grade(normalizedGradeId);
 
     if (gradeValidationError != null) {
       return false;
     }
 
-    return grades.any((grade) => grade.gradeId == selectedGradeId.trim());
+    return grades.any((grade) => grade.gradeId == normalizedGradeId);
+  }
+  bool get hasValidReplacementPdf {
+    final file = replacementPdf;
+
+    if (file == null) {
+      return true;
+    }
+
+    if (!file.isValid) {
+      return false;
+    }
+
+    return AppValidator.lessonPdfFile(
+          fileName: file.name,
+          extension: null,
+          sizeInBytes: file.sizeInBytes,
+          path: file.path,
+        ) ==
+        null;
   }
 
   bool get hasChanges {
@@ -184,7 +211,7 @@ class EditLessonState {
         hasValidSubtitle &&
         hasValidYoutubeUrl &&
         hasValidSelectedGrade &&
-        hasCurrentPdf;
+        hasValidReplacementPdf;
   }
 
   bool get canUpdate {

@@ -54,7 +54,7 @@ class LessonsRepositoryImpl implements LessonsRepository {
   @override
   Future<Either<AppErrorModel, Unit>> createLesson({
     required LessonEntity lesson,
-    required String localPdfFilePath,
+    String? localPdfFilePath,
   }) {
     return _execute<Unit>(() async {
       final lessonModel = LessonModel.fromEntity(lesson);

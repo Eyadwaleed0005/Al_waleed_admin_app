@@ -4,9 +4,8 @@ import 'package:alwaleed_admin/features/lessons/domain/repositories/lessons_repo
 import 'package:dartz/dartz.dart';
 
 class UpdateLessonUseCase {
-  const UpdateLessonUseCase({
-    required LessonsRepository repository,
-  }) : _repository = repository;
+  const UpdateLessonUseCase({required LessonsRepository repository})
+    : _repository = repository;
 
   final LessonsRepository _repository;
 

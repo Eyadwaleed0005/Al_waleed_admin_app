@@ -53,7 +53,6 @@ class EditLessonCubit extends Cubit<EditLessonState> {
 
     try {
       await _cancelSubscriptions();
-
       _resetLoadedData();
 
       if (isClosed) {
@@ -75,27 +74,33 @@ class EditLessonCubit extends Cubit<EditLessonState> {
   Future<void> retry() => initialize();
 
   void changeTitle(String value) {
-    _updateForm((currentState) => currentState.copyWith(title: value));
+    _updateForm((currentState) {
+      return currentState.copyWith(title: value);
+    });
   }
 
   void changeSubtitle(String value) {
-    _updateForm((currentState) => currentState.copyWith(subtitle: value));
+    _updateForm((currentState) {
+      return currentState.copyWith(subtitle: value);
+    });
   }
 
   void changeYoutubeUrl(String value) {
-    _updateForm((currentState) => currentState.copyWith(youtubeUrl: value));
+    _updateForm((currentState) {
+      return currentState.copyWith(youtubeUrl: value);
+    });
   }
 
   void selectGrade(String gradeId) {
-    _updateForm(
-      (currentState) => currentState.copyWith(selectedGradeId: gradeId.trim()),
-    );
+    _updateForm((currentState) {
+      return currentState.copyWith(selectedGradeId: gradeId.trim());
+    });
   }
 
   void changePublicationStatus(bool isPublished) {
-    _updateForm(
-      (currentState) => currentState.copyWith(isPublished: isPublished),
-    );
+    _updateForm((currentState) {
+      return currentState.copyWith(isPublished: isPublished);
+    });
   }
 
   void selectReplacementPdf(EditLessonPdfFile file) {
@@ -103,32 +108,35 @@ class EditLessonCubit extends Cubit<EditLessonState> {
       return;
     }
 
+    final normalizedName = file.name.trim();
+    final normalizedPath = file.path.trim();
+
     final validationError = AppValidator.lessonPdfFile(
-      fileName: file.name,
+      fileName: normalizedName,
       extension: null,
       sizeInBytes: file.sizeInBytes,
-      path: file.path,
+      path: normalizedPath,
     );
 
     if (validationError != null) {
       return;
     }
 
-    _updateForm(
-      (currentState) => currentState.copyWith(
+    _updateForm((currentState) {
+      return currentState.copyWith(
         replacementPdf: EditLessonPdfFile(
-          name: file.name.trim(),
-          path: file.path.trim(),
+          name: normalizedName,
+          path: normalizedPath,
           sizeInBytes: file.sizeInBytes,
         ),
-      ),
-    );
+      );
+    });
   }
 
   void removeReplacementPdf() {
-    _updateForm(
-      (currentState) => currentState.copyWith(clearReplacementPdf: true),
-    );
+    _updateForm((currentState) {
+      return currentState.copyWith(clearReplacementPdf: true);
+    });
   }
 
   void _updateForm(
@@ -167,12 +175,14 @@ class EditLessonCubit extends Cubit<EditLessonState> {
 
     final replacementPdf = currentState.replacementPdf;
 
+    final normalizedYoutubeUrl = currentState.youtubeUrl.trim();
+
     final updatedLesson = LessonEntity(
       lessonId: currentLesson.lessonId,
       gradeId: currentState.selectedGradeId.trim(),
       title: currentState.title.trim(),
       subtitle: currentState.subtitle.trim(),
-      youtubeUrl: currentState.youtubeUrl.trim(),
+      youtubeUrl: normalizedYoutubeUrl.isEmpty ? null : normalizedYoutubeUrl,
       pdfStoragePath: currentLesson.pdfStoragePath,
       pdfFileName: replacementPdf?.name ?? currentLesson.pdfFileName,
       pdfFileSize: replacementPdf?.sizeInBytes ?? currentLesson.pdfFileSize,
@@ -328,6 +338,7 @@ class EditLessonCubit extends Cubit<EditLessonState> {
     }
 
     _grades = List<GradeEntity>.unmodifiable(grades);
+
     _hasLoadedGrades = true;
 
     _emitReadyIfPossible();

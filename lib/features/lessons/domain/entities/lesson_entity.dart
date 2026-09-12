@@ -13,16 +13,12 @@ class LessonEntity {
 
   final String lessonId;
   final String gradeId;
-
   final String title;
   final String subtitle;
-
   final String? youtubeUrl;
-
   final String? pdfFileName;
   final int? pdfFileSize;
   final String? pdfStoragePath;
-
   final bool isPublished;
 
   bool get hasYoutubeVideo {
