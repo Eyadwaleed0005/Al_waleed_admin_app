@@ -4,15 +4,14 @@ import 'package:alwaleed_admin/features/lessons/domain/repositories/lessons_repo
 import 'package:dartz/dartz.dart';
 
 class CreateLessonUseCase {
-  const CreateLessonUseCase({
-    required LessonsRepository repository,
-  }) : _repository = repository;
+  const CreateLessonUseCase({required LessonsRepository repository})
+    : _repository = repository;
 
   final LessonsRepository _repository;
 
   Future<Either<AppErrorModel, Unit>> call({
     required LessonEntity lesson,
-    required String localPdfFilePath,
+    String? localPdfFilePath,
   }) {
     return _repository.createLesson(
       lesson: lesson,

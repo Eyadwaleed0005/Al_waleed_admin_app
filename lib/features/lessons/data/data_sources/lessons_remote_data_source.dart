@@ -9,7 +9,7 @@ abstract class LessonsRemoteDataSource {
 
   Future<void> createLesson({
     required LessonModel lesson,
-    required String localPdfFilePath,
+    String? localPdfFilePath,
   });
 
   Future<void> updateLesson({

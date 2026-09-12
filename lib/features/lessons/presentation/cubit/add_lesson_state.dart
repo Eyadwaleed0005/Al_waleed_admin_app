@@ -2,19 +2,9 @@ import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
 import 'package:alwaleed_admin/core/helper/app_validator.dart';
 import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
 
-enum AddLessonPageStatus {
-  initial,
-  loading,
-  ready,
-  failure,
-}
+enum AddLessonPageStatus { initial, loading, ready, failure }
 
-enum AddLessonSubmissionStatus {
-  idle,
-  loading,
-  success,
-  failure,
-}
+enum AddLessonSubmissionStatus { idle, loading, success, failure }
 
 class AddLessonPdfFile {
   const AddLessonPdfFile({
@@ -26,6 +16,10 @@ class AddLessonPdfFile {
   final String name;
   final String path;
   final int sizeInBytes;
+
+  bool get isValid {
+    return name.trim().isNotEmpty && path.trim().isNotEmpty && sizeInBytes > 0;
+  }
 }
 
 class AddLessonState {
@@ -118,8 +112,14 @@ class AddLessonState {
     return AppValidator.grade(selectedGradeId) == null;
   }
 
+  /// الـPDF اختياري، لكن إذا اختاره المستخدم
+  /// لازم يكون الملف صالحًا.
   bool get hasValidPdf {
-    return AppValidator.lessonPdf(selectedPdf) == null;
+    if (selectedPdf == null) {
+      return true;
+    }
+
+    return selectedPdf!.isValid && AppValidator.lessonPdf(selectedPdf) == null;
   }
 
   bool get canSubmit {
@@ -155,9 +155,7 @@ class AddLessonState {
       youtubeUrl: youtubeUrl ?? this.youtubeUrl,
       selectedGradeId: selectedGradeId ?? this.selectedGradeId,
       isPublished: isPublished ?? this.isPublished,
-      selectedPdf: clearSelectedPdf
-          ? null
-          : selectedPdf ?? this.selectedPdf,
+      selectedPdf: clearSelectedPdf ? null : selectedPdf ?? this.selectedPdf,
       error: clearError ? null : error ?? this.error,
     );
   }

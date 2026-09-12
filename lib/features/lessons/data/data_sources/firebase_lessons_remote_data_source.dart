@@ -63,12 +63,25 @@ class FirebaseLessonsRemoteDataSource implements LessonsRemoteDataSource {
   @override
   Future<void> createLesson({
     required LessonModel lesson,
-    required String localPdfFilePath,
+    String? localPdfFilePath,
   }) {
     return FirebaseErrorHandler.execute(() async {
       final lessonId = lesson.lessonId.trim();
-      final localPath = localPdfFilePath.trim();
-      final pdfFileName = lesson.pdfFileName?.trim() ?? '';
+      final localPath = localPdfFilePath?.trim();
+
+      final hasPdfFile = localPath != null && localPath.isNotEmpty;
+
+      if (!hasPdfFile) {
+        await _firestoreService.postData(
+          collectionPath: FirestoreCollections.lessons,
+          documentId: lessonId,
+          data: lesson.toCreateMap(),
+        );
+
+        return;
+      }
+
+      final pdfFileName = lesson.pdfFileName?.trim() ?? 'lesson.pdf';
 
       final newStoragePath = _buildPdfStoragePath(lessonId: lessonId);
 
@@ -141,7 +154,7 @@ class FirebaseLessonsRemoteDataSource implements LessonsRemoteDataSource {
         return;
       }
 
-      final newPdfFileName = lesson.pdfFileName?.trim() ?? '';
+      final newPdfFileName = lesson.pdfFileName?.trim() ?? 'lesson.pdf';
 
       final newStoragePath = _buildPdfStoragePath(lessonId: lessonId);
 
@@ -334,6 +347,7 @@ class FirebaseLessonsRemoteDataSource implements LessonsRemoteDataSource {
       if (dateComparison != 0) {
         return dateComparison;
       }
+
       return first.title.compareTo(second.title);
     });
 
