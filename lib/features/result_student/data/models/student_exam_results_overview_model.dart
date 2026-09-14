@@ -11,12 +11,16 @@ class StudentExamResultsOverviewModel extends StudentExamResultsOverviewEntity {
     required super.studentGradeId,
     required super.studentGradeName,
     required super.isStudentAccountActive,
+    required super.completedExamsCount,
+    required super.totalExamsCount,
     required super.studentExamResults,
   });
 
   factory StudentExamResultsOverviewModel.fromFirestoreStudentDocument({
     required DocumentSnapshot<Map<String, dynamic>> studentDocument,
     required String studentGradeName,
+    required int completedExamsCount,
+    required int totalExamsCount,
     required List<StudentExamResultModel> studentExamResultModels,
   }) {
     final Map<String, dynamic> studentData =
@@ -31,6 +35,8 @@ class StudentExamResultsOverviewModel extends StudentExamResultsOverviewEntity {
       studentGradeName: studentGradeName,
       isStudentAccountActive:
           studentData[FirestoreFields.isActive] as bool? ?? false,
+      completedExamsCount: completedExamsCount,
+      totalExamsCount: totalExamsCount,
       studentExamResults: List.unmodifiable(studentExamResultModels),
     );
   }
