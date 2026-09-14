@@ -61,9 +61,7 @@ class _EditLessonContentState extends State<EditLessonContent> {
 
     if (oldLessonId != newLessonId) {
       _titleController.text = widget.state.title;
-
       _subtitleController.text = widget.state.subtitle;
-
       _youtubeUrlController.text = widget.state.youtubeUrl;
     }
   }
@@ -165,12 +163,21 @@ class _EditLessonContentState extends State<EditLessonContent> {
             verticalSpace(20),
             AppAnimations.formFieldEntrance(
               order: 4,
-              child: EditLessonPdfPicker(
-                existingFileName: lesson.pdfFileName?.trim() ?? '',
-                existingFileSize: lesson.pdfFileSize ?? 0,
-                replacementPdf: state.replacementPdf,
-                onReplacementSelected: cubit.selectReplacementPdf,
-                onReplacementRemoved: cubit.removeReplacementPdf,
+              child: IgnorePointer(
+                ignoring: !fieldsEnabled,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: fieldsEnabled ? 1 : 0.6,
+                  child: EditLessonPdfPicker(
+                    existingFileName: lesson.pdfFileName?.trim() ?? '',
+                    existingFileSize: lesson.pdfFileSize ?? 0,
+                    replacementPdf: state.replacementPdf,
+                    isExistingPdfRemoved: state.shouldRemoveExistingPdf,
+                    onReplacementSelected: cubit.selectReplacementPdf,
+                    onReplacementRemoved: cubit.removeReplacementPdf,
+                    onExistingPdfRemoved: cubit.removeExistingPdf,
+                  ),
+                ),
               ),
             ),
             verticalSpace(20),

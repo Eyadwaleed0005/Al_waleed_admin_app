@@ -25,6 +25,7 @@ abstract class LessonsRepository {
   Future<Either<AppErrorModel, Unit>> updateLesson({
     required LessonEntity lesson,
     String? replacementPdfFilePath,
+    bool removeExistingPdf = false,
   });
 
   Future<Either<AppErrorModel, Unit>> deleteLesson({required String lessonId});

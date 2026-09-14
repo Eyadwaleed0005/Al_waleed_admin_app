@@ -15,17 +15,22 @@ class EditLessonPdfPicker extends StatefulWidget {
     required this.existingFileName,
     required this.existingFileSize,
     required this.replacementPdf,
+    required this.isExistingPdfRemoved,
     required this.onReplacementSelected,
     required this.onReplacementRemoved,
+    required this.onExistingPdfRemoved,
   });
 
   final String existingFileName;
   final int existingFileSize;
 
   final EditLessonPdfFile? replacementPdf;
+  final bool isExistingPdfRemoved;
 
   final ValueChanged<EditLessonPdfFile> onReplacementSelected;
+
   final VoidCallback onReplacementRemoved;
+  final VoidCallback onExistingPdfRemoved;
 
   @override
   State<EditLessonPdfPicker> createState() {
@@ -108,6 +113,7 @@ class _EditLessonPdfPickerState extends State<EditLessonPdfPicker> {
       );
 
       debugPrint('Edit lesson PDF picker error: $error');
+
       debugPrintStack(stackTrace: stackTrace);
     } finally {
       if (mounted) {
@@ -142,8 +148,13 @@ class _EditLessonPdfPickerState extends State<EditLessonPdfPicker> {
   @override
   Widget build(BuildContext context) {
     final replacementPdf = widget.replacementPdf;
+
     final existingFileName = widget.existingFileName.trim();
-    final hasExistingFile = existingFileName.isNotEmpty;
+
+    final hasExistingFile =
+        !widget.isExistingPdfRemoved &&
+        existingFileName.isNotEmpty &&
+        widget.existingFileSize > 0;
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
@@ -157,7 +168,7 @@ class _EditLessonPdfPickerState extends State<EditLessonPdfPicker> {
               fileName: replacementPdf.name,
               fileSize: _formatFileSize(replacementPdf.sizeInBytes),
               statusText: 'ملف جديد · اضغط للاستبدال',
-              showRemoveButton: true,
+              removeTooltip: 'إلغاء استبدال الملف',
               onTap: _pickPdfFile,
               onRemove: widget.onReplacementRemoved,
             )
@@ -167,8 +178,9 @@ class _EditLessonPdfPickerState extends State<EditLessonPdfPicker> {
               fileName: existingFileName,
               fileSize: _formatFileSize(widget.existingFileSize),
               statusText: 'الملف الحالي · اضغط للاستبدال',
-              showRemoveButton: false,
+              removeTooltip: 'حذف ملف PDF الحالي',
               onTap: _pickPdfFile,
+              onRemove: widget.onExistingPdfRemoved,
             )
           : _EmptyEditLessonPdfPicker(onTap: _pickPdfFile),
     );
@@ -254,19 +266,18 @@ class _EditLessonSelectedPdfPicker extends StatelessWidget {
     required this.fileName,
     required this.fileSize,
     required this.statusText,
-    required this.showRemoveButton,
+    required this.removeTooltip,
     required this.onTap,
-    this.onRemove,
+    required this.onRemove,
   });
 
   final String fileName;
   final String fileSize;
   final String statusText;
-
-  final bool showRemoveButton;
+  final String removeTooltip;
 
   final VoidCallback onTap;
-  final VoidCallback? onRemove;
+  final VoidCallback onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -334,34 +345,33 @@ class _EditLessonSelectedPdfPicker extends StatelessWidget {
                   ),
                 ),
               ),
-              if (showRemoveButton)
-                Positioned(
-                  top: 8.h,
-                  left: 8.w,
-                  child: Tooltip(
-                    message: 'إلغاء استبدال الملف',
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: onRemove,
-                        borderRadius: BorderRadius.circular(20.r),
-                        splashColor: ColorPalette.error.withValues(alpha: 0.10),
-                        highlightColor: ColorPalette.error.withValues(
-                          alpha: 0.08,
-                        ),
-                        child: SizedBox(
-                          width: 32.w,
-                          height: 32.w,
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 20.sp,
-                            color: ColorPalette.textSecondary,
-                          ),
+              Positioned(
+                top: 8.h,
+                left: 8.w,
+                child: Tooltip(
+                  message: removeTooltip,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: onRemove,
+                      borderRadius: BorderRadius.circular(20.r),
+                      splashColor: ColorPalette.error.withValues(alpha: 0.10),
+                      highlightColor: ColorPalette.error.withValues(
+                        alpha: 0.08,
+                      ),
+                      child: SizedBox(
+                        width: 32.w,
+                        height: 32.w,
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 20.sp,
+                          color: ColorPalette.error,
                         ),
                       ),
                     ),
                   ),
                 ),
+              ),
             ],
           ),
         ),

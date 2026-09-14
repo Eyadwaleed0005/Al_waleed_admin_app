@@ -71,7 +71,9 @@ class EditLessonCubit extends Cubit<EditLessonState> {
     }
   }
 
-  Future<void> retry() => initialize();
+  Future<void> retry() {
+    return initialize();
+  }
 
   void changeTitle(String value) {
     _updateForm((currentState) {
@@ -129,13 +131,30 @@ class EditLessonCubit extends Cubit<EditLessonState> {
           path: normalizedPath,
           sizeInBytes: file.sizeInBytes,
         ),
+        shouldRemoveExistingPdf: false,
       );
     });
   }
 
   void removeReplacementPdf() {
     _updateForm((currentState) {
-      return currentState.copyWith(clearReplacementPdf: true);
+      return currentState.copyWith(
+        clearReplacementPdf: true,
+        shouldRemoveExistingPdf: false,
+      );
+    });
+  }
+
+  void removeExistingPdf() {
+    if (!_canEditForm || !state.hasExistingPdf) {
+      return;
+    }
+
+    _updateForm((currentState) {
+      return currentState.copyWith(
+        clearReplacementPdf: true,
+        shouldRemoveExistingPdf: true,
+      );
     });
   }
 
@@ -175,6 +194,9 @@ class EditLessonCubit extends Cubit<EditLessonState> {
 
     final replacementPdf = currentState.replacementPdf;
 
+    final shouldRemoveExistingPdf =
+        currentState.shouldRemoveExistingPdf && replacementPdf == null;
+
     final normalizedYoutubeUrl = currentState.youtubeUrl.trim();
 
     final updatedLesson = LessonEntity(
@@ -183,9 +205,15 @@ class EditLessonCubit extends Cubit<EditLessonState> {
       title: currentState.title.trim(),
       subtitle: currentState.subtitle.trim(),
       youtubeUrl: normalizedYoutubeUrl.isEmpty ? null : normalizedYoutubeUrl,
-      pdfStoragePath: currentLesson.pdfStoragePath,
-      pdfFileName: replacementPdf?.name ?? currentLesson.pdfFileName,
-      pdfFileSize: replacementPdf?.sizeInBytes ?? currentLesson.pdfFileSize,
+      pdfStoragePath: shouldRemoveExistingPdf
+          ? null
+          : currentLesson.pdfStoragePath,
+      pdfFileName: shouldRemoveExistingPdf
+          ? null
+          : replacementPdf?.name ?? currentLesson.pdfFileName,
+      pdfFileSize: shouldRemoveExistingPdf
+          ? null
+          : replacementPdf?.sizeInBytes ?? currentLesson.pdfFileSize,
       isPublished: currentState.isPublished,
     );
 
@@ -199,6 +227,7 @@ class EditLessonCubit extends Cubit<EditLessonState> {
     final result = await _updateLessonUseCase(
       lesson: updatedLesson,
       replacementPdfFilePath: replacementPdf?.path,
+      removeExistingPdf: shouldRemoveExistingPdf,
     );
 
     if (isClosed) {
@@ -275,6 +304,7 @@ class EditLessonCubit extends Cubit<EditLessonState> {
         actionStatus: EditLessonActionStatus.updateSuccess,
         lesson: updatedLesson,
         clearReplacementPdf: true,
+        shouldRemoveExistingPdf: false,
         clearActionError: true,
       ),
     );
@@ -338,7 +368,6 @@ class EditLessonCubit extends Cubit<EditLessonState> {
     }
 
     _grades = List<GradeEntity>.unmodifiable(grades);
-
     _hasLoadedGrades = true;
 
     _emitReadyIfPossible();
@@ -387,6 +416,7 @@ class EditLessonCubit extends Cubit<EditLessonState> {
         youtubeUrl: lesson.youtubeUrl ?? '',
         selectedGradeId: lesson.gradeId,
         isPublished: lesson.isPublished,
+        shouldRemoveExistingPdf: false,
       ),
     );
   }

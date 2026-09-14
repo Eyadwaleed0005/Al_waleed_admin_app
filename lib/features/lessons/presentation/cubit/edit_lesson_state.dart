@@ -43,6 +43,7 @@ class EditLessonState {
     this.selectedGradeId = '',
     this.isPublished = false,
     this.replacementPdf,
+    this.shouldRemoveExistingPdf = false,
     this.pageError,
     this.actionError,
   });
@@ -61,6 +62,7 @@ class EditLessonState {
   final bool isPublished;
 
   final EditLessonPdfFile? replacementPdf;
+  final bool shouldRemoveExistingPdf;
 
   final AppErrorModel? pageError;
   final AppErrorModel? actionError;
@@ -118,11 +120,7 @@ class EditLessonState {
     return replacementPdf != null;
   }
 
-  bool get hasCurrentPdf {
-    if (replacementPdf != null) {
-      return true;
-    }
-
+  bool get hasExistingPdf {
     final currentLesson = lesson;
 
     if (currentLesson == null) {
@@ -138,12 +136,44 @@ class EditLessonState {
     return storagePath.isNotEmpty && fileName.isNotEmpty && fileSize > 0;
   }
 
+  bool get hasCurrentPdf {
+    if (replacementPdf != null) {
+      return true;
+    }
+
+    if (shouldRemoveExistingPdf) {
+      return false;
+    }
+
+    return hasExistingPdf;
+  }
+
   String get displayedPdfFileName {
-    return replacementPdf?.name ?? lesson?.pdfFileName ?? '';
+    final replacement = replacementPdf;
+
+    if (replacement != null) {
+      return replacement.name;
+    }
+
+    if (shouldRemoveExistingPdf) {
+      return '';
+    }
+
+    return lesson?.pdfFileName?.trim() ?? '';
   }
 
   int get displayedPdfFileSize {
-    return replacementPdf?.sizeInBytes ?? lesson?.pdfFileSize ?? 0;
+    final replacement = replacementPdf;
+
+    if (replacement != null) {
+      return replacement.sizeInBytes;
+    }
+
+    if (shouldRemoveExistingPdf) {
+      return 0;
+    }
+
+    return lesson?.pdfFileSize ?? 0;
   }
 
   bool get hasValidTitle {
@@ -161,14 +191,17 @@ class EditLessonState {
   bool get hasValidSelectedGrade {
     final normalizedGradeId = selectedGradeId.trim();
 
-    final gradeValidationError = AppValidator.grade(normalizedGradeId);
+    final validationError = AppValidator.grade(normalizedGradeId);
 
-    if (gradeValidationError != null) {
+    if (validationError != null) {
       return false;
     }
 
-    return grades.any((grade) => grade.gradeId == normalizedGradeId);
+    return grades.any((grade) {
+      return grade.gradeId == normalizedGradeId;
+    });
   }
+
   bool get hasValidReplacementPdf {
     final file = replacementPdf;
 
@@ -203,7 +236,8 @@ class EditLessonState {
         youtubeUrl.trim() != currentYoutubeUrl ||
         selectedGradeId.trim() != currentLesson.gradeId.trim() ||
         isPublished != currentLesson.isPublished ||
-        replacementPdf != null;
+        replacementPdf != null ||
+        shouldRemoveExistingPdf;
   }
 
   bool get isFormValid {
@@ -234,6 +268,7 @@ class EditLessonState {
     bool? isPublished,
     EditLessonPdfFile? replacementPdf,
     bool clearReplacementPdf = false,
+    bool? shouldRemoveExistingPdf,
     AppErrorModel? pageError,
     bool clearPageError = false,
     AppErrorModel? actionError,
@@ -252,6 +287,8 @@ class EditLessonState {
       replacementPdf: clearReplacementPdf
           ? null
           : replacementPdf ?? this.replacementPdf,
+      shouldRemoveExistingPdf:
+          shouldRemoveExistingPdf ?? this.shouldRemoveExistingPdf,
       pageError: clearPageError ? null : pageError ?? this.pageError,
       actionError: clearActionError ? null : actionError ?? this.actionError,
     );

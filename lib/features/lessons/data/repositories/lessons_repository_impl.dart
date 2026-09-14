@@ -72,6 +72,7 @@ class LessonsRepositoryImpl implements LessonsRepository {
   Future<Either<AppErrorModel, Unit>> updateLesson({
     required LessonEntity lesson,
     String? replacementPdfFilePath,
+    bool removeExistingPdf = false,
   }) {
     return _execute<Unit>(() async {
       final lessonModel = LessonModel.fromEntity(lesson);
@@ -79,6 +80,7 @@ class LessonsRepositoryImpl implements LessonsRepository {
       await _remoteDataSource.updateLesson(
         lesson: lessonModel,
         replacementPdfFilePath: replacementPdfFilePath,
+        removeExistingPdf: removeExistingPdf,
       );
 
       return unit;

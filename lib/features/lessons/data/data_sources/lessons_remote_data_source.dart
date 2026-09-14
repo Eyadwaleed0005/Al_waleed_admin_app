@@ -1,11 +1,19 @@
 import 'package:alwaleed_admin/features/lessons/data/models/lesson_model.dart';
 
 abstract class LessonsRemoteDataSource {
-  Future<List<LessonModel>> getLessons({String? gradeId, bool? isPublished});
+  Future<List<LessonModel>> getLessons({
+    String? gradeId,
+    bool? isPublished,
+  });
 
-  Future<LessonModel> getLessonById({required String lessonId});
+  Future<LessonModel> getLessonById({
+    required String lessonId,
+  });
 
-  Stream<List<LessonModel>> streamLessons({String? gradeId, bool? isPublished});
+  Stream<List<LessonModel>> streamLessons({
+    String? gradeId,
+    bool? isPublished,
+  });
 
   Future<void> createLesson({
     required LessonModel lesson,
@@ -15,7 +23,10 @@ abstract class LessonsRemoteDataSource {
   Future<void> updateLesson({
     required LessonModel lesson,
     String? replacementPdfFilePath,
+    bool removeExistingPdf = false,
   });
 
-  Future<void> deleteLesson({required String lessonId});
+  Future<void> deleteLesson({
+    required String lessonId,
+  });
 }
