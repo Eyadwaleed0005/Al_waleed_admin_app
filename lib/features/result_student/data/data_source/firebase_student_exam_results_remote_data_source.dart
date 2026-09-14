@@ -55,11 +55,20 @@ class FirebaseStudentExamResultsRemoteDataSource
           .where(FirestoreFields.studentId, isEqualTo: normalizedStudentId)
           .get();
 
+      final Future<QuerySnapshot<Map<String, dynamic>>>
+      studentGradeExamsSnapshotFuture = firebaseFirestore
+          .collection(FirestoreCollections.exams)
+          .where(FirestoreFields.gradeId, isEqualTo: studentGradeId)
+          .get();
+
       final DocumentSnapshot<Map<String, dynamic>> studentGradeDocument =
           await studentGradeDocumentFuture;
 
       final QuerySnapshot<Map<String, dynamic>> studentExamResultsSnapshot =
           await studentExamResultsSnapshotFuture;
+
+      final QuerySnapshot<Map<String, dynamic>> studentGradeExamsSnapshot =
+          await studentGradeExamsSnapshotFuture;
 
       if (!studentGradeDocument.exists || studentGradeDocument.data() == null) {
         FirebaseErrorHandler.throwFirestoreCode('not-found');
@@ -78,7 +87,7 @@ class FirebaseStudentExamResultsRemoteDataSource
           )
           .toList();
 
-      final Set<String> examIds = submittedExamResultDocuments
+      final Set<String> submittedExamIds = submittedExamResultDocuments
           .map(
             (resultDocument) => _readRequiredString(
               data: resultDocument.data(),
@@ -87,9 +96,19 @@ class FirebaseStudentExamResultsRemoteDataSource
           )
           .toSet();
 
+      final Set<String> studentGradeExamIds = studentGradeExamsSnapshot.docs
+          .map((examDocument) => examDocument.id)
+          .toSet();
+
+      final int totalExamsCount = studentGradeExamIds.length;
+
+      final int completedExamsCount = submittedExamIds
+          .intersection(studentGradeExamIds)
+          .length;
+
       final List<DocumentSnapshot<Map<String, dynamic>>> examDocuments =
           await Future.wait(
-            examIds.map((examId) {
+            submittedExamIds.map((examId) {
               return firebaseFirestore
                   .collection(FirestoreCollections.exams)
                   .doc(examId)
@@ -139,6 +158,8 @@ class FirebaseStudentExamResultsRemoteDataSource
       return StudentExamResultsOverviewModel.fromFirestoreStudentDocument(
         studentDocument: studentDocument,
         studentGradeName: studentGradeName,
+        completedExamsCount: completedExamsCount,
+        totalExamsCount: totalExamsCount,
         studentExamResultModels: studentExamResultModels,
       );
     });

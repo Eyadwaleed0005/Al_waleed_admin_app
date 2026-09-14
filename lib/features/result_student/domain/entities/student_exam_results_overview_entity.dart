@@ -6,6 +6,8 @@ class StudentExamResultsOverviewEntity {
   final String studentGradeId;
   final String studentGradeName;
   final bool isStudentAccountActive;
+  final int completedExamsCount;
+  final int totalExamsCount;
   final List<StudentExamResultEntity> studentExamResults;
 
   const StudentExamResultsOverviewEntity({
@@ -14,10 +16,10 @@ class StudentExamResultsOverviewEntity {
     required this.studentGradeId,
     required this.studentGradeName,
     required this.isStudentAccountActive,
+    required this.completedExamsCount,
+    required this.totalExamsCount,
     required this.studentExamResults,
   });
-
-  int get completedExamsCount => studentExamResults.length;
 
   double get highestResultPercentage {
     if (studentExamResults.isEmpty) {

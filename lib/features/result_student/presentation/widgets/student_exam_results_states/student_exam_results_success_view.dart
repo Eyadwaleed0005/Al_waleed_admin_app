@@ -3,6 +3,7 @@ import 'package:alwaleed_admin/core/style/app_animations.dart';
 import 'package:alwaleed_admin/core/style/app_color.dart';
 import 'package:alwaleed_admin/features/result_student/domain/entities/student_exam_results_overview_entity.dart';
 import 'package:alwaleed_admin/features/result_student/presentation/cubit/student_exam_results_cubit.dart';
+import 'package:alwaleed_admin/features/result_student/presentation/widgets/student_exam_completion_card.dart';
 import 'package:alwaleed_admin/features/result_student/presentation/widgets/student_exam_result_card.dart';
 import 'package:alwaleed_admin/features/result_student/presentation/widgets/student_exam_results_information_card.dart';
 import 'package:alwaleed_admin/features/result_student/presentation/widgets/student_exam_results_section_header.dart';
@@ -43,14 +44,21 @@ class StudentExamResultsSuccessView extends StatelessWidget {
           ),
           verticalSpace(16),
           AppAnimations.screenSection(
-            delay: 140,
+            delay: 120,
+            child: StudentExamCompletionCard(
+              studentExamResultsOverview: studentExamResultsOverview,
+            ),
+          ),
+          verticalSpace(16),
+          AppAnimations.screenSection(
+            delay: 160,
             child: StudentExamResultsStatisticsSection(
               studentExamResultsOverview: studentExamResultsOverview,
             ),
           ),
           verticalSpace(14),
           AppAnimations.screenSection(
-            delay: 200,
+            delay: 220,
             child: const StudentExamResultsSectionHeader(),
           ),
           verticalSpace(14),
@@ -60,7 +68,7 @@ class StudentExamResultsSuccessView extends StatelessWidget {
             resultIndex++
           ) ...[
             AppAnimations.formFieldEntrance(
-              order: resultIndex + 3,
+              order: resultIndex + 4,
               child: StudentExamResultCard(
                 studentExamResult:
                     studentExamResultsOverview.studentExamResults[resultIndex],

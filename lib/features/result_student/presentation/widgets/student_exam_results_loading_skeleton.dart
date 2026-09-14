@@ -11,7 +11,7 @@ class StudentExamResultsLoadingSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsetsDirectional.fromSTEB(16.w, 16.h, 16.w, 24.h),
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
       child: Column(
         children: [
           _SkeletonBox(
@@ -20,6 +20,11 @@ class StudentExamResultsLoadingSkeleton extends StatelessWidget {
             borderRadius: 16.r,
           ),
           verticalSpace(16),
+
+          const _StudentExamCompletionCardSkeleton(),
+
+          verticalSpace(16),
+
           Row(
             children: [
               Expanded(
@@ -35,16 +40,76 @@ class StudentExamResultsLoadingSkeleton extends StatelessWidget {
               ),
             ],
           ),
+
           verticalSpace(14),
+
           _SkeletonBox(
             width: double.infinity,
             height: 42.h,
             borderRadius: 10.r,
           ),
+
           verticalSpace(14),
+
           const _StudentExamResultCardSkeleton(),
+
           verticalSpace(12),
+
           const _StudentExamResultCardSkeleton(),
+        ],
+      ),
+    );
+  }
+}
+
+class _StudentExamCompletionCardSkeleton extends StatelessWidget {
+  const _StudentExamCompletionCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
+      decoration: BoxDecoration(
+        color: ColorPalette.surface.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: ColorPalette.border, width: 1.2.w),
+        boxShadow: [
+          BoxShadow(
+            color: ColorPalette.primaryShadow,
+            blurRadius: 16.r,
+            offset: Offset(0, 6.h),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              _SkeletonBox(width: 42.w, height: 42.w, borderRadius: 12.r),
+              horizontalSpace(12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _SkeletonBox(width: 150.w, height: 17.h, borderRadius: 6.r),
+                    verticalSpace(8),
+                    _SkeletonBox(width: 210.w, height: 11.h, borderRadius: 5.r),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          verticalSpace(18),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _SkeletonBox(width: 42.w, height: 14.h, borderRadius: 5.r),
+              _SkeletonBox(width: 62.w, height: 20.h, borderRadius: 6.r),
+            ],
+          ),
+          verticalSpace(10),
+          _SkeletonBox(width: double.infinity, height: 9.h, borderRadius: 20.r),
         ],
       ),
     );
