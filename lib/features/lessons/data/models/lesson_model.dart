@@ -69,7 +69,7 @@ class LessonModel extends LessonEntity {
     return map;
   }
 
-  Map<String, dynamic> toUpdateMap() {
+  Map<String, dynamic> toUpdateMap({bool removePdf = false}) {
     final map = <String, dynamic>{
       FirestoreFields.gradeId: gradeId.trim(),
       FirestoreFields.title: title.trim(),
@@ -79,7 +79,11 @@ class LessonModel extends LessonEntity {
       FirestoreFields.updatedAt: FieldValue.serverTimestamp(),
     };
 
-    _addPdfFieldsIfAvailable(map);
+    if (removePdf) {
+      _addDeletedPdfFields(map);
+    } else {
+      _addPdfFieldsIfAvailable(map);
+    }
 
     return map;
   }
@@ -104,6 +108,12 @@ class LessonModel extends LessonEntity {
     map[FirestoreFields.pdfFileName] = normalizedFileName;
     map[FirestoreFields.pdfFileSize] = normalizedFileSize;
     map[FirestoreFields.pdfStoragePath] = normalizedStoragePath;
+  }
+
+  void _addDeletedPdfFields(Map<String, dynamic> map) {
+    map[FirestoreFields.pdfFileName] = FieldValue.delete();
+    map[FirestoreFields.pdfFileSize] = FieldValue.delete();
+    map[FirestoreFields.pdfStoragePath] = FieldValue.delete();
   }
 
   static String _readString(dynamic value) {

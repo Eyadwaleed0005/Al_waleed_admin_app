@@ -126,6 +126,7 @@ class FirebaseLessonsRemoteDataSource implements LessonsRemoteDataSource {
   Future<void> updateLesson({
     required LessonModel lesson,
     String? replacementPdfFilePath,
+    bool removeExistingPdf = false,
   }) {
     return FirebaseErrorHandler.execute(() async {
       final lessonId = lesson.lessonId.trim();
@@ -136,6 +137,26 @@ class FirebaseLessonsRemoteDataSource implements LessonsRemoteDataSource {
 
       final hasReplacementPdf =
           replacementPath != null && replacementPath.isNotEmpty;
+
+      if (removeExistingPdf && hasReplacementPdf) {
+        FirebaseErrorHandler.throwFirestoreCode('invalid-argument');
+      }
+
+      if (removeExistingPdf) {
+        final oldStoragePath = currentLesson.pdfStoragePath?.trim() ?? '';
+
+        await _firestoreService.patchData(
+          collectionPath: FirestoreCollections.lessons,
+          documentId: lessonId,
+          data: lesson.toUpdateMap(removePdf: true),
+        );
+
+        if (oldStoragePath.isNotEmpty) {
+          await _deleteStorageFile(storagePath: oldStoragePath);
+        }
+
+        return;
+      }
 
       if (!hasReplacementPdf) {
         final updatedLesson = _copyLessonWithPdf(

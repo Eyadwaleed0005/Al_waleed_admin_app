@@ -12,10 +12,12 @@ class UpdateLessonUseCase {
   Future<Either<AppErrorModel, Unit>> call({
     required LessonEntity lesson,
     String? replacementPdfFilePath,
+    bool removeExistingPdf = false,
   }) {
     return _repository.updateLesson(
       lesson: lesson,
       replacementPdfFilePath: replacementPdfFilePath,
+      removeExistingPdf: removeExistingPdf,
     );
   }
 }
