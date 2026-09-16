@@ -1,6 +1,6 @@
 # Al-Waleed Admin
 
-Al-Waleed Admin is a secure administration application designed to manage the educational content, students, exams, results, live sessions, and notifications available in the Al-Waleed student application.
+Al-Waleed Admin is a secure administration application designed to manage the students, educational content, exams, results, live sessions, notifications, and application settings of the Al-Waleed platform.
 
 ## Features
 
@@ -15,7 +15,6 @@ Al-Waleed Admin is a secure administration application designed to manage the ed
 - Live-session management
 - Push-notification management
 - Application version and update management
-- Optional and forced application updates
 - Network connection monitoring
 
 ## Student Management
@@ -23,8 +22,8 @@ Al-Waleed Admin is a secure administration application designed to manage the ed
 - View registered students
 - Organize students by academic grade
 - Access individual student details
-- Review student exam history and results
-- Monitor student performance
+- Review student exam history
+- Monitor student results and performance
 
 ## Content Management
 
@@ -40,7 +39,8 @@ Al-Waleed Admin is a secure administration application designed to manage the ed
 - Add and organize exam questions
 - Control exam duration and availability
 - Monitor exam participants
-- Review general and individual student results
+- Review general exam results
+- Review individual student results
 
 ## Live Sessions
 
@@ -54,7 +54,16 @@ Al-Waleed Admin is a secure administration application designed to manage the ed
 - Send push notifications to students
 - Announce new lessons and educational materials
 - Send exam and live-session reminders
-- Publish important announcements and application updates
+- Publish important announcements
+- Notify students about application updates
+
+## Application Updates
+
+- Manage the latest Android and iOS versions
+- Manage Android and iOS build numbers
+- Configure optional updates
+- Enable forced updates when required
+- Manage application store URLs
 
 ## Security
 
@@ -63,6 +72,13 @@ Al-Waleed Admin is a secure administration application designed to manage the ed
 - Restricted access to administrative features
 - Secure communication with Firebase services
 - Firestore Security Rules for protecting application data
+
+## Database and Storage
+
+- Cloud Firestore for students, lessons, exams, results, and application settings
+- Firebase Storage for educational files and media
+- Flutter Secure Storage for sensitive local data
+- SharedPreferences for local application preferences
 
 ## Tech Stack
 
@@ -76,6 +92,7 @@ Al-Waleed Admin is a secure administration application designed to manage the ed
 - Bloc / Cubit
 - GetIt
 - Flutter Secure Storage
+- SharedPreferences
 - Clean Architecture
 
 ## Architecture
