@@ -15,7 +15,7 @@ platform :android do
       service_credentials_file: ENV.fetch("GOOGLE_APPLICATION_CREDENTIALS"),
       android_artifact_type: "APK",
       android_artifact_path: apk_path,
-      groups: "team",
+      groups: "test-admin",
       release_notes: "Admin development build for team testing"
     )
   end
