@@ -1,9 +1,7 @@
 default_platform(:android)
 
 platform :android do
-  # Firebase distribution for the development team
-  desc "Send admin development APK to the team"
-
+  desc "Send admin development APK to testers"
   lane :firebase_distribution do
     apk_path = File.expand_path(
       "../../build/app/outputs/flutter-apk/app-release.apk",
@@ -16,7 +14,24 @@ platform :android do
       android_artifact_type: "APK",
       android_artifact_path: apk_path,
       groups: "test-admin",
-      release_notes: "Admin development build for team testing"
+      release_notes: "Admin development build for testing"
+    )
+  end
+
+  desc "Send admin main APK to the client"
+  lane :firebase_client_distribution do
+    apk_path = File.expand_path(
+      "../../build/app/outputs/flutter-apk/app-release.apk",
+      __dir__
+    )
+
+    firebase_app_distribution(
+      app: ENV.fetch("FIREBASE_ANDROID_APP_ID"),
+      service_credentials_file: ENV.fetch("GOOGLE_APPLICATION_CREDENTIALS"),
+      android_artifact_type: "APK",
+      android_artifact_path: apk_path,
+      groups: "client",
+      release_notes: "Admin main build for client testing"
     )
   end
 end
