@@ -110,6 +110,54 @@ This structure improves maintainability, scalability, and separation of responsi
 - Android
 - iOS
 
+## CI/CD
+
+Three GitHub Actions workflows are planned for code validation, development distribution, and client delivery. Build distribution will use **Fastlane** and **Firebase App Distribution**.
+
+| Workflow | Trigger | Purpose | Status |
+|----------|---------|---------|--------|
+| Development CI | Any pull request from any branch targeting `development` | Run static analysis and automated tests to validate the proposed changes | Planned |
+| Development Distribution | Manual trigger on `development` | Use Fastlane to build and upload an Android APK to Firebase App Distribution for the development team and testers | Planned |
+| Client Distribution | A pull request from `development` targeting `main` | Use Fastlane to build and upload an Android APK to Firebase App Distribution for the client | Planned |
+
+### Development CI
+
+This workflow will run automatically when a pull request is opened, updated, or reopened against the `development` branch, regardless of its source branch.
+
+It will:
+
+- Set up the Flutter environment
+- Install project dependencies
+- Run static analysis
+- Run automated tests
+- Report validation results on the pull request
+
+### Development Distribution
+
+This workflow will run manually on the `development` branch.
+
+It will:
+
+- Set up the Flutter and Fastlane environments
+- Install project dependencies
+- Build a signed Android APK using Fastlane
+- Upload the APK to Firebase App Distribution
+- Distribute the build to the development team and testers
+
+### Client Distribution
+
+This workflow will run automatically when a pull request is opened, updated, or reopened from `development` to `main`.
+
+It will:
+
+- Set up the Flutter and Fastlane environments
+- Install project dependencies
+- Build a signed Android APK using Fastlane
+- Upload the APK to Firebase App Distribution
+- Distribute the build to the client
+
+Signing credentials and Firebase service account credentials will be managed securely using **GitHub Actions Secrets**.
+
 ## Related Application
 
 This administration application manages the content and data displayed in the **Al-Waleed Student Application**.
