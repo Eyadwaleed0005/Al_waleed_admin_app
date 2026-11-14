@@ -243,6 +243,7 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
       description: note.description,
       gradeId: note.gradeId,
       isPublished: note.isPublished,
+      isFree: note.isFree,
       pdfStoragePath: pdfStoragePath,
       pdfFileName: pdfFileName,
       pdfFileSize: pdfFileSize,
@@ -272,9 +273,7 @@ class FirebaseStudyNotesRemoteDataSource implements StudyNotesRemoteDataSource {
 
     try {
       await _storageService.deleteFile(storagePath: normalizedStoragePath);
-    } catch (_) {
-      // نحافظ على الخطأ الأصلي الذي أدى لتنفيذ الـrollback.
-    }
+    } catch (_) {}
   }
 
   FirestoreQueryBuilder? _getNotesQuery({String? gradeId, bool? isPublished}) {

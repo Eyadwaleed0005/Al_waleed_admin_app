@@ -12,6 +12,7 @@ class StudyNoteModel extends StudyNoteEntity {
     required super.pdfStoragePath,
     required super.pdfFileName,
     required super.pdfFileSize,
+    super.isFree = true,
     super.createdAt,
     super.updatedAt,
   });
@@ -23,36 +24,26 @@ class StudyNoteModel extends StudyNoteEntity {
     return StudyNoteModel(
       noteId: documentId,
       name: map[FirestoreFields.name] as String? ?? '',
-      description:
-          map[FirestoreFields.description] as String? ?? '',
+      description: map[FirestoreFields.description] as String? ?? '',
       gradeId: map[FirestoreFields.gradeId] as String? ?? '',
-      isPublished:
-          map[FirestoreFields.isPublished] as bool? ?? false,
-      pdfStoragePath:
-          map[FirestoreFields.pdfStoragePath] as String? ?? '',
-      pdfFileName:
-          map[FirestoreFields.pdfFileName] as String? ?? '',
-      pdfFileSize: _readFileSize(
-        map[FirestoreFields.pdfFileSize],
-      ),
-      createdAt: _readDateTime(
-        map[FirestoreFields.createdAt],
-      ),
-      updatedAt: _readDateTime(
-        map[FirestoreFields.updatedAt],
-      ),
+      isPublished: map[FirestoreFields.isPublished] as bool? ?? false,
+      isFree: map[FirestoreFields.isFree] as bool? ?? true,
+      pdfStoragePath: map[FirestoreFields.pdfStoragePath] as String? ?? '',
+      pdfFileName: map[FirestoreFields.pdfFileName] as String? ?? '',
+      pdfFileSize: _readFileSize(map[FirestoreFields.pdfFileSize]),
+      createdAt: _readDateTime(map[FirestoreFields.createdAt]),
+      updatedAt: _readDateTime(map[FirestoreFields.updatedAt]),
     );
   }
 
-  factory StudyNoteModel.fromEntity(
-    StudyNoteEntity entity,
-  ) {
+  factory StudyNoteModel.fromEntity(StudyNoteEntity entity) {
     return StudyNoteModel(
       noteId: entity.noteId,
       name: entity.name,
       description: entity.description,
       gradeId: entity.gradeId,
       isPublished: entity.isPublished,
+      isFree: entity.isFree,
       pdfStoragePath: entity.pdfStoragePath,
       pdfFileName: entity.pdfFileName,
       pdfFileSize: entity.pdfFileSize,
@@ -67,6 +58,7 @@ class StudyNoteModel extends StudyNoteEntity {
       FirestoreFields.description: description.trim(),
       FirestoreFields.gradeId: gradeId.trim(),
       FirestoreFields.isPublished: isPublished,
+      FirestoreFields.isFree: isFree,
       FirestoreFields.pdfStoragePath: pdfStoragePath.trim(),
       FirestoreFields.pdfFileName: pdfFileName.trim(),
       FirestoreFields.pdfFileSize: pdfFileSize,
@@ -81,6 +73,7 @@ class StudyNoteModel extends StudyNoteEntity {
       FirestoreFields.description: description.trim(),
       FirestoreFields.gradeId: gradeId.trim(),
       FirestoreFields.isPublished: isPublished,
+      FirestoreFields.isFree: isFree,
       FirestoreFields.pdfStoragePath: pdfStoragePath.trim(),
       FirestoreFields.pdfFileName: pdfFileName.trim(),
       FirestoreFields.pdfFileSize: pdfFileSize,
@@ -110,17 +103,11 @@ class StudyNoteModel extends StudyNoteEntity {
     }
 
     if (value is int) {
-      return DateTime.fromMillisecondsSinceEpoch(
-        value,
-        isUtc: true,
-      );
+      return DateTime.fromMillisecondsSinceEpoch(value, isUtc: true);
     }
 
     if (value is num) {
-      return DateTime.fromMillisecondsSinceEpoch(
-        value.toInt(),
-        isUtc: true,
-      );
+      return DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true);
     }
 
     if (value is String) {

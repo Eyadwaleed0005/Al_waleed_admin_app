@@ -36,6 +36,7 @@ class EditNoteState {
     this.description = '',
     this.selectedGradeId = '',
     this.isPublished = false,
+    this.isFree = true,
     this.replacementPdf,
     this.pageError,
     this.actionError,
@@ -50,7 +51,9 @@ class EditNoteState {
   final String title;
   final String description;
   final String selectedGradeId;
+
   final bool isPublished;
+  final bool isFree;
 
   final EditNotePdfFile? replacementPdf;
 
@@ -145,6 +148,7 @@ class EditNoteState {
         description.trim() != currentNote.description.trim() ||
         selectedGradeId.trim() != currentNote.gradeId.trim() ||
         isPublished != currentNote.isPublished ||
+        isFree != currentNote.isFree ||
         replacementPdf != null;
   }
 
@@ -172,6 +176,7 @@ class EditNoteState {
     String? description,
     String? selectedGradeId,
     bool? isPublished,
+    bool? isFree,
     EditNotePdfFile? replacementPdf,
     bool clearReplacementPdf = false,
     AppErrorModel? pageError,
@@ -188,6 +193,7 @@ class EditNoteState {
       description: description ?? this.description,
       selectedGradeId: selectedGradeId ?? this.selectedGradeId,
       isPublished: isPublished ?? this.isPublished,
+      isFree: isFree ?? this.isFree,
       replacementPdf: clearReplacementPdf
           ? null
           : replacementPdf ?? this.replacementPdf,

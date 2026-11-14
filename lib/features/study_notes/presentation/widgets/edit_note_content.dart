@@ -9,6 +9,7 @@ import 'package:alwaleed_admin/features/study_notes/presentation/widgets/add_not
 import 'package:alwaleed_admin/features/study_notes/presentation/widgets/add_note_title_field.dart';
 import 'package:alwaleed_admin/features/study_notes/presentation/widgets/edit_note_pdf_picker.dart';
 import 'package:alwaleed_admin/features/study_notes/presentation/widgets/note_last_update_card.dart';
+import 'package:alwaleed_admin/features/study_notes/presentation/widgets/study_note_access_type_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -90,6 +91,7 @@ class _EditNoteContentState extends State<EditNoteContent> {
     }
 
     final lastUpdatedAt = note.updatedAt ?? note.createdAt;
+    final isBusy = state.isActionInProgress;
 
     return Form(
       key: _formKey,
@@ -112,39 +114,60 @@ class _EditNoteContentState extends State<EditNoteContent> {
             ],
             AppAnimations.formFieldEntrance(
               order: 0,
-              child: AddNoteTitleField(
-                controller: _titleController,
-                onChanged: cubit.changeTitle,
+              child: AbsorbPointer(
+                absorbing: isBusy,
+                child: AddNoteTitleField(
+                  controller: _titleController,
+                  onChanged: cubit.changeTitle,
+                ),
               ),
             ),
             verticalSpace(18),
             AppAnimations.formFieldEntrance(
               order: 1,
-              child: AddNoteDescriptionField(
-                controller: _descriptionController,
-                onChanged: cubit.changeDescription,
+              child: AbsorbPointer(
+                absorbing: isBusy,
+                child: AddNoteDescriptionField(
+                  controller: _descriptionController,
+                  onChanged: cubit.changeDescription,
+                ),
               ),
             ),
             verticalSpace(20),
             AppAnimations.formFieldEntrance(
               order: 2,
-              child: AddNoteOptionsSection(
-                grades: state.grades,
-                selectedGradeId: state.selectedGradeId,
-                isPublished: state.isPublished,
-                onGradeSelected: cubit.selectGrade,
-                onPublicationChanged: cubit.changePublicationStatus,
+              child: AbsorbPointer(
+                absorbing: isBusy,
+                child: AddNoteOptionsSection(
+                  grades: state.grades,
+                  selectedGradeId: state.selectedGradeId,
+                  isPublished: state.isPublished,
+                  onGradeSelected: cubit.selectGrade,
+                  onPublicationChanged: cubit.changePublicationStatus,
+                ),
               ),
             ),
             verticalSpace(20),
             AppAnimations.formFieldEntrance(
               order: 3,
-              child: EditNotePdfPicker(
-                existingFileName: note.pdfFileName,
-                existingFileSize: note.pdfFileSize,
-                replacementPdf: state.replacementPdf,
-                onReplacementSelected: cubit.selectReplacementPdf,
-                onReplacementRemoved: cubit.removeReplacementPdf,
+              child: StudyNoteAccessTypeSwitch(
+                isFree: state.isFree,
+                enabled: !isBusy,
+                onChanged: cubit.changeFreeStatus,
+              ),
+            ),
+            verticalSpace(20),
+            AppAnimations.formFieldEntrance(
+              order: 4,
+              child: AbsorbPointer(
+                absorbing: isBusy,
+                child: EditNotePdfPicker(
+                  existingFileName: note.pdfFileName,
+                  existingFileSize: note.pdfFileSize,
+                  replacementPdf: state.replacementPdf,
+                  onReplacementSelected: cubit.selectReplacementPdf,
+                  onReplacementRemoved: cubit.removeReplacementPdf,
+                ),
               ),
             ),
             verticalSpace(24),

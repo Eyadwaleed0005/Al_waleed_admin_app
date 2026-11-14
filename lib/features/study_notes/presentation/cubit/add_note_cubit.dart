@@ -58,11 +58,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   void _handleGradesFailure(AppErrorModel error) {
-    if (isClosed) {
-      return;
-    }
-
-    if (state.grades.isNotEmpty) {
+    if (isClosed || state.grades.isNotEmpty) {
       return;
     }
 
@@ -91,7 +87,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   void changeTitle(String value) {
-    if (state.isSubmitting) {
+    if (isClosed || state.isSubmitting) {
       return;
     }
 
@@ -105,7 +101,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   void changeDescription(String value) {
-    if (state.isSubmitting) {
+    if (isClosed || state.isSubmitting) {
       return;
     }
 
@@ -119,7 +115,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   void selectGrade(String gradeId) {
-    if (state.isSubmitting) {
+    if (isClosed || state.isSubmitting) {
       return;
     }
 
@@ -133,7 +129,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   void changePublicationStatus(bool isPublished) {
-    if (state.isSubmitting) {
+    if (isClosed || state.isSubmitting) {
       return;
     }
 
@@ -146,8 +142,22 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     );
   }
 
+  void changeFreeStatus(bool isFree) {
+    if (isClosed || state.isSubmitting) {
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        isFree: isFree,
+        submissionStatus: AddNoteSubmissionStatus.idle,
+        clearError: true,
+      ),
+    );
+  }
+
   void selectPdf(AddNotePdfFile pdfFile) {
-    if (state.isSubmitting) {
+    if (isClosed || state.isSubmitting) {
       return;
     }
 
@@ -161,7 +171,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   void removePdf() {
-    if (state.isSubmitting) {
+    if (isClosed || state.isSubmitting) {
       return;
     }
 
@@ -175,6 +185,10 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   Future<void> createNote() async {
+    if (isClosed) {
+      return;
+    }
+
     final currentState = state;
     final selectedPdf = currentState.selectedPdf;
 
@@ -195,6 +209,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       description: currentState.description.trim(),
       gradeId: currentState.selectedGradeId.trim(),
       isPublished: currentState.isPublished,
+      isFree: currentState.isFree,
       pdfStoragePath: '',
       pdfFileName: selectedPdf.name.trim(),
       pdfFileSize: selectedPdf.sizeInBytes,
@@ -213,6 +228,10 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   void _emitSubmissionFailure(AppErrorModel error) {
+    if (isClosed) {
+      return;
+    }
+
     emit(
       state.copyWith(
         submissionStatus: AddNoteSubmissionStatus.failure,
@@ -222,6 +241,10 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   void _emitSubmissionSuccess() {
+    if (isClosed) {
+      return;
+    }
+
     emit(
       state.copyWith(
         submissionStatus: AddNoteSubmissionStatus.success,
@@ -231,7 +254,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   void consumeSubmissionResult() {
-    if (state.submissionStatus == AddNoteSubmissionStatus.idle) {
+    if (isClosed || state.submissionStatus == AddNoteSubmissionStatus.idle) {
       return;
     }
 

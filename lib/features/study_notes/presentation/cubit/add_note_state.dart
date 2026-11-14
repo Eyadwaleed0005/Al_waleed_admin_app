@@ -1,19 +1,9 @@
 import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
 import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart';
 
-enum AddNotePageStatus {
-  initial,
-  loading,
-  ready,
-  failure,
-}
+enum AddNotePageStatus { initial, loading, ready, failure }
 
-enum AddNoteSubmissionStatus {
-  idle,
-  loading,
-  success,
-  failure,
-}
+enum AddNoteSubmissionStatus { idle, loading, success, failure }
 
 class AddNotePdfFile {
   const AddNotePdfFile({
@@ -36,6 +26,7 @@ class AddNoteState {
     this.description = '',
     this.selectedGradeId = '',
     this.isPublished = false,
+    this.isFree = true,
     this.selectedPdf,
     this.error,
   });
@@ -48,7 +39,9 @@ class AddNoteState {
   final String title;
   final String description;
   final String selectedGradeId;
+
   final bool isPublished;
+  final bool isFree;
 
   final AddNotePdfFile? selectedPdf;
   final AppErrorModel? error;
@@ -111,6 +104,7 @@ class AddNoteState {
     String? description,
     String? selectedGradeId,
     bool? isPublished,
+    bool? isFree,
     AddNotePdfFile? selectedPdf,
     bool clearSelectedPdf = false,
     AppErrorModel? error,
@@ -118,17 +112,14 @@ class AddNoteState {
   }) {
     return AddNoteState(
       pageStatus: pageStatus ?? this.pageStatus,
-      submissionStatus:
-          submissionStatus ?? this.submissionStatus,
+      submissionStatus: submissionStatus ?? this.submissionStatus,
       grades: grades ?? this.grades,
       title: title ?? this.title,
       description: description ?? this.description,
-      selectedGradeId:
-          selectedGradeId ?? this.selectedGradeId,
+      selectedGradeId: selectedGradeId ?? this.selectedGradeId,
       isPublished: isPublished ?? this.isPublished,
-      selectedPdf: clearSelectedPdf
-          ? null
-          : selectedPdf ?? this.selectedPdf,
+      isFree: isFree ?? this.isFree,
+      selectedPdf: clearSelectedPdf ? null : selectedPdf ?? this.selectedPdf,
       error: clearError ? null : error ?? this.error,
     );
   }

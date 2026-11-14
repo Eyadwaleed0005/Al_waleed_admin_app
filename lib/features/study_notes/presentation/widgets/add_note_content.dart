@@ -8,6 +8,7 @@ import 'package:alwaleed_admin/features/study_notes/presentation/widgets/add_not
 import 'package:alwaleed_admin/features/study_notes/presentation/widgets/add_note_options_section.dart';
 import 'package:alwaleed_admin/features/study_notes/presentation/widgets/add_note_pdf_picker.dart';
 import 'package:alwaleed_admin/features/study_notes/presentation/widgets/add_note_title_field.dart';
+import 'package:alwaleed_admin/features/study_notes/presentation/widgets/study_note_access_type_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -66,66 +67,77 @@ class _AddNoteContentState extends State<AddNoteContent> {
               delay: 0,
               child: const AddNoteHintCard(),
             ),
-
             verticalSpace(24),
-
             AppAnimations.formFieldEntrance(
               order: 0,
-              child: AddNoteTitleField(
-                controller: _titleController,
-                onChanged: cubit.changeTitle,
+              child: AbsorbPointer(
+                absorbing: state.isSubmitting,
+                child: AddNoteTitleField(
+                  controller: _titleController,
+                  onChanged: cubit.changeTitle,
+                ),
               ),
             ),
-
             verticalSpace(18),
-
             AppAnimations.formFieldEntrance(
               order: 1,
-              child: AddNoteDescriptionField(
-                controller: _descriptionController,
-                onChanged: cubit.changeDescription,
+              child: AbsorbPointer(
+                absorbing: state.isSubmitting,
+                child: AddNoteDescriptionField(
+                  controller: _descriptionController,
+                  onChanged: cubit.changeDescription,
+                ),
               ),
             ),
-
             verticalSpace(20),
-
             AppAnimations.formFieldEntrance(
               order: 2,
-              child: AddNoteOptionsSection(
-                grades: state.grades,
-                selectedGradeId: state.selectedGradeId,
-                isPublished: state.isPublished,
-                onGradeSelected: cubit.selectGrade,
-                onPublicationChanged: cubit.changePublicationStatus,
+              child: AbsorbPointer(
+                absorbing: state.isSubmitting,
+                child: AddNoteOptionsSection(
+                  grades: state.grades,
+                  selectedGradeId: state.selectedGradeId,
+                  isPublished: state.isPublished,
+                  onGradeSelected: cubit.selectGrade,
+                  onPublicationChanged: cubit.changePublicationStatus,
+                ),
               ),
             ),
-
             verticalSpace(20),
-
             AppAnimations.formFieldEntrance(
               order: 3,
-              child: AddNotePdfPicker(
-                onFileSelected: (file) {
-                  final path = file.path?.trim();
-
-                  if (path == null || path.isEmpty) {
-                    return;
-                  }
-
-                  cubit.selectPdf(
-                    AddNotePdfFile(
-                      name: file.name,
-                      path: path,
-                      sizeInBytes: file.size,
-                    ),
-                  );
-                },
-                onFileRemoved: cubit.removePdf,
+              child: StudyNoteAccessTypeSwitch(
+                isFree: state.isFree,
+                enabled: !state.isSubmitting,
+                onChanged: cubit.changeFreeStatus,
               ),
             ),
+            verticalSpace(20),
+            AppAnimations.formFieldEntrance(
+              order: 4,
+              child: AbsorbPointer(
+                absorbing: state.isSubmitting,
+                child: AddNotePdfPicker(
+                  onFileSelected: (file) {
+                    final path = file.path?.trim();
 
+                    if (path == null || path.isEmpty) {
+                      return;
+                    }
+
+                    cubit.selectPdf(
+                      AddNotePdfFile(
+                        name: file.name,
+                        path: path,
+                        sizeInBytes: file.size,
+                      ),
+                    );
+                  },
+                  onFileRemoved: cubit.removePdf,
+                ),
+              ),
+            ),
             verticalSpace(24),
-
             AppAnimations.screenSection(
               delay: 360,
               child: CustomButton(
@@ -146,7 +158,6 @@ class _AddNoteContentState extends State<AddNoteContent> {
                 },
               ),
             ),
-
             verticalSpace(4),
           ],
         ),
