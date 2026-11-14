@@ -32,6 +32,7 @@ class AddLessonState {
     this.youtubeUrl = '',
     this.selectedGradeId = '',
     this.isPublished = false,
+    this.isFree = true,
     this.selectedPdf,
     this.error,
   });
@@ -47,6 +48,7 @@ class AddLessonState {
   final String selectedGradeId;
 
   final bool isPublished;
+  final bool isFree;
 
   final AddLessonPdfFile? selectedPdf;
   final AppErrorModel? error;
@@ -112,8 +114,6 @@ class AddLessonState {
     return AppValidator.grade(selectedGradeId) == null;
   }
 
-  /// الـPDF اختياري، لكن إذا اختاره المستخدم
-  /// لازم يكون الملف صالحًا.
   bool get hasValidPdf {
     if (selectedPdf == null) {
       return true;
@@ -141,6 +141,7 @@ class AddLessonState {
     String? youtubeUrl,
     String? selectedGradeId,
     bool? isPublished,
+    bool? isFree,
     AddLessonPdfFile? selectedPdf,
     bool clearSelectedPdf = false,
     AppErrorModel? error,
@@ -155,6 +156,7 @@ class AddLessonState {
       youtubeUrl: youtubeUrl ?? this.youtubeUrl,
       selectedGradeId: selectedGradeId ?? this.selectedGradeId,
       isPublished: isPublished ?? this.isPublished,
+      isFree: isFree ?? this.isFree,
       selectedPdf: clearSelectedPdf ? null : selectedPdf ?? this.selectedPdf,
       error: clearError ? null : error ?? this.error,
     );

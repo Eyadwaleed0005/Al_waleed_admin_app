@@ -6,6 +6,7 @@ import 'package:alwaleed_admin/features/lessons/presentation/cubit/add_lesson_st
 import 'package:alwaleed_admin/features/lessons/presentation/widgets/add_lesson_fields.dart';
 import 'package:alwaleed_admin/features/lessons/presentation/widgets/add_lesson_options_section.dart';
 import 'package:alwaleed_admin/features/lessons/presentation/widgets/add_lesson_pdf_picker.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/widgets/lesson_access_type_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -72,9 +73,7 @@ class _AddLessonContentState extends State<AddLessonContent> {
                 onChanged: cubit.changeTitle,
               ),
             ),
-
             verticalSpace(18),
-
             AppAnimations.formFieldEntrance(
               order: 1,
               child: AddLessonSubtitleField(
@@ -83,9 +82,7 @@ class _AddLessonContentState extends State<AddLessonContent> {
                 onChanged: cubit.changeSubtitle,
               ),
             ),
-
             verticalSpace(20),
-
             AppAnimations.formFieldEntrance(
               order: 2,
               child: AddLessonOptionsSection(
@@ -97,22 +94,27 @@ class _AddLessonContentState extends State<AddLessonContent> {
                 onPublicationChanged: cubit.changePublicationStatus,
               ),
             ),
-
-            verticalSpace(50),
-
+            verticalSpace(18),
             AppAnimations.formFieldEntrance(
               order: 3,
+              child: LessonAccessTypeSwitch(
+                isFree: state.isFree,
+                enabled: !state.isSubmitting,
+                onChanged: cubit.changeFreeStatus,
+              ),
+            ),
+            verticalSpace(32),
+            AppAnimations.formFieldEntrance(
+              order: 4,
               child: AddLessonYoutubeUrlField(
                 controller: _youtubeUrlController,
                 enabled: !state.isSubmitting,
                 onChanged: cubit.changeYoutubeUrl,
               ),
             ),
-
             verticalSpace(20),
-
             AppAnimations.formFieldEntrance(
-              order: 4,
+              order: 5,
               child: AddLessonPdfPicker(
                 onFileSelected: (file) {
                   final path = file.path?.trim();
@@ -132,9 +134,7 @@ class _AddLessonContentState extends State<AddLessonContent> {
                 onFileRemoved: cubit.removePdf,
               ),
             ),
-
             verticalSpace(24),
-
             AppAnimations.screenSection(
               delay: 420,
               child: CustomButton(
@@ -155,7 +155,6 @@ class _AddLessonContentState extends State<AddLessonContent> {
                 },
               ),
             ),
-
             verticalSpace(4),
           ],
         ),

@@ -29,12 +29,11 @@ abstract final class FirestoreFields {
   static const String email = 'email';
   static const String phoneNumber = 'phoneNumber';
   static const String age = 'age';
+  static const String isFree = 'isFree';
 
-  static const String subscriptionStartAt =
-      'subscriptionStartAt';
+  static const String subscriptionStartAt = 'subscriptionStartAt';
 
-  static const String subscriptionEndAt =
-      'subscriptionEndAt';
+  static const String subscriptionEndAt = 'subscriptionEndAt';
 
   static const String isLoggedIn = 'isLoggedIn';
 
@@ -54,20 +53,16 @@ abstract final class FirestoreFields {
 
   static const String questionText = 'questionText';
 
-  static const String questionImageUrl =
-      'questionImageUrl';
+  static const String questionImageUrl = 'questionImageUrl';
 
-  static const String questionImageStoragePath =
-      'questionImageStoragePath';
+  static const String questionImageStoragePath = 'questionImageStoragePath';
 
   static const String choices = 'choices';
 
-  static const String correctChoiceIndex =
-      'correctChoiceIndex';
+  static const String correctChoiceIndex = 'correctChoiceIndex';
 
   static const String degree = 'degree';
   static const String questionOrder = 'questionOrder';
-
 
   static const String option1 = 'option1';
   static const String option2 = 'option2';
@@ -81,19 +76,16 @@ abstract final class FirestoreFields {
 
   static const String examName = 'examName';
   static const String questionCount = 'questionCount';
-  static const String durationMinutes =
-      'durationMinutes';
+  static const String durationMinutes = 'durationMinutes';
 
   static const String totalScore = 'totalScore';
   static const String examStatus = 'examStatus';
 
-  static const String firstAttemptAt =
-      'firstAttemptAt';
+  static const String firstAttemptAt = 'firstAttemptAt';
 
   static const String closedAt = 'closedAt';
 
-  static const String participantsCount =
-      'participantsCount';
+  static const String participantsCount = 'participantsCount';
 
   // Exam result fields
 
@@ -104,19 +96,15 @@ abstract final class FirestoreFields {
   static const String expiresAt = 'expiresAt';
   static const String submittedAt = 'submittedAt';
 
-  static const String correctAnswers =
-      'correctAnswers';
+  static const String correctAnswers = 'correctAnswers';
 
   static const String wrongAnswers = 'wrongAnswers';
 
-  static const String unansweredQuestions =
-      'unansweredQuestions';
+  static const String unansweredQuestions = 'unansweredQuestions';
 
- 
   static const String studentScore = score;
 
-  static const String selectedChoiceIndex =
-      'selectedChoiceIndex';
+  static const String selectedChoiceIndex = 'selectedChoiceIndex';
 
   static const String isCorrect = 'isCorrect';
 

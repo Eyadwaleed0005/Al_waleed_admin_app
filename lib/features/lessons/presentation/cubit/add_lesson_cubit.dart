@@ -79,6 +79,12 @@ class AddLessonCubit extends Cubit<AddLessonState> {
     });
   }
 
+  void changeFreeStatus(bool isFree) {
+    _updateForm((currentState) {
+      return currentState.copyWith(isFree: isFree);
+    });
+  }
+
   void selectPdf(AddLessonPdfFile pdfFile) {
     _updateForm((currentState) {
       return currentState.copyWith(selectedPdf: pdfFile);
@@ -136,6 +142,7 @@ class AddLessonCubit extends Cubit<AddLessonState> {
       pdfFileSize: selectedPdf?.sizeInBytes,
       pdfStoragePath: null,
       isPublished: currentState.isPublished,
+      isFree: currentState.isFree,
     );
 
     final result = await _createLessonUseCase(
@@ -230,6 +237,7 @@ class AddLessonCubit extends Cubit<AddLessonState> {
 
   String _generateLessonId() {
     final timestamp = DateTime.now().toUtc().microsecondsSinceEpoch;
+
     return 'lesson_$timestamp';
   }
 

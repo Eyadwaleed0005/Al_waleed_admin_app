@@ -105,6 +105,12 @@ class EditLessonCubit extends Cubit<EditLessonState> {
     });
   }
 
+  void changeFreeStatus(bool isFree) {
+    _updateForm((currentState) {
+      return currentState.copyWith(isFree: isFree);
+    });
+  }
+
   void selectReplacementPdf(EditLessonPdfFile file) {
     if (!_canEditForm) {
       return;
@@ -215,6 +221,7 @@ class EditLessonCubit extends Cubit<EditLessonState> {
           ? null
           : replacementPdf?.sizeInBytes ?? currentLesson.pdfFileSize,
       isPublished: currentState.isPublished,
+      isFree: currentState.isFree,
     );
 
     emit(
@@ -416,6 +423,7 @@ class EditLessonCubit extends Cubit<EditLessonState> {
         youtubeUrl: lesson.youtubeUrl ?? '',
         selectedGradeId: lesson.gradeId,
         isPublished: lesson.isPublished,
+        isFree: lesson.isFree,
         shouldRemoveExistingPdf: false,
       ),
     );

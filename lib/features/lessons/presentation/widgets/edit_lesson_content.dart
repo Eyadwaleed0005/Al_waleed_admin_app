@@ -11,6 +11,7 @@ import 'package:alwaleed_admin/features/lessons/presentation/cubit/edit_lesson_s
 import 'package:alwaleed_admin/features/lessons/presentation/widgets/add_lesson_fields.dart';
 import 'package:alwaleed_admin/features/lessons/presentation/widgets/add_lesson_options_section.dart';
 import 'package:alwaleed_admin/features/lessons/presentation/widgets/edit_lesson_pdf_picker.dart';
+import 'package:alwaleed_admin/features/lessons/presentation/widgets/lesson_access_type_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,7 +57,6 @@ class _EditLessonContentState extends State<EditLessonContent> {
     super.didUpdateWidget(oldWidget);
 
     final oldLessonId = oldWidget.state.lesson?.lessonId;
-
     final newLessonId = widget.state.lesson?.lessonId;
 
     if (oldLessonId != newLessonId) {
@@ -111,7 +111,6 @@ class _EditLessonContentState extends State<EditLessonContent> {
     }
 
     final cubit = context.read<EditLessonCubit>();
-
     final fieldsEnabled = !state.isActionInProgress;
 
     return Form(
@@ -147,13 +146,23 @@ class _EditLessonContentState extends State<EditLessonContent> {
                 grades: state.grades,
                 selectedGradeId: state.selectedGradeId,
                 isPublished: state.isPublished,
+                enabled: fieldsEnabled,
                 onGradeSelected: cubit.selectGrade,
                 onPublicationChanged: cubit.changePublicationStatus,
               ),
             ),
-            verticalSpace(20),
+            verticalSpace(18),
             AppAnimations.formFieldEntrance(
               order: 3,
+              child: LessonAccessTypeSwitch(
+                isFree: state.isFree,
+                enabled: fieldsEnabled,
+                onChanged: cubit.changeFreeStatus,
+              ),
+            ),
+            verticalSpace(20),
+            AppAnimations.formFieldEntrance(
+              order: 4,
               child: AddLessonYoutubeUrlField(
                 controller: _youtubeUrlController,
                 onChanged: cubit.changeYoutubeUrl,
@@ -162,7 +171,7 @@ class _EditLessonContentState extends State<EditLessonContent> {
             ),
             verticalSpace(20),
             AppAnimations.formFieldEntrance(
-              order: 4,
+              order: 5,
               child: IgnorePointer(
                 ignoring: !fieldsEnabled,
                 child: AnimatedOpacity(
@@ -182,7 +191,7 @@ class _EditLessonContentState extends State<EditLessonContent> {
             ),
             verticalSpace(20),
             AppAnimations.formFieldEntrance(
-              order: 5,
+              order: 6,
               child: BlocBuilder<LessonExamsCubit, LessonExamsState>(
                 buildWhen: (previous, current) {
                   return previous.pageStatus != current.pageStatus ||
