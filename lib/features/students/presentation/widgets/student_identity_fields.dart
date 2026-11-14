@@ -10,7 +10,6 @@ import 'package:alwaleed_admin/features/grades/domain/entities/grade_entity.dart
 import 'package:alwaleed_admin/features/students/presentation/cubit/add_student_cubit.dart';
 import 'package:alwaleed_admin/features/students/presentation/cubit/add_student_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -23,52 +22,30 @@ class StudentIdentityFields extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<AddStudentCubit>();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AppAnimations.formFieldEntrance(
-          order: 0,
-          child: CustomTextFormField(
-            controller: cubit.studentNameController,
-            labelText: 'اسم الطالب',
-            hintText: 'اكتب الاسم الثلاثي',
-            keyboardType: TextInputType.name,
-            textInputAction: TextInputAction.next,
-            autofillHints: const [AutofillHints.name],
-            validator: AppValidator.studentName,
+    return AbsorbPointer(
+      absorbing: state.isSubmitting,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppAnimations.formFieldEntrance(
+            order: 0,
+            child: CustomTextFormField(
+              controller: cubit.studentNameController,
+              labelText: 'اسم الطالب',
+              hintText: 'اكتب الاسم الثلاثي',
+              keyboardType: TextInputType.name,
+              textInputAction: TextInputAction.next,
+              autofillHints: const [AutofillHints.name],
+              validator: AppValidator.studentName,
+            ),
           ),
-        ),
-
-        verticalSpace(18),
-
-        AppAnimations.formFieldEntrance(
-          order: 1,
-          child: Row(
-            textDirection: TextDirection.rtl,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: CustomTextFormField(
-                  controller: cubit.studentAgeController,
-                  labelText: 'عمر الطالب',
-                  hintText: 'اكتب العمر',
-                  keyboardType: TextInputType.number,
-                  textInputAction: TextInputAction.next,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(3),
-                  ],
-                  validator: AppValidator.studentAge,
-                ),
-              ),
-
-              horizontalSpace(12),
-
-              Expanded(child: StudentGradeSelectionField(state: state)),
-            ],
+          verticalSpace(18),
+          AppAnimations.formFieldEntrance(
+            order: 1,
+            child: StudentGradeSelectionField(state: state),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -104,7 +81,6 @@ class StudentGradeSelectionField extends StatelessWidget {
                 cubit.selectGrade(gradeId);
               },
             ),
-
             CustomFormFieldErrorText(errorText: field.errorText),
           ],
         );

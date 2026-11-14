@@ -42,6 +42,7 @@ class EditLessonState {
     this.youtubeUrl = '',
     this.selectedGradeId = '',
     this.isPublished = false,
+    this.isFree = true,
     this.replacementPdf,
     this.shouldRemoveExistingPdf = false,
     this.pageError,
@@ -60,6 +61,7 @@ class EditLessonState {
   final String selectedGradeId;
 
   final bool isPublished;
+  final bool isFree;
 
   final EditLessonPdfFile? replacementPdf;
   final bool shouldRemoveExistingPdf;
@@ -128,9 +130,7 @@ class EditLessonState {
     }
 
     final storagePath = currentLesson.pdfStoragePath?.trim() ?? '';
-
     final fileName = currentLesson.pdfFileName?.trim() ?? '';
-
     final fileSize = currentLesson.pdfFileSize ?? 0;
 
     return storagePath.isNotEmpty && fileName.isNotEmpty && fileSize > 0;
@@ -236,6 +236,7 @@ class EditLessonState {
         youtubeUrl.trim() != currentYoutubeUrl ||
         selectedGradeId.trim() != currentLesson.gradeId.trim() ||
         isPublished != currentLesson.isPublished ||
+        isFree != currentLesson.isFree ||
         replacementPdf != null ||
         shouldRemoveExistingPdf;
   }
@@ -266,6 +267,7 @@ class EditLessonState {
     String? youtubeUrl,
     String? selectedGradeId,
     bool? isPublished,
+    bool? isFree,
     EditLessonPdfFile? replacementPdf,
     bool clearReplacementPdf = false,
     bool? shouldRemoveExistingPdf,
@@ -284,6 +286,7 @@ class EditLessonState {
       youtubeUrl: youtubeUrl ?? this.youtubeUrl,
       selectedGradeId: selectedGradeId ?? this.selectedGradeId,
       isPublished: isPublished ?? this.isPublished,
+      isFree: isFree ?? this.isFree,
       replacementPdf: clearReplacementPdf
           ? null
           : replacementPdf ?? this.replacementPdf,

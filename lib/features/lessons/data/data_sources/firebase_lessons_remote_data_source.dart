@@ -277,6 +277,7 @@ class FirebaseLessonsRemoteDataSource implements LessonsRemoteDataSource {
       pdfFileName: pdfFileName,
       pdfFileSize: pdfFileSize,
       isPublished: lesson.isPublished,
+      isFree: lesson.isFree,
       createdAt: lesson.createdAt,
       updatedAt: lesson.updatedAt,
     );

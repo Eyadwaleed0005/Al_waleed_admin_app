@@ -5,6 +5,7 @@ class LessonEntity {
     required this.title,
     required this.subtitle,
     required this.isPublished,
+    this.isFree = true,
     this.youtubeUrl,
     this.pdfFileName,
     this.pdfFileSize,
@@ -20,6 +21,7 @@ class LessonEntity {
   final int? pdfFileSize;
   final String? pdfStoragePath;
   final bool isPublished;
+  final bool isFree;
 
   bool get hasYoutubeVideo {
     return youtubeUrl?.trim().isNotEmpty ?? false;
@@ -39,6 +41,7 @@ class LessonEntity {
     int? pdfFileSize,
     String? pdfStoragePath,
     bool? isPublished,
+    bool? isFree,
     bool clearYoutubeUrl = false,
     bool clearPdf = false,
   }) {
@@ -52,6 +55,7 @@ class LessonEntity {
       pdfFileSize: clearPdf ? null : pdfFileSize ?? this.pdfFileSize,
       pdfStoragePath: clearPdf ? null : pdfStoragePath ?? this.pdfStoragePath,
       isPublished: isPublished ?? this.isPublished,
+      isFree: isFree ?? this.isFree,
     );
   }
 }

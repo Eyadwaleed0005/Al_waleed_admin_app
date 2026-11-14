@@ -32,13 +32,11 @@ class StudentsList extends StatelessWidget {
       itemBuilder: (context, index) {
         final student = students[index];
         final gradeName = gradeNames[student.gradeId] ?? 'صف غير معروف';
-        final isActive =
-            student.isActive &&
-            student.subscriptionEndAt.isAfter(DateTime.now());
+
         return StudentCard(
           name: student.name,
           grade: gradeName,
-          isActive: isActive,
+          isActive: student.isActive,
           onTap: () {
             onStudentTap(student);
           },

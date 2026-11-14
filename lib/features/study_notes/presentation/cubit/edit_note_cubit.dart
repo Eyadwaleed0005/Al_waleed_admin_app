@@ -26,13 +26,9 @@ class EditNoteCubit extends Cubit<EditNoteState> {
        super(const EditNoteState());
 
   final String _noteId;
-
   final GetStudyNoteByIdUseCase _getStudyNoteByIdUseCase;
-
   final StreamGradesUseCase _streamGradesUseCase;
-
   final UpdateStudyNoteUseCase _updateStudyNoteUseCase;
-
   final DeleteStudyNoteUseCase _deleteStudyNoteUseCase;
 
   StreamSubscription<Either<AppErrorModel, List<GradeEntity>>>?
@@ -80,7 +76,7 @@ class EditNoteCubit extends Cubit<EditNoteState> {
   }
 
   void changeTitle(String value) {
-    if (!state.isPageReady || state.isActionInProgress) {
+    if (isClosed || !state.isPageReady || state.isActionInProgress) {
       return;
     }
 
@@ -94,7 +90,7 @@ class EditNoteCubit extends Cubit<EditNoteState> {
   }
 
   void changeDescription(String value) {
-    if (!state.isPageReady || state.isActionInProgress) {
+    if (isClosed || !state.isPageReady || state.isActionInProgress) {
       return;
     }
 
@@ -108,7 +104,7 @@ class EditNoteCubit extends Cubit<EditNoteState> {
   }
 
   void selectGrade(String gradeId) {
-    if (!state.isPageReady || state.isActionInProgress) {
+    if (isClosed || !state.isPageReady || state.isActionInProgress) {
       return;
     }
 
@@ -122,7 +118,7 @@ class EditNoteCubit extends Cubit<EditNoteState> {
   }
 
   void changePublicationStatus(bool isPublished) {
-    if (!state.isPageReady || state.isActionInProgress) {
+    if (isClosed || !state.isPageReady || state.isActionInProgress) {
       return;
     }
 
@@ -135,8 +131,22 @@ class EditNoteCubit extends Cubit<EditNoteState> {
     );
   }
 
+  void changeFreeStatus(bool isFree) {
+    if (isClosed || !state.isPageReady || state.isActionInProgress) {
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        isFree: isFree,
+        actionStatus: EditNoteActionStatus.idle,
+        clearActionError: true,
+      ),
+    );
+  }
+
   void selectReplacementPdf(EditNotePdfFile file) {
-    if (!state.isPageReady || state.isActionInProgress) {
+    if (isClosed || !state.isPageReady || state.isActionInProgress) {
       return;
     }
 
@@ -163,7 +173,7 @@ class EditNoteCubit extends Cubit<EditNoteState> {
   }
 
   void removeReplacementPdf() {
-    if (!state.isPageReady || state.isActionInProgress) {
+    if (isClosed || !state.isPageReady || state.isActionInProgress) {
       return;
     }
 
@@ -177,7 +187,7 @@ class EditNoteCubit extends Cubit<EditNoteState> {
   }
 
   Future<void> updateNote() async {
-    if (!state.canUpdate) {
+    if (isClosed || !state.canUpdate) {
       return;
     }
 
@@ -195,6 +205,7 @@ class EditNoteCubit extends Cubit<EditNoteState> {
       description: state.description.trim(),
       gradeId: state.selectedGradeId.trim(),
       isPublished: state.isPublished,
+      isFree: state.isFree,
       pdfStoragePath: currentNote.pdfStoragePath,
       pdfFileName: replacementPdf?.name ?? currentNote.pdfFileName,
       pdfFileSize: replacementPdf?.sizeInBytes ?? currentNote.pdfFileSize,
@@ -239,7 +250,7 @@ class EditNoteCubit extends Cubit<EditNoteState> {
   }
 
   Future<void> deleteNote() async {
-    if (!state.canDelete) {
+    if (isClosed || !state.canDelete) {
       return;
     }
 
@@ -283,7 +294,7 @@ class EditNoteCubit extends Cubit<EditNoteState> {
   }
 
   void consumeActionResult() {
-    if (state.isActionInProgress) {
+    if (isClosed || state.isActionInProgress) {
       return;
     }
 
@@ -308,7 +319,6 @@ class EditNoteCubit extends Cubit<EditNoteState> {
 
     result.fold(_emitPageFailure, (grades) {
       _grades = List<GradeEntity>.unmodifiable(grades);
-
       _hasLoadedGrades = true;
 
       _emitReadyIfPossible();
@@ -357,6 +367,7 @@ class EditNoteCubit extends Cubit<EditNoteState> {
         description: note.description,
         selectedGradeId: note.gradeId,
         isPublished: note.isPublished,
+        isFree: note.isFree,
       ),
     );
   }

@@ -9,6 +9,7 @@ class LessonModel extends LessonEntity {
     required super.title,
     required super.subtitle,
     required super.isPublished,
+    super.isFree = true,
     super.youtubeUrl,
     super.pdfFileName,
     super.pdfFileSize,
@@ -31,6 +32,7 @@ class LessonModel extends LessonEntity {
       pdfFileSize: lesson.pdfFileSize,
       pdfStoragePath: lesson.pdfStoragePath,
       isPublished: lesson.isPublished,
+      isFree: lesson.isFree,
     );
   }
 
@@ -48,6 +50,7 @@ class LessonModel extends LessonEntity {
       pdfFileSize: _readNullablePositiveInt(map[FirestoreFields.pdfFileSize]),
       pdfStoragePath: _readNullableString(map[FirestoreFields.pdfStoragePath]),
       isPublished: _readBool(map[FirestoreFields.isPublished]),
+      isFree: map[FirestoreFields.isFree] as bool? ?? true,
       createdAt: _readDateTime(map[FirestoreFields.createdAt]),
       updatedAt: _readDateTime(map[FirestoreFields.updatedAt]),
     );
@@ -60,6 +63,7 @@ class LessonModel extends LessonEntity {
       FirestoreFields.description: subtitle.trim(),
       FirestoreFields.youtubeUrl: youtubeUrl?.trim() ?? '',
       FirestoreFields.isPublished: isPublished,
+      FirestoreFields.isFree: isFree,
       FirestoreFields.createdAt: FieldValue.serverTimestamp(),
       FirestoreFields.updatedAt: FieldValue.serverTimestamp(),
     };
@@ -76,6 +80,7 @@ class LessonModel extends LessonEntity {
       FirestoreFields.description: subtitle.trim(),
       FirestoreFields.youtubeUrl: youtubeUrl?.trim() ?? '',
       FirestoreFields.isPublished: isPublished,
+      FirestoreFields.isFree: isFree,
       FirestoreFields.updatedAt: FieldValue.serverTimestamp(),
     };
 

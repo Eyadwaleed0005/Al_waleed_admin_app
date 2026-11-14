@@ -8,6 +8,7 @@ class StudyNoteEntity {
     required this.pdfStoragePath,
     required this.pdfFileName,
     required this.pdfFileSize,
+    this.isFree = true,
     this.createdAt,
     this.updatedAt,
   });
@@ -17,6 +18,7 @@ class StudyNoteEntity {
   final String description;
   final String gradeId;
   final bool isPublished;
+  final bool isFree;
 
   final String pdfStoragePath;
   final String pdfFileName;

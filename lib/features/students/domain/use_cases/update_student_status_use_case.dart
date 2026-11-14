@@ -1,19 +1,15 @@
 import 'package:alwaleed_admin/core/errors/error_model/app_error_model.dart';
 import 'package:alwaleed_admin/features/students/domain/entities/student_entity.dart';
 import 'package:alwaleed_admin/features/students/domain/helper/date_validation_helper.dart';
-import 'package:alwaleed_admin/features/students/domain/repositories/student_auth_repository.dart';
 import 'package:alwaleed_admin/features/students/domain/repositories/students_repository.dart';
 import 'package:dartz/dartz.dart';
 
 class UpdateStudentStatusUseCase {
-  final StudentAuthRepository _studentAuthRepository;
-  final StudentsRepository _studentsRepository;
-
   const UpdateStudentStatusUseCase({
-    required StudentAuthRepository studentAuthRepository,
     required StudentsRepository studentsRepository,
-  })  : _studentAuthRepository = studentAuthRepository,
-        _studentsRepository = studentsRepository;
+  }) : _studentsRepository = studentsRepository;
+
+  final StudentsRepository _studentsRepository;
 
   Future<Either<AppErrorModel, StudentEntity>> call({
     required StudentEntity student,
@@ -24,58 +20,25 @@ class UpdateStudentStatusUseCase {
     }
 
     if (isActive) {
+      final subscriptionEndAt = student.subscriptionEndAt;
+
       final hasValidSubscription =
-          DateValidationHelper.isEndDateInFuture(
-        endAt: student.subscriptionEndAt,
-      );
+          subscriptionEndAt != null &&
+          DateValidationHelper.isEndDateInFuture(endAt: subscriptionEndAt);
 
       if (!hasValidSubscription) {
         return Left<AppErrorModel, StudentEntity>(
-          DateValidationHelper
-              .cannotActivateExpiredSubscriptionError(),
+          DateValidationHelper.cannotActivateExpiredSubscriptionError(),
         );
       }
     }
 
-    final authResult =
-        await _studentAuthRepository.updateStudentAccountStatus(
-      studentId: student.studentId,
-      isActive: isActive,
+    final updatedStudent = student.copyWith(isActive: isActive);
+
+    final result = await _studentsRepository.updateStudent(
+      student: updatedStudent,
     );
 
-    return authResult.fold<
-        Future<Either<AppErrorModel, StudentEntity>>>(
-      (error) async {
-        return Left<AppErrorModel, StudentEntity>(error);
-      },
-      (_) async {
-        final updatedStudent = student.copyWith(
-          isActive: isActive,
-        );
-
-        final firestoreResult =
-            await _studentsRepository.updateStudent(
-          student: updatedStudent,
-        );
-
-        return firestoreResult.fold<
-            Future<Either<AppErrorModel, StudentEntity>>>(
-          (error) async {
-            await _studentAuthRepository
-                .updateStudentAccountStatus(
-              studentId: student.studentId,
-              isActive: student.isActive,
-            );
-
-            return Left<AppErrorModel, StudentEntity>(error);
-          },
-          (_) async {
-            return Right<AppErrorModel, StudentEntity>(
-              updatedStudent,
-            );
-          },
-        );
-      },
-    );
+    return result.map((_) => updatedStudent);
   }
 }
