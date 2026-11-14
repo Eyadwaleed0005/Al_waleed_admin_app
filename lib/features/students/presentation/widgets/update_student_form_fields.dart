@@ -29,41 +29,26 @@ class UpdateStudentFormFields extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                AppAnimations.formFieldEntrance(
-                  order: 0,
-                  child: CustomTextFormField(
-                    controller: cubit.studentNameController,
-                    labelText: 'اسم الطالب',
-                    hintText: 'اكتب الاسم الثلاثي',
-                    keyboardType: TextInputType.name,
-                    textInputAction: TextInputAction.next,
-                    autofillHints: const [AutofillHints.name],
-                    validator: AppValidator.studentName,
-                  ),
-                ),
-                verticalSpace(18),
-                AppAnimations.formFieldEntrance(
-                  order: 1,
-                  child: Row(
-                    textDirection: TextDirection.rtl,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                AbsorbPointer(
+                  absorbing: state.isBusy,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Expanded(
+                      AppAnimations.formFieldEntrance(
+                        order: 0,
                         child: CustomTextFormField(
-                          controller: cubit.studentAgeController,
-                          labelText: 'عمر الطالب',
-                          hintText: 'اكتب العمر',
-                          keyboardType: TextInputType.number,
+                          controller: cubit.studentNameController,
+                          labelText: 'اسم الطالب',
+                          hintText: 'اكتب الاسم الثلاثي',
+                          keyboardType: TextInputType.name,
                           textInputAction: TextInputAction.next,
-                          validator: AppValidator.studentAge,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(3),
-                          ],
+                          autofillHints: const [AutofillHints.name],
+                          validator: AppValidator.studentName,
                         ),
                       ),
-                      horizontalSpace(12),
-                      Expanded(
+                      verticalSpace(18),
+                      AppAnimations.formFieldEntrance(
+                        order: 1,
                         child: GradePopupMenuField(
                           grades: state.grades,
                           selectedGradeId: state.selectedGradeId,
@@ -75,118 +60,144 @@ class UpdateStudentFormFields extends StatelessWidget {
                           onGradeSelected: cubit.selectGrade,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                verticalSpace(18),
-                AppAnimations.formFieldEntrance(
-                  order: 2,
-                  child: CustomTextFormField(
-                    controller: cubit.phoneController,
-                    labelText: 'رقم الهاتف',
-                    hintText: '01xxxxxxxxx',
-                    keyboardType: TextInputType.phone,
-                    textInputAction: TextInputAction.next,
-                    textDirection: TextDirection.ltr,
-                    autofillHints: const [AutofillHints.telephoneNumber],
-                    validator: AppValidator.phoneNumber,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(11),
-                    ],
-                  ),
-                ),
-                verticalSpace(18),
-                AppAnimations.formFieldEntrance(
-                  order: 3,
-                  child: CustomTextFormField(
-                    controller: cubit.emailController,
-                    labelText: 'البريد الإلكتروني',
-                    hintText: 'example@gmail.com',
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    textDirection: TextDirection.ltr,
-                    autofillHints: const [AutofillHints.email],
-                    validator: AppValidator.email,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.deny(RegExp(r'\s')),
-                    ],
-                  ),
-                ),
-                verticalSpace(18),
-                AppAnimations.formFieldEntrance(
-                  order: 4,
-                  child: CustomTextFormField(
-                    controller: cubit.passwordController,
-                    labelText: 'كلمة مرور جديدة - اختياري',
-                    hintText: 'اتركها فارغة دون تغيير',
-                    isPassword: true,
-                    textDirection: TextDirection.ltr,
-                    textInputAction: TextInputAction.next,
-                    autofillHints: const [AutofillHints.newPassword],
-                    validator: (value) {
-                      final password = value ?? '';
-
-                      if (password.isEmpty) {
-                        return null;
-                      }
-
-                      return AppValidator.strongPassword(password);
-                    },
-                    onChanged: cubit.onPasswordChanged,
-                    suffixIcon: Icon(
-                      state.hasGeneratedPassword
-                          ? Icons.copy_rounded
-                          : Icons.auto_awesome_rounded,
-                      color: ColorPalette.primary,
-                      size: 23.sp,
-                    ),
-                    onSuffixTap: state.hasGeneratedPassword
-                        ? null
-                        : cubit.generateStrongPassword,
-                  ),
-                ),
-                verticalSpace(18),
-                AppAnimations.formFieldEntrance(
-                  order: 5,
-                  child: Row(
-                    textDirection: TextDirection.rtl,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: CustomDatePickerField(
-                          controller: cubit.subscriptionStartDateController,
-                          labelText: 'بداية الاشتراك',
-                          hintText: 'اختر التاريخ',
-                          selectedDate: state.subscriptionStartDate,
-                          initialDate: state.subscriptionStartDate,
-                          firstDate: DateTime(2000),
-                          validator: (_) {
-                            if (state.subscriptionStartDate == null) {
-                              return 'اختر تاريخ بداية الاشتراك';
-                            }
-
-                            return null;
-                          },
-                          onDateSelected: cubit.selectSubscriptionStartDate,
+                      verticalSpace(18),
+                      AppAnimations.formFieldEntrance(
+                        order: 2,
+                        child: CustomTextFormField(
+                          controller: cubit.phoneController,
+                          labelText: 'رقم الهاتف',
+                          hintText: '01xxxxxxxxx',
+                          keyboardType: TextInputType.phone,
+                          textInputAction: TextInputAction.next,
+                          textDirection: TextDirection.ltr,
+                          autofillHints: const [AutofillHints.telephoneNumber],
+                          validator: AppValidator.phoneNumber,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(11),
+                          ],
                         ),
                       ),
-                      horizontalSpace(12),
-                      Expanded(
-                        child: CustomDatePickerField(
-                          controller: cubit.subscriptionEndDateController,
-                          labelText: 'نهاية الاشتراك',
-                          hintText: 'اختر التاريخ',
-                          selectedDate: state.subscriptionEndDate,
-                          initialDate: state.subscriptionEndDate,
-                          firstDate: cubit.subscriptionEndFirstDate,
-                          validator: (_) {
-                            return AppValidator.subscriptionEndDate(
-                              startDate: state.subscriptionStartDate,
-                              endDate: state.subscriptionEndDate,
-                            );
+                      verticalSpace(18),
+                      AppAnimations.formFieldEntrance(
+                        order: 3,
+                        child: CustomTextFormField(
+                          controller: cubit.emailController,
+                          labelText: 'البريد الإلكتروني',
+                          hintText: 'example@gmail.com',
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          textDirection: TextDirection.ltr,
+                          autofillHints: const [AutofillHints.email],
+                          validator: AppValidator.email,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                          ],
+                        ),
+                      ),
+                      verticalSpace(18),
+                      AppAnimations.formFieldEntrance(
+                        order: 4,
+                        child: CustomTextFormField(
+                          controller: cubit.passwordController,
+                          labelText: 'كلمة مرور جديدة - اختياري',
+                          hintText: 'اتركها فارغة دون تغيير',
+                          isPassword: true,
+                          textDirection: TextDirection.ltr,
+                          textInputAction: TextInputAction.next,
+                          autofillHints: const [AutofillHints.newPassword],
+                          validator: (value) {
+                            final password = value ?? '';
+
+                            if (password.isEmpty) {
+                              return null;
+                            }
+
+                            return AppValidator.strongPassword(password);
                           },
-                          onDateSelected: cubit.selectSubscriptionEndDate,
+                          onChanged: cubit.onPasswordChanged,
+                          suffixIcon: Icon(
+                            state.hasGeneratedPassword
+                                ? Icons.copy_rounded
+                                : Icons.auto_awesome_rounded,
+                            color: ColorPalette.primary,
+                            size: 23.sp,
+                          ),
+                          onSuffixTap: state.hasGeneratedPassword
+                              ? null
+                              : cubit.generateStrongPassword,
+                        ),
+                      ),
+                      verticalSpace(18),
+                      AppAnimations.formFieldEntrance(
+                        order: 5,
+                        child: Row(
+                          textDirection: TextDirection.rtl,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: CustomDatePickerField(
+                                controller:
+                                    cubit.subscriptionStartDateController,
+                                labelText: 'بداية الاشتراك',
+                                hintText: 'بدون اشتراك',
+                                selectedDate: state.subscriptionStartDate,
+                                initialDate: state.subscriptionStartDate,
+                                firstDate: DateTime(2000),
+                                validator: (_) {
+                                  final startDate = state.subscriptionStartDate;
+                                  final endDate = state.subscriptionEndDate;
+
+                                  if (startDate == null && endDate != null) {
+                                    return 'اختر تاريخ بداية الاشتراك';
+                                  }
+
+                                  return null;
+                                },
+                                onDateSelected:
+                                    cubit.selectSubscriptionStartDate,
+                              ),
+                            ),
+                            horizontalSpace(12),
+                            Expanded(
+                              child: CustomDatePickerField(
+                                controller: cubit.subscriptionEndDateController,
+                                labelText: 'نهاية الاشتراك',
+                                hintText: 'بدون اشتراك',
+                                selectedDate: state.subscriptionEndDate,
+                                initialDate: state.subscriptionEndDate,
+                                firstDate: cubit.subscriptionEndFirstDate,
+                                validator: (_) {
+                                  final startDate = state.subscriptionStartDate;
+                                  final endDate = state.subscriptionEndDate;
+
+                                  final subscriptionChanged =
+                                      !_isSameDate(
+                                        startDate,
+                                        state.student?.subscriptionStartAt,
+                                      ) ||
+                                      !_isSameDate(
+                                        endDate,
+                                        state.student?.subscriptionEndAt,
+                                      );
+
+                                  if (!subscriptionChanged) {
+                                    return null;
+                                  }
+
+                                  if (startDate == null && endDate == null) {
+                                    return null;
+                                  }
+
+                                  return AppValidator.subscriptionEndDate(
+                                    startDate: startDate,
+                                    endDate: endDate,
+                                  );
+                                },
+                                onDateSelected: cubit.selectSubscriptionEndDate,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -201,5 +212,15 @@ class UpdateStudentFormFields extends StatelessWidget {
         );
       },
     );
+  }
+
+  bool _isSameDate(DateTime? first, DateTime? second) {
+    if (first == null || second == null) {
+      return first == null && second == null;
+    }
+
+    return first.year == second.year &&
+        first.month == second.month &&
+        first.day == second.day;
   }
 }

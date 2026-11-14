@@ -1,4 +1,3 @@
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:alwaleed_admin/core/firebase/firestore/firestore_service.dart';
 import 'package:alwaleed_admin/features/students/data/data_sources/auth/firebase_student_auth_remote_data_source.dart';
 import 'package:alwaleed_admin/features/students/data/data_sources/auth/student_auth_remote_data_source.dart';
@@ -18,6 +17,7 @@ import 'package:alwaleed_admin/features/students/domain/use_cases/update_student
 import 'package:alwaleed_admin/features/students/domain/use_cases/update_student_profile_use_case.dart';
 import 'package:alwaleed_admin/features/students/domain/use_cases/update_student_status_use_case.dart';
 import 'package:alwaleed_admin/features/students/domain/use_cases/update_student_subscription_use_case.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:get_it/get_it.dart';
 
 void registerStudentsDependencies(GetIt getIt) {
@@ -87,14 +87,12 @@ void registerStudentsDependencies(GetIt getIt) {
 
   getIt.registerLazySingleton<UpdateStudentStatusUseCase>(
     () => UpdateStudentStatusUseCase(
-      studentAuthRepository: getIt<StudentAuthRepository>(),
       studentsRepository: getIt<StudentsRepository>(),
     ),
   );
 
   getIt.registerLazySingleton<UpdateStudentSubscriptionUseCase>(
     () => UpdateStudentSubscriptionUseCase(
-      studentAuthRepository: getIt<StudentAuthRepository>(),
       studentsRepository: getIt<StudentsRepository>(),
     ),
   );
