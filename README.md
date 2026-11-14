@@ -1,13 +1,14 @@
 # Al-Waleed Admin
 
-Al-Waleed Admin is a secure administration application designed to manage the students, educational content, exams, results, live sessions, notifications, and application settings of the Al-Waleed platform.
+Al-Waleed Admin is an administration application for managing students, educational content, exams, results, live sessions, notifications, and application settings across the Al-Waleed platform.
 
 ## Features
 
-- Secure administrator authentication
-- Student account management
+- Administrator authentication
+- Student account and subscription management
 - Grade-based student organization
-- Educational lesson management
+- Educational lesson and study-note management
+- Free and subscription-based content controls
 - Video and PDF material management
 - Online exam and question management
 - Student exam-results monitoring
@@ -19,19 +20,28 @@ Al-Waleed Admin is a secure administration application designed to manage the st
 
 ## Student Management
 
-- View registered students
+- View and create student accounts
 - Organize students by academic grade
-- Access individual student details
-- Review student exam history
-- Monitor student results and performance
+- Manage student names, phone numbers, and email addresses
+- Update student passwords
+- Support students without subscription dates
+- Manage subscription dates, renewals, and activation status
+- Track subscription status independently of Firebase Authentication account status
+- Reset student device-login status
+- Delete student accounts
+- Review student exam history, results, and performance
+
+Students without an active subscription can access the free content available for their academic grade in the student application.
 
 ## Content Management
 
-- Add and manage educational lessons
+- Add and manage educational lessons and study notes
 - Attach educational videos
-- Upload and manage PDF materials
+- Upload and replace PDF materials
 - Organize content by academic grade
-- Control content availability for students
+- Manage content publication status
+- Mark lessons and study notes as free or subscription-based
+- Preserve content access settings when replacing PDF files
 
 ## Exam Management
 
@@ -65,20 +75,19 @@ Al-Waleed Admin is a secure administration application designed to manage the st
 - Enable forced updates when required
 - Manage application store URLs
 
-## Security
+## Authentication and Local Storage
 
-- Secure administrator authentication using Firebase Authentication
-- Protected local data using Flutter Secure Storage
-- Restricted access to administrative features
-- Secure communication with Firebase services
-- Firestore Security Rules for protecting application data
+- Administrator authentication using Firebase Authentication
+- Flutter Secure Storage for sensitive local data
+- SharedPreferences for local application preferences
+- HTTPS communication with Firebase services
 
 ## Database and Storage
 
-- Cloud Firestore for students, lessons, exams, results, and application settings
+- Cloud Firestore for students, grades, lessons, study notes, exams, results, live sessions, and application settings
 - Firebase Storage for educational files and media
-- Flutter Secure Storage for sensitive local data
-- SharedPreferences for local application preferences
+- Firebase Authentication for account credentials
+- Cloud Functions for server-side operations
 
 ## Tech Stack
 
@@ -97,66 +106,68 @@ Al-Waleed Admin is a secure administration application designed to manage the st
 
 ## Architecture
 
-The application follows Clean Architecture principles and separates each feature into three main layers:
+The application follows Clean Architecture principles, separating each feature into three main layers:
 
-- Data
-- Domain
-- Presentation
-
-This structure improves maintainability, scalability, and separation of responsibilities.
+- **Data:** Data sources, models, and repository implementations
+- **Domain:** Entities, repository contracts, parameters, and use cases
+- **Presentation:** Screens, widgets, and state management
 
 ## Platforms
 
 - Android
 - iOS
 
+Current CI/CD distribution workflows target Android.
+
 ## CI/CD
 
-Three GitHub Actions workflows are planned for code validation, development distribution, and client delivery. Build distribution will use **Fastlane** and **Firebase App Distribution**.
+GitHub Actions handles code validation and build distribution. Fastlane builds signed Android APKs and distributes them through Firebase App Distribution.
 
 | Workflow | Trigger | Purpose | Status |
-|----------|---------|---------|--------|
-| Development CI | Any pull request from any branch targeting `development` | Run static analysis and automated tests to validate the proposed changes | Planned |
-| Development Distribution | Manual trigger on `development` | Use Fastlane to build and upload an Android APK to Firebase App Distribution for the development team and testers | Planned |
-| Client Distribution | A pull request from `development` targeting `main` | Use Fastlane to build and upload an Android APK to Firebase App Distribution for the client | Planned |
+| --- | --- | --- | --- |
+| Development CI | Pull requests targeting `development` | Run static analysis and automated tests | Implemented |
+| Development Distribution | Manual dispatch on `development` | Build and distribute an Android APK to the development team and testers | Implemented |
+| Client Distribution | Pull requests from `development` targeting `main` | Build and distribute an Android APK to the client | Implemented |
 
 ### Development CI
 
-This workflow will run automatically when a pull request is opened, updated, or reopened against the `development` branch, regardless of its source branch.
+Runs when a pull request is opened, updated, or reopened against `development`, regardless of its source branch.
 
-It will:
+The workflow:
 
-- Set up the Flutter environment
-- Install project dependencies
-- Run static analysis
-- Run automated tests
-- Report validation results on the pull request
+- Sets up the Flutter environment
+- Installs project dependencies
+- Runs static analysis
+- Runs automated tests
+- Reports validation results on the pull request
 
 ### Development Distribution
 
-This workflow will run manually on the `development` branch.
+Runs manually on the `development` branch.
 
-It will:
+The workflow:
 
-- Set up the Flutter and Fastlane environments
-- Install project dependencies
-- Build a signed Android APK using Fastlane
-- Upload the APK to Firebase App Distribution
-- Distribute the build to the development team and testers
+- Sets up the Flutter and Fastlane environments
+- Installs project dependencies
+- Builds a signed Android APK using Fastlane
+- Uploads the APK to Firebase App Distribution
+- Distributes the build to the development team and testers
 
 ### Client Distribution
 
-This workflow will run automatically when a pull request is opened, updated, or reopened from `development` to `main`.
+Runs when a pull request is opened, updated, or reopened from `development` to `main`.
 
-It will:
+The workflow:
 
-- Set up the Flutter and Fastlane environments
-- Install project dependencies
-- Build a signed Android APK using Fastlane
-- Upload the APK to Firebase App Distribution
-- Distribute the build to the client
+- Sets up the Flutter and Fastlane environments
+- Installs project dependencies
+- Builds a signed Android APK using Fastlane
+- Uploads the APK to Firebase App Distribution
+- Distributes the build to the client
 
-Signing credentials and Firebase service account credentials will be managed securely using **GitHub Actions Secrets**.
+Workflow files are located in `.github/workflows/`. Distribution lanes are defined in `android/fastlane/Fastfile`.
+
+Signing credentials and Firebase service account credentials are stored in GitHub Actions Secrets.
 
 ## Related Application
 
